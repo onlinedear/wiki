@@ -3,15 +3,14 @@
     <p>
         Open-source collaborative wiki and documentation software
         <br />
-        <a href="https://docmost.com"><strong>Website</strong></a> | 
+        <a href="https://github.com/onlinedear/wiki"><strong>GitHub</strong></a> | 
         <a href="https://docmost.com/docs"><strong>Documentation</strong></a> |
-        <a href="https://twitter.com/DocmostHQ"><strong>Twitter / X</strong></a> |
-        <a href="https://github.com/docmost/docmost/discussions"><strong>Discussions</strong></a>
+        <a href="https://github.com/onlinedear/wiki/discussions"><strong>Discussions</strong></a>
     </p>
     <p>
-        <img src="https://img.shields.io/github/v/release/docmost/docmost?style=flat-square" alt="Release">
-        <img src="https://img.shields.io/github/license/docmost/docmost?style=flat-square" alt="License">
-        <img src="https://img.shields.io/github/stars/docmost/docmost?style=flat-square" alt="Stars">
+        <img src="https://img.shields.io/github/v/release/onlinedear/wiki?style=flat-square" alt="Release">
+        <img src="https://img.shields.io/github/license/onlinedear/wiki?style=flat-square" alt="License">
+        <img src="https://img.shields.io/github/stars/onlinedear/wiki?style=flat-square" alt="Stars">
     </p>
 </div>
 
@@ -37,7 +36,7 @@ Docmost is a powerful open-source collaborative wiki and documentation platform 
 
 ```bash
 # Download docker-compose.yml
-curl -O https://raw.githubusercontent.com/docmost/docmost/main/docker-compose.yml
+curl -O https://raw.githubusercontent.com/onlinedear/wiki/main/docker-compose.yml
 
 # Generate a secure secret
 openssl rand -hex 32
@@ -164,8 +163,8 @@ For a complete list of documentation, see the [docs directory](./docs/README.md)
 
 ```bash
 # Clone the repository
-git clone https://github.com/docmost/docmost.git
-cd docmost
+git clone https://github.com/onlinedear/wiki.git
+cd wiki
 
 # Install dependencies
 pnpm install
@@ -330,10 +329,9 @@ Docmost is actively maintained and under continuous development. We release new 
     <p>
         Made with ❤️ by the Docmost team and contributors
         <br />
-        <a href="https://docmost.com">Website</a> •
+        <a href="https://github.com/onlinedear/wiki">GitHub</a> •
         <a href="https://docmost.com/docs">Docs</a> •
-        <a href="https://github.com/docmost/docmost">GitHub</a> •
-        <a href="https://twitter.com/DocmostHQ">Twitter</a>
+        <a href="https://github.com/onlinedear/wiki/issues">Issues</a>
     </p>
 </div>
 
