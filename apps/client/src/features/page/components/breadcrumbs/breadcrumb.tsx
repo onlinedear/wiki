@@ -19,6 +19,7 @@ import { buildPageUrl } from "@/features/page/page.utils.ts";
 import { usePageQuery } from "@/features/page/queries/page-query.ts";
 import { extractPageSlugId } from "@/lib";
 import { useMediaQuery } from "@mantine/hooks";
+import { useTranslation } from "react-i18next";
 
 function getTitle(name: string, icon: string) {
   if (icon) {
@@ -37,13 +38,14 @@ export default function Breadcrumb() {
     pageId: extractPageSlugId(pageSlug),
   });
   const isMobile = useMediaQuery("(max-width: 48em)");
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (treeData?.length > 0 && currentPage) {
-      const breadcrumb = findBreadcrumbPath(treeData, currentPage.id);
+      const breadcrumb = findBreadcrumbPath(treeData, currentPage.id, [], t("untitled"));
       setBreadcrumbNodes(breadcrumb || null);
     }
-  }, [currentPage?.id, treeData]);
+  }, [currentPage?.id, treeData, t]);
 
   const HiddenNodesTooltipContent = () =>
     breadcrumbNodes?.slice(1, -1).map((node) => (

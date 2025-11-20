@@ -52,7 +52,7 @@ export default function WorkspaceNameForm() {
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <TextInput
         id="name"
-        label={t("Name")}
+        label={t("Workspace Name")}
         placeholder={t("e.g ACME")}
         variant="filled"
         readOnly={!isAdmin}

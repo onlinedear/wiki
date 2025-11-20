@@ -115,4 +115,114 @@ export class CommentRepo {
 
     return Number(result?.count) > 0;
   }
+
+  async searchComments(opts: {
+    pageId?: string;
+    workspaceId?: string;
+    searchText?: string;
+    creatorId?: string;
+    resolved?: boolean;
+    pagination: PaginationOptions;
+  }) {
+    let query = this.db
+      .selectFrom('comments')
+      .selectAll('comments')
+      .select((eb) => this.withCreator(eb))
+      .select((eb) => this.withResolvedBy(eb));
+
+    if (opts.pageId) {
+      query = query.where('pageId', '=', opts.pageId);
+    }
+
+    if (opts.workspaceId) {
+      query = query.where('workspaceId', '=', opts.workspaceId);
+    }
+
+    if (opts.searchText) {
+      query = query.where((eb) =>
+        eb.or([
+          eb('selection', 'ilike', `%${opts.searchText}%`),
+        ]),
+      );
+    }
+
+    if (opts.creatorId) {
+      query = query.where('creatorId', '=', opts.creatorId);
+    }
+
+    if (opts.resolved !== undefined) {
+      if (opts.resolved) {
+        query = query.where('resolvedAt', 'is not', null);
+      } else {
+        query = query.where('resolvedAt', 'is', null);
+      }
+    }
+
+    query = query.orderBy('createdAt', 'desc');
+
+    return executeWithPagination(query, {
+      page: opts.pagination.page,
+      perPage: opts.pagination.limit,
+    });
+  }
+
+  async getWorkspaceComments(
+    workspaceId: string,
+    pagination: PaginationOptions,
+    filters?: {
+      searchText?: string;
+      type?: string;
+      creatorId?: string;
+    },
+  ) {
+    let query = this.db
+      .selectFrom('comments')
+      .selectAll('comments')
+      .select((eb) => this.withCreator(eb))
+      .select((eb) => this.withPage(eb))
+      .select((eb) => this.withSpace(eb))
+      .where('comments.workspaceId', '=', workspaceId)
+      .where('comments.deletedAt', 'is', null);
+
+    if (filters?.searchText) {
+      query = query.where((eb) =>
+        eb.or([
+          eb('comments.selection', 'ilike', `%${filters.searchText}%`),
+        ]),
+      );
+    }
+
+    if (filters?.type) {
+      query = query.where('comments.type', '=', filters.type);
+    }
+
+    if (filters?.creatorId) {
+      query = query.where('comments.creatorId', '=', filters.creatorId);
+    }
+
+    query = query.orderBy('comments.createdAt', 'desc');
+
+    return executeWithPagination(query, {
+      page: pagination.page,
+      perPage: pagination.limit,
+    });
+  }
+
+  withPage(eb: ExpressionBuilder<DB, 'comments'>) {
+    return jsonObjectFrom(
+      eb
+        .selectFrom('pages')
+        .select(['pages.id', 'pages.title', 'pages.slugId'])
+        .whereRef('pages.id', '=', 'comments.pageId'),
+    ).as('page');
+  }
+
+  withSpace(eb: ExpressionBuilder<DB, 'comments'>) {
+    return jsonObjectFrom(
+      eb
+        .selectFrom('spaces')
+        .select(['spaces.id', 'spaces.name', 'spaces.slug'])
+        .whereRef('spaces.id', '=', 'comments.spaceId'),
+    ).as('space');
+  }
 }

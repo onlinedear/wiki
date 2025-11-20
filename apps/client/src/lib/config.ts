@@ -9,7 +9,13 @@ declare global {
 }
 
 export function getAppName(): string {
-  return "Docmost";
+  // Try to get the current app name from the dynamic head component
+  try {
+    const { getCurrentAppName } = require('@/components/ui/dynamic-head');
+    return getCurrentAppName();
+  } catch {
+    return "Docmost";
+  }
 }
 
 export function getAppUrl(): string {

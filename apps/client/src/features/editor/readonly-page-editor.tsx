@@ -8,6 +8,7 @@ import { Text } from "@tiptap/extension-text";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { useAtom } from "jotai";
 import { readOnlyEditorAtom } from "@/features/editor/atoms/editor-atoms.ts";
+import { useTranslation } from "react-i18next";
 
 interface PageEditorProps {
   title: string;
@@ -21,6 +22,7 @@ export default function ReadonlyPageEditor({
   pageId,
 }: PageEditorProps) {
   const [, setReadOnlyEditor] = useAtom(readOnlyEditorAtom);
+  const { t } = useTranslation();
 
   const extensions = useMemo(() => {
     return [...mainExtensions];
@@ -33,7 +35,7 @@ export default function ReadonlyPageEditor({
     Heading,
     Text,
     Placeholder.configure({
-      placeholder: "Untitled",
+      placeholder: t("Untitled"),
       showOnlyWhenEditable: false,
     }),
   ];

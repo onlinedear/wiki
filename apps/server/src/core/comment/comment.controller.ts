@@ -7,10 +7,17 @@ import {
   UseGuards,
   NotFoundException,
   ForbiddenException,
+  Get,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { SearchCommentDto } from './dto/search-comment.dto';
+import { AddReactionDto, RemoveReactionDto } from './dto/reaction.dto';
+import {
+  GetNotificationsDto,
+  MarkNotificationReadDto,
+} from './dto/notification.dto';
 import { PageIdDto, CommentIdDto } from './dto/comments.input';
 import { AuthUser } from '../../common/decorators/auth-user.decorator';
 import { AuthWorkspace } from '../../common/decorators/auth-workspace.decorator';
@@ -173,5 +180,132 @@ export class CommentController {
       );
     }
     await this.commentRepo.deleteComment(comment.id);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('search')
+  async search(
+    @Body() searchDto: SearchCommentDto,
+    @Body() pagination: PaginationOptions,
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    return this.commentService.searchComments(
+      searchDto,
+      workspace.id,
+      pagination,
+    );
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('reactions/add')
+  async addReaction(@Body() dto: AddReactionDto, @AuthUser() user: User) {
+    const comment = await this.commentRepo.findById(dto.commentId);
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    const ability = await this.spaceAbility.createForUser(
+      user,
+      comment.spaceId,
+    );
+    if (ability.cannot(SpaceCaslAction.Read, SpaceCaslSubject.Page)) {
+      throw new ForbiddenException();
+    }
+
+    return this.commentService.addReaction(
+      dto.commentId,
+      user.id,
+      dto.reactionType,
+    );
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('reactions/remove')
+  async removeReaction(@Body() dto: RemoveReactionDto, @AuthUser() user: User) {
+    const comment = await this.commentRepo.findById(dto.commentId);
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    return this.commentService.removeReaction(
+      dto.commentId,
+      user.id,
+      dto.reactionType,
+    );
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('reactions')
+  async getReactions(@Body() input: CommentIdDto, @AuthUser() user: User) {
+    const comment = await this.commentRepo.findById(input.commentId);
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    return this.commentService.getCommentReactions(input.commentId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('notifications')
+  async getNotifications(
+    @Body() dto: GetNotificationsDto,
+    @AuthUser() user: User,
+  ) {
+    return this.commentService.getUserNotifications(user.id, dto.unreadOnly);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('notifications/unread-count')
+  async getUnreadCount(@AuthUser() user: User) {
+    const count = await this.commentService.getUnreadNotificationCount(
+      user.id,
+    );
+    return { count };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('notifications/mark-read')
+  async markNotificationRead(
+    @Body() dto: MarkNotificationReadDto,
+    @AuthUser() user: User,
+  ) {
+    return this.commentService.markNotificationAsRead(dto.notificationId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('notifications/mark-all-read')
+  async markAllNotificationsRead(@AuthUser() user: User) {
+    return this.commentService.markAllNotificationsAsRead(user.id);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('workspace/list')
+  async getWorkspaceComments(
+    @Body() dto: any,
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    // Only workspace admins can access this
+    if (user.role !== 'admin' && user.role !== 'owner') {
+      throw new ForbiddenException('Only workspace admins can manage comments');
+    }
+
+    return this.commentService.getWorkspaceComments(workspace.id, dto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('workspace/delete-batch')
+  async deleteBatchComments(
+    @Body() dto: { commentIds: string[] },
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    // Only workspace admins can access this
+    if (user.role !== 'admin' && user.role !== 'owner') {
+      throw new ForbiddenException('Only workspace admins can manage comments');
+    }
+
+    return this.commentService.deleteBatchComments(dto.commentIds, workspace.id);
   }
 }

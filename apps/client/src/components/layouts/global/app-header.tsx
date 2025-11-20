@@ -22,6 +22,7 @@ import {
   searchSpotlight,
   shareSearchSpotlight,
 } from "@/features/search/constants.ts";
+import { currentUserAtom } from "@/features/user/atoms/current-user-atom.ts";
 
 const links = [{ link: APP_ROUTE.HOME, label: "Home" }];
 
@@ -33,6 +34,9 @@ export function AppHeader() {
   const [desktopOpened] = useAtom(desktopSidebarAtom);
   const toggleDesktop = useToggleSidebar(desktopSidebarAtom);
   const { isTrial, trialDaysLeft } = useTrial();
+  const [currentUser] = useAtom(currentUserAtom);
+
+  const workspace = currentUser?.workspace;
 
   const isHomeRoute = location.pathname.startsWith("/home");
   const isSpacesRoute = location.pathname === "/spaces";
@@ -79,7 +83,7 @@ export function AppHeader() {
             component={Link}
             to="/home"
           >
-            Docmost
+            {workspace?.name || "Docmost"}
           </Text>
 
           <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">

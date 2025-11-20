@@ -361,11 +361,11 @@ export class PageService {
 
         const prosemirrorJson = prosemirrorDoc.toJSON();
 
-        // Add "Copy of " prefix to the root page title only for duplicates in same space
+        // Add "副本" suffix to the root page title only for duplicates in same space
         let title = page.title;
         if (isDuplicateInSameSpace && page.id === rootPage.id) {
           const originalTitle = page.title || 'Untitled';
-          title = `Copy of ${originalTitle}`;
+          title = `${originalTitle}副本`;
         }
 
         return {

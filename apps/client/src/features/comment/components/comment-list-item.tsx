@@ -20,6 +20,7 @@ import { CustomAvatar } from "@/components/ui/custom-avatar.tsx";
 import { currentUserAtom } from "@/features/user/atoms/current-user-atom.ts";
 import { useQueryEmit } from "@/features/websocket/use-query-emit";
 import { useTranslation } from "react-i18next";
+import { CommentReactions } from "./comment-reactions";
 
 interface CommentListItemProps {
   comment: IComment;
@@ -188,7 +189,12 @@ function CommentListItem({
         )}
 
         {!isEditing ? (
-          <CommentEditor defaultContent={content} editable={false} />
+          <>
+            <CommentEditor defaultContent={content} editable={false} />
+            <Box mt="xs">
+              <CommentReactions commentId={comment.id} />
+            </Box>
+          </>
         ) : (
           <>
             <CommentEditor

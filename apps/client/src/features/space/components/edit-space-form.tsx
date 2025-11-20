@@ -67,7 +67,7 @@ export function EditSpaceForm({ space, readOnly }: EditSpaceFormProps) {
           <Stack>
             <TextInput
               id="name"
-              label={t("Name")}
+              label={t("Space name")}
               placeholder={t("e.g Sales")}
               variant="filled"
               readOnly={readOnly}

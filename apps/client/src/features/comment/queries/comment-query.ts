@@ -9,6 +9,14 @@ import {
   deleteComment,
   getPageComments,
   updateComment,
+  searchComments,
+  addReaction,
+  removeReaction,
+  getCommentReactions,
+  getNotifications,
+  getUnreadNotificationCount,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
 } from "@/features/comment/services/comment-service";
 import {
   ICommentParams,
@@ -107,3 +115,133 @@ export function useDeleteCommentMutation(pageId?: string) {
 }
 
 // EE: useResolveCommentMutation has been moved to @/ee/comment/queries/comment-query
+
+export function useSearchCommentsQuery(params: any) {
+  return useQuery({
+    queryKey: ["comments", "search", params],
+    queryFn: () => searchComments(params),
+    enabled: !!params.searchText || !!params.creatorId || params.resolved !== undefined,
+  });
+}
+
+export function useAddReactionMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { commentId: string; reactionType: string }) =>
+      addReaction(data),
+    onMutate: async (variables) => {
+      // Cancel any outgoing refetches to avoid overwriting optimistic update
+      await queryClient.cancelQueries({ 
+        queryKey: ["comment-reactions", variables.commentId] 
+      });
+
+      // Snapshot the previous value
+      const previousReactions = queryClient.getQueryData([
+        "comment-reactions",
+        variables.commentId,
+      ]);
+
+      return { previousReactions };
+    },
+    onError: (err, variables, context) => {
+      // Rollback to previous value on error
+      if (context?.previousReactions) {
+        queryClient.setQueryData(
+          ["comment-reactions", variables.commentId],
+          context.previousReactions,
+        );
+      }
+    },
+    onSettled: (data, error, variables) => {
+      // Always refetch after error or success to ensure consistency
+      queryClient.invalidateQueries({ 
+        queryKey: ["comment-reactions", variables.commentId] 
+      });
+    },
+  });
+}
+
+export function useRemoveReactionMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { commentId: string; reactionType: string }) =>
+      removeReaction(data),
+    onMutate: async (variables) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ 
+        queryKey: ["comment-reactions", variables.commentId] 
+      });
+
+      // Snapshot the previous value
+      const previousReactions = queryClient.getQueryData([
+        "comment-reactions",
+        variables.commentId,
+      ]);
+
+      return { previousReactions };
+    },
+    onError: (err, variables, context) => {
+      // Rollback on error
+      if (context?.previousReactions) {
+        queryClient.setQueryData(
+          ["comment-reactions", variables.commentId],
+          context.previousReactions,
+        );
+      }
+    },
+    onSettled: (data, error, variables) => {
+      // Always refetch to ensure consistency
+      queryClient.invalidateQueries({ 
+        queryKey: ["comment-reactions", variables.commentId] 
+      });
+    },
+  });
+}
+
+export function useCommentReactionsQuery(commentId: string) {
+  return useQuery({
+    queryKey: ["comment-reactions", commentId],
+    queryFn: () => getCommentReactions(commentId),
+    enabled: !!commentId,
+  });
+}
+
+export function useNotificationsQuery(unreadOnly = false) {
+  return useQuery({
+    queryKey: ["comment-notifications", unreadOnly],
+    queryFn: () => getNotifications(unreadOnly),
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+}
+
+export function useUnreadNotificationCountQuery() {
+  return useQuery({
+    queryKey: ["comment-notifications", "unread-count"],
+    queryFn: () => getUnreadNotificationCount(),
+    refetchInterval: 30000,
+  });
+}
+
+export function useMarkNotificationReadMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (notificationId: string) => markNotificationAsRead(notificationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comment-notifications"] });
+    },
+  });
+}
+
+export function useMarkAllNotificationsReadMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => markAllNotificationsAsRead(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comment-notifications"] });
+    },
+  });
+}

@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import useLicense from "@/ee/hooks/use-license.tsx";
 import usePlan from "@/ee/hooks/use-plan.tsx";
 import EnforceMfa from "@/ee/security/components/enforce-mfa.tsx";
+import { MfaSettings } from "@/ee/mfa/components/mfa-settings";
 
 export default function Security() {
   const { t } = useTranslation();
@@ -28,9 +29,17 @@ export default function Security() {
       <Helmet>
         <title>Security - {getAppName()}</title>
       </Helmet>
-      <SettingsTitle title={t("Security")} />
+      <SettingsTitle title={t("Security & SSO")} />
 
       <AllowedDomains />
+
+      <Divider my="lg" />
+
+      <Title order={4} my="lg">
+        {t("Multi-Factor Authentication")}
+      </Title>
+
+      <MfaSettings />
 
       <Divider my="lg" />
 
@@ -39,7 +48,7 @@ export default function Security() {
       <Divider my="lg" />
 
       <Title order={4} my="lg">
-        Single sign-on (SSO)
+        {t("Single sign-on (SSO)")}
       </Title>
 
       {(isCloud() && isBusiness) || (!isCloud() && hasLicenseKey) ? (

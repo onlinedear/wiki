@@ -25,7 +25,7 @@ function LanguageSwitcher() {
   const { t, i18n } = useTranslation();
   const [user, setUser] = useAtom(userAtom);
   const [language, setLanguage] = useState(
-    user?.locale === "en" ? "en-US" : user?.locale,
+    user?.locale === "en" ? "en-US" : user?.locale ?? "zh-CN",
   );
 
   const handleChange = async (value: string) => {
@@ -54,7 +54,7 @@ function LanguageSwitcher() {
         { value: "ru-RU", label: "Русский (Russian)" },
         { value: "zh-CN", label: "中文 (简体)" },
       ]}
-      value={language || "en-US"}
+      value={language || "zh-CN"}
       onChange={handleChange}
       allowDeselect={false}
       checkIconPosition="right"

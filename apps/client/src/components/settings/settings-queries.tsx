@@ -10,7 +10,7 @@ import { getWorkspaceMembers } from "@/features/workspace/services/workspace-ser
 import { getLicenseInfo } from "@/ee/licence/services/license-service.ts";
 import { getSsoProviders } from "@/ee/security/services/security-service.ts";
 import { getShares } from "@/features/share/services/share-service.ts";
-import { getApiKeys } from "@/ee/api-key";
+import { getApiKeys, getUserApiKeys } from "@/ee/api-key";
 
 export const prefetchWorkspaceMembers = () => {
   const params = { limit: 100, page: 1, query: "" } as QueryParams;
@@ -68,15 +68,23 @@ export const prefetchShares = () => {
 };
 
 export const prefetchApiKeys = () => {
-  queryClient.prefetchQuery({
-    queryKey: ["api-key-list", { page: 1 }],
-    queryFn: () => getApiKeys({ page: 1 }),
-  });
+  // 预加载个人 API 密钥（账户设置）
+  const workspaceId = localStorage.getItem('currentWorkspaceId');
+  if (workspaceId) {
+    queryClient.prefetchQuery({
+      queryKey: ["user-api-key-list", workspaceId, { page: 1 }],
+      queryFn: () => getUserApiKeys(workspaceId, { page: 1 }),
+    });
+  }
 };
 
 export const prefetchApiKeyManagement = () => {
-  queryClient.prefetchQuery({
-    queryKey: ["api-key-list", { page: 1 }],
-    queryFn: () => getApiKeys({ page: 1, adminView: true }),
-  });
+  // 预加载工作区 API 密钥管理（管理员）
+  const workspaceId = localStorage.getItem('currentWorkspaceId');
+  if (workspaceId) {
+    queryClient.prefetchQuery({
+      queryKey: ["api-key-list", workspaceId, { page: 1 }],
+      queryFn: () => getApiKeys(workspaceId, { page: 1 }),
+    });
+  }
 };

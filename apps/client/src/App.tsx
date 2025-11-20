@@ -35,8 +35,10 @@ import SpacesPage from "@/pages/spaces/spaces.tsx";
 import { MfaChallengePage } from "@/ee/mfa/pages/mfa-challenge-page";
 import { MfaSetupRequiredPage } from "@/ee/mfa/pages/mfa-setup-required-page";
 import SpaceTrash from "@/pages/space/space-trash.tsx";
-import UserApiKeys from "@/ee/api-key/pages/user-api-keys";
 import WorkspaceApiKeys from "@/ee/api-key/pages/workspace-api-keys";
+import AccountApiKeys from "@/pages/settings/account/api-keys";
+import { DynamicHead } from "@/components/ui/dynamic-head";
+import CommentManagement from "@/pages/settings/comment/comment-management";
 
 export default function App() {
   const { t } = useTranslation();
@@ -45,6 +47,7 @@ export default function App() {
 
   return (
     <>
+      <DynamicHead />
       <Routes>
         <Route index element={<Navigate to="/home" />} />
         <Route path={"/login"} element={<LoginPage />} />
@@ -98,7 +101,7 @@ export default function App() {
               path={"account/preferences"}
               element={<AccountPreferences />}
             />
-            <Route path={"account/api-keys"} element={<UserApiKeys />} />
+            <Route path={"account/api-keys"} element={<AccountApiKeys />} />
             <Route path={"workspace"} element={<WorkspaceSettings />} />
             <Route path={"members"} element={<WorkspaceMembers />} />
             <Route path={"api-keys"} element={<WorkspaceApiKeys />} />
@@ -106,6 +109,7 @@ export default function App() {
             <Route path={"groups/:groupId"} element={<GroupInfo />} />
             <Route path={"spaces"} element={<Spaces />} />
             <Route path={"sharing"} element={<Shares />} />
+            <Route path={"comments"} element={<CommentManagement />} />
             <Route path={"security"} element={<Security />} />
             {!isCloud() && <Route path={"license"} element={<License />} />}
             {isCloud() && <Route path={"billing"} element={<Billing />} />}

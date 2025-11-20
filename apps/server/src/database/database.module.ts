@@ -17,6 +17,9 @@ import { SpaceRepo } from '@docmost/db/repos/space/space.repo';
 import { SpaceMemberRepo } from '@docmost/db/repos/space/space-member.repo';
 import { PageRepo } from './repos/page/page.repo';
 import { CommentRepo } from './repos/comment/comment.repo';
+import { CommentReactionRepo } from './repos/comment/comment-reaction.repo';
+import { CommentMentionRepo } from './repos/comment/comment-mention.repo';
+import { CommentNotificationRepo } from './repos/comment/comment-notification.repo';
 import { PageHistoryRepo } from './repos/page/page-history.repo';
 import { AttachmentRepo } from './repos/attachment/attachment.repo';
 import { KyselyDB } from '@docmost/db/types/kysely.types';
@@ -26,6 +29,7 @@ import { UserTokenRepo } from './repos/user-token/user-token.repo';
 import { BacklinkRepo } from '@docmost/db/repos/backlink/backlink.repo';
 import { ShareRepo } from '@docmost/db/repos/share/share.repo';
 import { PageListener } from '@docmost/db/listeners/page.listener';
+import { UserMfaRepo } from './repos/user-mfa/user-mfa.repo';
 
 // https://github.com/brianc/node-postgres/issues/811
 types.setTypeParser(types.builtins.INT8, (val) => Number(val));
@@ -73,10 +77,14 @@ types.setTypeParser(types.builtins.INT8, (val) => Number(val));
     PageRepo,
     PageHistoryRepo,
     CommentRepo,
+    CommentReactionRepo,
+    CommentMentionRepo,
+    CommentNotificationRepo,
     AttachmentRepo,
     UserTokenRepo,
     BacklinkRepo,
     ShareRepo,
+    UserMfaRepo,
     PageListener,
   ],
   exports: [
@@ -89,10 +97,14 @@ types.setTypeParser(types.builtins.INT8, (val) => Number(val));
     PageRepo,
     PageHistoryRepo,
     CommentRepo,
+    CommentReactionRepo,
+    CommentMentionRepo,
+    CommentNotificationRepo,
     AttachmentRepo,
     UserTokenRepo,
     BacklinkRepo,
     ShareRepo,
+    UserMfaRepo,
   ],
 })
 export class DatabaseModule

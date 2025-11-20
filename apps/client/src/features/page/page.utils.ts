@@ -1,7 +1,7 @@
 import slugify from "@sindresorhus/slugify";
 
-const buildPageSlug = (pageSlugId: string, pageTitle?: string): string => {
-  const titleSlug = slugify(pageTitle?.substring(0, 70) || "untitled", {
+const buildPageSlug = (pageSlugId: string, pageTitle?: string, untitledText: string = "untitled"): string => {
+  const titleSlug = slugify(pageTitle?.substring(0, 70) || untitledText, {
     customReplacements: [
       ["♥", ""],
       ["🦄", ""],

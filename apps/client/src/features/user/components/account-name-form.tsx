@@ -55,7 +55,7 @@ export default function AccountNameForm() {
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <TextInput
         id="name"
-        label={t("Name")}
+        label={t("Your name")}
         placeholder={t("Your name")}
         variant="filled"
         {...form.getInputProps("name")}

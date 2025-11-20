@@ -46,14 +46,13 @@ export default function TopMenu() {
         <UnstyledButton>
           <Group gap={7} wrap={"nowrap"}>
             <CustomAvatar
-              avatarUrl={workspace?.logo}
-              name={workspace?.name}
+              avatarUrl={user?.avatarUrl}
+              name={user?.name}
               variant="filled"
               size="sm"
-              type={AvatarIconType.WORKSPACE_ICON}
             />
             <Text fw={500} size="sm" lh={1} mr={3} lineClamp={1}>
-              {workspace?.name}
+              {user?.name}
             </Text>
             <IconChevronDown size={16} />
           </Group>

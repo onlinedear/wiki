@@ -40,6 +40,12 @@ export interface ApiKeys {
   updatedAt: Generated<Timestamp>;
   creatorId: string;
   workspaceId: string;
+  token: string;
+  scopes: string[];
+  status: Generated<string>;
+  description: string | null;
+  lastUsedIp: string | null;
+  usageCount: Generated<number>;
 }
 
 export interface Attachments {
@@ -157,6 +163,31 @@ export interface Comments {
   type: string | null;
   updatedAt: Generated<Timestamp>;
   workspaceId: string;
+}
+
+export interface CommentReactions {
+  id: Generated<string>;
+  commentId: string;
+  userId: string;
+  reactionType: string;
+  createdAt: Generated<Timestamp>;
+}
+
+export interface CommentMentions {
+  id: Generated<string>;
+  commentId: string;
+  mentionedUserId: string;
+  createdAt: Generated<Timestamp>;
+}
+
+export interface CommentNotifications {
+  id: Generated<string>;
+  userId: string;
+  commentId: string;
+  type: string;
+  isRead: Generated<boolean>;
+  createdAt: Generated<Timestamp>;
+  readAt: Timestamp | null;
 }
 
 export interface FileTasks {
@@ -368,6 +399,9 @@ export interface DB {
   backlinks: Backlinks;
   billing: Billing;
   comments: Comments;
+  commentReactions: CommentReactions;
+  commentMentions: CommentMentions;
+  commentNotifications: CommentNotifications;
   fileTasks: FileTasks;
   groups: Groups;
   groupUsers: GroupUsers;

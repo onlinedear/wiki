@@ -85,8 +85,16 @@ const CommentEditor = forwardRef(
     });
 
     useEffect(() => {
-      commentEditor.commands.setContent(defaultContent);
-    }, [defaultContent]);
+      if (commentEditor && defaultContent) {
+        commentEditor.commands.setContent(defaultContent);
+      }
+    }, [defaultContent, commentEditor]);
+
+    useEffect(() => {
+      if (commentEditor) {
+        commentEditor.setEditable(editable);
+      }
+    }, [editable, commentEditor]);
 
     useEffect(() => {
       setTimeout(() => {

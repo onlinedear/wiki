@@ -41,6 +41,11 @@ function CommentListWithTabs() {
   const spaceRules = space?.membership?.permissions;
   const spaceAbility = useSpaceAbility(spaceRules);
 
+  // State for new comment at the top
+  const [newCommentContent, setNewCommentContent] = useState("");
+  const [isCreatingComment, setIsCreatingComment] = useState(false);
+  const newCommentEditorRef = useRef(null);
+  const { ref: newCommentRef, focused: newCommentFocused } = useFocusWithin();
 
   const canComment: boolean = spaceAbility.can(
     SpaceCaslAction.Manage,
@@ -91,6 +96,31 @@ function CommentListWithTabs() {
     },
     [createCommentMutation, page?.id]
   );
+
+  const handleCreateNewComment = useCallback(async () => {
+    if (!newCommentContent || !page?.id) return;
+
+    try {
+      setIsCreatingComment(true);
+      const commentData = {
+        pageId: page.id,
+        content: JSON.stringify(newCommentContent),
+      };
+
+      await createCommentMutation.mutateAsync(commentData);
+      setNewCommentContent("");
+      newCommentEditorRef.current?.clearContent();
+
+      emit({
+        operation: "invalidateComment",
+        pageId: page.id,
+      });
+    } catch (error) {
+      console.error("Failed to create comment:", error);
+    } finally {
+      setIsCreatingComment(false);
+    }
+  }, [newCommentContent, page?.id, createCommentMutation, emit]);
 
   const renderComments = useCallback(
     (comment: IComment) => (
@@ -146,60 +176,110 @@ function CommentListWithTabs() {
 
   // If not cloud/enterprise, show simple list without tabs
   if (!isCloudEE) {
-    if (totalComments === 0) {
-      return <>{t("No comments yet.")}</>;
-    }
-
     return (
-      <ScrollArea style={{ height: "85vh" }} scrollbarSize={5} type="scroll">
-        <div style={{ paddingBottom: "200px" }}>
-          {comments?.items
-            .filter((comment: IComment) => comment.parentCommentId === null)
-            .map((comment) => (
-              <Paper
-                shadow="sm"
-                radius="md"
-                p="sm"
-                mb="sm"
-                withBorder
-                key={comment.id}
-                data-comment-id={comment.id}
-              >
-                <div>
-                  <CommentListItem
-                    comment={comment}
-                    pageId={page?.id}
-                    canComment={canComment}
-                    userSpaceRole={space?.membership?.role}
-                  />
-                  <MemoizedChildComments
-                    comments={comments}
-                    parentId={comment.id}
-                    pageId={page?.id}
-                    canComment={canComment}
-                    userSpaceRole={space?.membership?.role}
-                  />
-                </div>
+      <div style={{ height: "85vh", display: "flex", flexDirection: "column" }}>
+        {/* New comment input at the top */}
+        {canComment && (
+          <Paper shadow="sm" radius="md" p="sm" mb="sm" withBorder>
+            <div ref={newCommentRef}>
+              <CommentEditor
+                ref={newCommentEditorRef}
+                onUpdate={setNewCommentContent}
+                onSave={handleCreateNewComment}
+                placeholder={t("Write a comment")}
+                editable={true}
+              />
+              {newCommentFocused && (
+                <CommentActions
+                  onSave={handleCreateNewComment}
+                  isLoading={isCreatingComment}
+                />
+              )}
+            </div>
+          </Paper>
+        )}
 
-                {canComment && (
-                  <>
-                    <Divider my={4} />
-                    <CommentEditorWithActions
-                      commentId={comment.id}
-                      onSave={handleAddReply}
-                      isLoading={isLoading}
-                    />
-                  </>
-                )}
-              </Paper>
-            ))}
-        </div>
-      </ScrollArea>
+        <ScrollArea 
+          style={{ flex: "1 1 auto", height: canComment ? "calc(85vh - 100px)" : "85vh" }} 
+          scrollbarSize={5} 
+          type="scroll"
+        >
+          <div style={{ paddingBottom: "200px" }}>
+            {totalComments === 0 ? (
+              <Text size="sm" c="dimmed" ta="center" py="md">
+                {t("No comments yet.")}
+              </Text>
+            ) : (
+              comments?.items
+                .filter((comment: IComment) => comment.parentCommentId === null)
+                .map((comment) => (
+                  <Paper
+                    shadow="sm"
+                    radius="md"
+                    p="sm"
+                    mb="sm"
+                    withBorder
+                    key={comment.id}
+                    data-comment-id={comment.id}
+                  >
+                    <div>
+                      <CommentListItem
+                        comment={comment}
+                        pageId={page?.id}
+                        canComment={canComment}
+                        userSpaceRole={space?.membership?.role}
+                      />
+                      <MemoizedChildComments
+                        comments={comments}
+                        parentId={comment.id}
+                        pageId={page?.id}
+                        canComment={canComment}
+                        userSpaceRole={space?.membership?.role}
+                      />
+                    </div>
+
+                    {canComment && (
+                      <>
+                        <Divider my={4} />
+                        <CommentEditorWithActions
+                          commentId={comment.id}
+                          onSave={handleAddReply}
+                          isLoading={isLoading}
+                        />
+                      </>
+                    )}
+                  </Paper>
+                ))
+            )}
+          </div>
+        </ScrollArea>
+      </div>
     );
   }
 
   return (
     <div style={{ height: "85vh", display: "flex", flexDirection: "column", marginTop: '-15px' }}>
+      {/* New comment input at the top */}
+      {canComment && (
+        <Paper shadow="sm" radius="md" p="sm" mb="sm" withBorder>
+          <div ref={newCommentRef}>
+            <CommentEditor
+              ref={newCommentEditorRef}
+              onUpdate={setNewCommentContent}
+              onSave={handleCreateNewComment}
+              placeholder={t("Write a comment")}
+              editable={true}
+            />
+            {newCommentFocused && (
+              <CommentActions
+                onSave={handleCreateNewComment}
+                isLoading={isCreatingComment}
+              />
+            )}
+          </div>
+        </Paper>
+      )}
+
       <Tabs defaultValue="open" variant="default" style={{ flex: "0 0 auto" }}>
         <Tabs.List justify="center">
           <Tabs.Tab
@@ -225,7 +305,7 @@ function CommentListWithTabs() {
         </Tabs.List>
 
         <ScrollArea
-          style={{ flex: "1 1 auto", height: "calc(85vh - 60px)" }}
+          style={{ flex: "1 1 auto", height: canComment ? "calc(85vh - 160px)" : "calc(85vh - 60px)" }}
           scrollbarSize={5}
           type="scroll"
         >

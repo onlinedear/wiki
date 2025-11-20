@@ -48,7 +48,7 @@ export default function WorkspaceIcon() {
   return (
     <div style={{ marginBottom: "24px" }}>
       <Text size="sm" fw={500} mb="xs">
-        {t("Icon")}
+        {t("Workspace icon")}
       </Text>
       <AvatarUploader
         currentImageUrl={workspace?.logo}
