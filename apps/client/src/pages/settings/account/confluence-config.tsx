@@ -36,8 +36,13 @@ export default function ConfluenceConfig() {
         !value || !value.startsWith('http')
           ? 'Please enter a valid Confluence URL'
           : null,
-      accessToken: (value) =>
-        !value ? 'Access token is required' : null,
+      accessToken: (value) => {
+        // Token is only required when creating new config or updating
+        if (!hasConfig && !value) {
+          return 'Access token is required';
+        }
+        return null;
+      },
     },
   });
 
@@ -49,24 +54,40 @@ export default function ConfluenceConfig() {
     console.log('Loading Confluence config...');
     try {
       const response = await getConfluenceConfig();
-      console.log('Loaded config:', response);
+      console.log('Loaded config response:', response);
       
       // Handle both wrapped and unwrapped responses
-      const config = response.data || response;
+      const config = response?.data || response;
+      console.log('Parsed config:', config);
       
-      if (config.confluenceUrl) {
+      if (config?.confluenceUrl) {
         form.setFieldValue('confluenceUrl', config.confluenceUrl);
         setHasConfig(config.hasAccessToken);
-        console.log('Config loaded successfully:', { confluenceUrl: config.confluenceUrl, hasAccessToken: config.hasAccessToken });
+        console.log('Config loaded successfully:', { 
+          confluenceUrl: config.confluenceUrl, 
+          hasAccessToken: config.hasAccessToken 
+        });
       } else {
         console.log('No config found');
+        setHasConfig(false);
       }
     } catch (error) {
       console.error('Failed to load Confluence config:', error);
+      setHasConfig(false);
     }
   };
 
   const handleSave = async (values: typeof form.values) => {
+    // If updating existing config and no new token provided, skip validation
+    if (hasConfig && !values.accessToken) {
+      notifications.show({
+        title: t('Info'),
+        message: t('Please enter a new access token to update, or leave unchanged'),
+        color: 'blue',
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const result = await saveConfluenceConfig(values);
@@ -78,6 +99,7 @@ export default function ConfluenceConfig() {
         icon: <IconCheck size={18} />,
       });
       setHasConfig(true);
+      // Clear the token field after successful save (for security)
       form.setFieldValue('accessToken', '');
       // Reload config to verify it was saved
       await loadConfig();
@@ -209,6 +231,7 @@ export default function ConfluenceConfig() {
                   ? t('Token is configured. Enter a new token to update.')
                   : t('Your Confluence Personal Access Token')
               }
+              required={!hasConfig}
               {...form.getInputProps('accessToken')}
             />
 

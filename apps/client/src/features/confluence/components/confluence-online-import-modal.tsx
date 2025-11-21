@@ -35,21 +35,10 @@ export function ConfluenceOnlineImportModal({
 
   const form = useForm({
     initialValues: {
-      confluenceUrl: '',
-      accessToken: '',
       pageUrl: '',
       includeChildren: true,
     },
     validate: {
-      confluenceUrl: (value) => {
-        if (!hasConfig && !value) return t('Confluence URL is required');
-        if (value && !value.startsWith('http')) return t('Please enter a valid URL');
-        return null;
-      },
-      accessToken: (value) => {
-        if (!hasConfig && !value) return t('Access token is required');
-        return null;
-      },
       pageUrl: (value) => {
         if (!value) return t('Page URL is required');
         if (!value.includes('confluence') && !value.includes('/pages/')) {
@@ -60,23 +49,29 @@ export function ConfluenceOnlineImportModal({
     },
   });
 
-  // Load saved configuration when modal opens
+  // Check if user has saved configuration when modal opens
   useEffect(() => {
     if (opened) {
-      loadConfig();
+      checkConfig();
     }
   }, [opened]);
 
-  const loadConfig = async () => {
+  const checkConfig = async () => {
     setConfigLoading(true);
     try {
-      const config = await getConfluenceConfig();
-      if (config.confluenceUrl && config.hasAccessToken) {
+      const response = await getConfluenceConfig();
+      console.log('Checking Confluence config response:', response);
+      
+      // Handle both wrapped and unwrapped responses
+      const config = response?.data || response;
+      console.log('Parsed config:', config);
+      
+      if (config && config.confluenceUrl && config.hasAccessToken) {
         setHasConfig(true);
-        form.setFieldValue('confluenceUrl', config.confluenceUrl);
-        // Don't set accessToken as it's not returned for security
+        console.log('Config found, user can import');
       } else {
         setHasConfig(false);
+        console.log('No config found, user needs to configure first');
       }
     } catch (error) {
       console.error('Failed to load Confluence config:', error);
@@ -118,17 +113,12 @@ export function ConfluenceOnlineImportModal({
     setLoading(true);
 
     try {
-      // If using saved config, don't send credentials (backend will use saved ones)
-      const importData: any = {
+      // Use saved configuration from user profile
+      const importData = {
         pageId,
         spaceId,
         includeChildren: values.includeChildren,
       };
-
-      if (!hasConfig) {
-        importData.confluenceUrl = values.confluenceUrl;
-        importData.accessToken = values.accessToken;
-      }
 
       const result = await importConfluenceOnline(importData);
 
@@ -169,9 +159,29 @@ export function ConfluenceOnlineImportModal({
       title={t('Import from Confluence Online')}
       size="md"
     >
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack gap="md">
-          {hasConfig ? (
+      {configLoading ? (
+        <Text size="sm" c="dimmed" ta="center">
+          {t('Loading configuration...')}
+        </Text>
+      ) : !hasConfig ? (
+        <Alert color="yellow" icon={<IconAlertCircle size={16} />}>
+          <Stack gap="sm">
+            <Text size="sm">
+              {t('Please configure your Confluence connection in your profile settings first.')}
+            </Text>
+            <Button
+              component="a"
+              href="/settings/account/profile"
+              variant="light"
+              leftSection={<IconSettings size={16} />}
+            >
+              {t('Go to Settings')}
+            </Button>
+          </Stack>
+        </Alert>
+      ) : (
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+          <Stack gap="md">
             <Alert color="green" icon={<IconCheck size={16} />}>
               <Text size="sm">
                 {t('Using saved Confluence configuration.')}{' '}
@@ -180,56 +190,27 @@ export function ConfluenceOnlineImportModal({
                 </Anchor>
               </Text>
             </Alert>
-          ) : (
-            <Alert color="blue" icon={<IconAlertCircle size={16} />}>
-              <Text size="sm">
-                {t('Enter your Confluence URL and Personal Access Token to import pages directly.')}{' '}
-                <Anchor href="/settings/account/profile" size="sm">
-                  {t('Save for future use')}
-                </Anchor>
-              </Text>
-            </Alert>
-          )}
 
-          {!hasConfig && (
-            <>
-              <TextInput
-                label={t('Confluence URL')}
-                placeholder="https://your-domain.atlassian.net/wiki"
-                description={t('Your Confluence base URL (e.g., https://example.com/confluence)')}
-                {...form.getInputProps('confluenceUrl')}
-                required
-              />
+            <TextInput
+              label={t('Confluence Page URL')}
+              placeholder="https://your-domain.atlassian.net/wiki/pages/123456/Page+Title"
+              description={t('The full URL of the specific page you want to import')}
+              {...form.getInputProps('pageUrl')}
+              required
+            />
 
-              <PasswordInput
-                label={t('Personal Access Token')}
-                placeholder={t('Enter your access token')}
-                description={t('Your Confluence Personal Access Token')}
-                {...form.getInputProps('accessToken')}
-                required
-              />
-            </>
-          )}
+            <Switch
+              label={t('Include child pages')}
+              description={t('Import all child pages recursively')}
+              {...form.getInputProps('includeChildren', { type: 'checkbox' })}
+            />
 
-          <TextInput
-            label={t('Confluence Page URL')}
-            placeholder="https://your-domain.atlassian.net/wiki/pages/123456/Page+Title"
-            description={t('The full URL of the specific page you want to import')}
-            {...form.getInputProps('pageUrl')}
-            required
-          />
-
-          <Switch
-            label={t('Include child pages')}
-            description={t('Import all child pages recursively')}
-            {...form.getInputProps('includeChildren', { type: 'checkbox' })}
-          />
-
-          <Button type="submit" loading={loading || configLoading} fullWidth>
-            {t('Import from Confluence')}
-          </Button>
-        </Stack>
-      </form>
+            <Button type="submit" loading={loading} fullWidth>
+              {t('Import from Confluence')}
+            </Button>
+          </Stack>
+        </form>
+      )}
     </Modal>
   );
 }

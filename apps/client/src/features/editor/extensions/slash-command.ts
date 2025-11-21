@@ -3,6 +3,7 @@ import { PluginKey } from '@tiptap/pm/state';
 import Suggestion, { SuggestionOptions } from '@tiptap/suggestion';
 import renderItems from '@/features/editor/components/slash-menu/render-items';
 import getSuggestionItems from '@/features/editor/components/slash-menu/menu-items';
+import i18n from '@/i18n';
 
 export const slashMenuPluginKey = new PluginKey('slash-command');
 
@@ -34,7 +35,7 @@ const Command = Extension.create({
 
 const SlashCommand = Command.configure({
   suggestion: {
-    items: getSuggestionItems,
+    items: ({ query }) => getSuggestionItems({ query, t: i18n.t }),
     render: renderItems,
   },
 });

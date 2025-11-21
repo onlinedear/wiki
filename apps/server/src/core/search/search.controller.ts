@@ -83,6 +83,32 @@ export class SearchController {
     return this.searchService.searchSuggestions(dto, user.id, workspace.id);
   }
 
+  @HttpCode(HttpStatus.OK)
+  @Post('search-attachments')
+  async attachmentSearch(
+    @Body() searchDto: SearchDTO,
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    delete searchDto.shareId;
+
+    if (searchDto.spaceId) {
+      const ability = await this.spaceAbility.createForUser(
+        user,
+        searchDto.spaceId,
+      );
+
+      if (ability.cannot(SpaceCaslAction.Read, SpaceCaslSubject.Page)) {
+        throw new ForbiddenException();
+      }
+    }
+
+    return this.searchService.searchAttachments(searchDto, {
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
+  }
+
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('share-search')

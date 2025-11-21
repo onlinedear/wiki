@@ -133,6 +133,110 @@ export class SearchService {
     return searchResults;
   }
 
+  async searchAttachments(
+    searchParams: SearchDTO,
+    opts: {
+      userId?: string;
+      workspaceId: string;
+    },
+  ) {
+    const { query } = searchParams;
+
+    if (query.length < 1) {
+      return [];
+    }
+
+    const searchQuery = tsquery(query.trim() + '*');
+
+    let queryResults = this.db
+      .selectFrom('attachments')
+      .innerJoin('pages', 'attachments.pageId', 'pages.id')
+      .select([
+        'attachments.id',
+        'attachments.fileName',
+        'attachments.pageId',
+        'attachments.creatorId',
+        'attachments.createdAt',
+        'attachments.updatedAt',
+        sql<number>`ts_rank(attachments.tsv, to_tsquery('english', f_unaccent(${searchQuery})))`.as(
+          'rank',
+        ),
+        sql<string>`ts_headline('english', COALESCE(attachments.text_content, attachments.file_name), to_tsquery('english', f_unaccent(${searchQuery})),'MinWords=9, MaxWords=10, MaxFragments=3')`.as(
+          'highlight',
+        ),
+        'pages.title as pageTitle',
+        'pages.slugId as pageSlugId',
+      ])
+      .where('attachments.tsv', 'is not', null)
+      .where(
+        'attachments.tsv',
+        '@@',
+        sql<string>`to_tsquery('english', f_unaccent(${searchQuery}))`,
+      )
+      .$if(Boolean(searchParams.creatorId), (qb) =>
+        qb.where('attachments.creatorId', '=', searchParams.creatorId),
+      )
+      .where('attachments.deletedAt', 'is', null)
+      .where('pages.deletedAt', 'is', null)
+      .orderBy('rank', 'desc')
+      .limit(searchParams.limit || 20)
+      .offset(searchParams.offset || 0);
+
+    queryResults = queryResults.select((eb) =>
+      eb
+        .selectFrom('spaces')
+        .select(['spaces.id', 'spaces.name', 'spaces.slug', 'spaces.logo'])
+        .whereRef('spaces.id', '=', 'attachments.spaceId')
+        .as('space'),
+    );
+
+    if (searchParams.spaceId) {
+      queryResults = queryResults.where(
+        'attachments.spaceId',
+        '=',
+        searchParams.spaceId,
+      );
+    } else if (opts.userId) {
+      const userSpaceIds = await this.spaceMemberRepo.getUserSpaceIds(
+        opts.userId,
+      );
+      if (userSpaceIds.length > 0) {
+        queryResults = queryResults
+          .where('attachments.spaceId', 'in', userSpaceIds)
+          .where('attachments.workspaceId', '=', opts.workspaceId);
+      } else {
+        return [];
+      }
+    } else {
+      return [];
+    }
+
+    const results = await queryResults.execute();
+
+    return results.map((result: any) => {
+      const highlight = result.highlight
+        ? result.highlight.replace(/\r\n|\r|\n/g, ' ').replace(/\s+/g, ' ')
+        : '';
+
+      return {
+        id: result.id,
+        fileName: result.fileName,
+        pageId: result.pageId,
+        creatorId: result.creatorId,
+        createdAt: result.createdAt,
+        updatedAt: result.updatedAt,
+        rank: result.rank,
+        highlight,
+        space: result.space,
+        page: {
+          id: result.pageId,
+          title: result.pageTitle,
+          slugId: result.pageSlugId,
+        },
+      };
+    });
+  }
+
   async searchSuggestions(
     suggestion: SearchSuggestionDTO,
     userId: string,

@@ -40,7 +40,40 @@ export default defineConfig(({ mode }) => {
         "@": "/src",
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+            'mantine-vendor': [
+              '@mantine/core',
+              '@mantine/hooks',
+              '@mantine/form',
+              '@mantine/modals',
+              '@mantine/notifications',
+              '@mantine/spotlight',
+              '@mantine/dates',
+            ],
+            'editor-core': [
+              '@tiptap/react',
+              '@tiptap/core',
+              '@tiptap/pm',
+              '@tiptap/extension-character-count',
+            ],
+            'collab': ['yjs', 'y-indexeddb', '@hocuspocus/provider'],
+            'excalidraw': ['@excalidraw/excalidraw'],
+            'mermaid': ['mermaid'],
+            'drawio': ['react-drawio'],
+            'heavy-deps': ['katex', 'lowlight', 'emoji-mart', '@emoji-mart/react', '@emoji-mart/data'],
+          },
+        },
+      },
+      chunkSizeWarningLimit: 1000,
+    },
     server: {
+      hmr: {
+        overlay: true,
+      },
       proxy: {
         "/api": {
           target: APP_URL,

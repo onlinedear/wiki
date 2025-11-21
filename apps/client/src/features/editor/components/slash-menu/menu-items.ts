@@ -527,8 +527,10 @@ const CommandGroups: SlashMenuGroupedItemsType = {
 
 export const getSuggestionItems = ({
   query,
+  t,
 }: {
   query: string;
+  t?: (key: string) => string;
 }): SlashMenuGroupedItemsType => {
   const search = query.toLowerCase();
   const filteredGroups: SlashMenuGroupedItemsType = {};
@@ -545,12 +547,20 @@ export const getSuggestionItems = ({
 
   for (const [group, items] of Object.entries(CommandGroups)) {
     const filteredItems = items.filter((item) => {
-      return (
+      // Match against English text
+      const matchesEnglish =
         fuzzyMatch(search, item.title) ||
         item.description.toLowerCase().includes(search) ||
         (item.searchTerms &&
-          item.searchTerms.some((term: string) => term.includes(search)))
-      );
+          item.searchTerms.some((term: string) => term.includes(search)));
+
+      // Match against translated text if translation function is provided
+      const matchesTranslated = t
+        ? fuzzyMatch(search, t(item.title)) ||
+          t(item.description).toLowerCase().includes(search)
+        : false;
+
+      return matchesEnglish || matchesTranslated;
     });
 
     if (filteredItems.length) {
