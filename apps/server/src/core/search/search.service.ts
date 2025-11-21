@@ -182,13 +182,14 @@ export class SearchService {
       .limit(searchParams.limit || 20)
       .offset(searchParams.offset || 0);
 
-    queryResults = queryResults.select((eb) =>
-      eb
-        .selectFrom('spaces')
-        .select(['spaces.id', 'spaces.name', 'spaces.slug', 'spaces.logo'])
-        .whereRef('spaces.id', '=', 'attachments.spaceId')
-        .as('space'),
-    );
+    queryResults = queryResults
+      .innerJoin('spaces', 'spaces.id', 'attachments.spaceId')
+      .select([
+        'spaces.id as spaceId',
+        'spaces.name as spaceName',
+        'spaces.slug as spaceSlug',
+        'spaces.logo as spaceLogo',
+      ]);
 
     if (searchParams.spaceId) {
       queryResults = queryResults.where(
@@ -227,7 +228,12 @@ export class SearchService {
         updatedAt: result.updatedAt,
         rank: result.rank,
         highlight,
-        space: result.space,
+        space: {
+          id: result.spaceId,
+          name: result.spaceName,
+          slug: result.spaceSlug,
+          logo: result.spaceLogo,
+        },
         page: {
           id: result.pageId,
           title: result.pageTitle,
