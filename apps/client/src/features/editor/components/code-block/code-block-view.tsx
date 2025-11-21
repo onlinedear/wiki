@@ -11,7 +11,7 @@ const MermaidView = React.lazy(
   () => import("@/features/editor/components/code-block/mermaid-view.tsx"),
 );
 
-export default function CodeBlockView(props: NodeViewProps) {
+function CodeBlockView(props: NodeViewProps) {
   const { t } = useTranslation();
   const { node, updateAttributes, extension, editor, getPos } = props;
   const { language } = node.attrs;
@@ -101,3 +101,5 @@ export default function CodeBlockView(props: NodeViewProps) {
     </NodeViewWrapper>
   );
 }
+
+export default React.memo(CodeBlockView);

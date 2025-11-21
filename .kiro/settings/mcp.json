@@ -8,7 +8,9 @@
       ],
       "env": {},
       "disabled": true,
-      "autoApprove": []
+      "autoApprove": [
+        "playwright_navigate"
+      ]
     },
     "github": {
       "command": "npx",

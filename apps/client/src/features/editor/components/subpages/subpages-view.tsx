@@ -3,6 +3,7 @@ import { Stack, Text, Anchor, ActionIcon } from "@mantine/core";
 import { IconFileDescription } from "@tabler/icons-react";
 import { useGetSidebarPagesQuery } from "@/features/page/queries/page-query";
 import { useMemo } from "react";
+import React from "react";
 import { Link, useParams } from "react-router-dom";
 import classes from "./subpages.module.css";
 import styles from "../mention/mention.module.css";
@@ -14,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import { sortPositionKeys } from "@/features/page/tree/utils/utils";
 import { useSharedPageSubpages } from "@/features/share/hooks/use-shared-page-subpages";
 
-export default function SubpagesView(props: NodeViewProps) {
+function SubpagesView(props: NodeViewProps) {
   const { editor } = props;
   const { spaceSlug, shareId } = useParams();
   const { t } = useTranslation();
@@ -118,3 +119,5 @@ export default function SubpagesView(props: NodeViewProps) {
     </NodeViewWrapper>
   );
 }
+
+export default React.memo(SubpagesView);

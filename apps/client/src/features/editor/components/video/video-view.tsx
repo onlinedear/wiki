@@ -1,9 +1,10 @@
 import { NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { useMemo } from "react";
+import React from "react";
 import { getFileUrl } from "@/lib/config.ts";
 import clsx from "clsx";
 
-export default function VideoView(props: NodeViewProps) {
+function VideoView(props: NodeViewProps) {
   const { node, selected } = props;
   const { src, width, align } = node.attrs;
 
@@ -27,3 +28,5 @@ export default function VideoView(props: NodeViewProps) {
     </NodeViewWrapper>
   );
 }
+
+export default React.memo(VideoView);

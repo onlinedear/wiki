@@ -1,10 +1,11 @@
 import { NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { useMemo } from "react";
+import React from "react";
 import { Image } from "@mantine/core";
 import { getFileUrl } from "@/lib/config.ts";
 import clsx from "clsx";
 
-export default function ImageView(props: NodeViewProps) {
+function ImageView(props: NodeViewProps) {
   const { node, selected } = props;
   const { src, width, align, title } = node.attrs;
 
@@ -28,3 +29,5 @@ export default function ImageView(props: NodeViewProps) {
     </NodeViewWrapper>
   );
 }
+
+export default React.memo(ImageView);

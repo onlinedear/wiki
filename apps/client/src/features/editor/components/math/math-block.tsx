@@ -2,6 +2,7 @@ import "katex/dist/katex.min.css";
 import katex from "katex";
 //import "katex/dist/contrib/mhchem.min.js";
 import { useEffect, useRef, useState } from "react";
+import React from "react";
 import { NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { ActionIcon, Flex, Popover, Stack, Textarea } from "@mantine/core";
 import classes from "./math.module.css";
@@ -10,7 +11,7 @@ import { IconTrashX } from "@tabler/icons-react";
 import { useDebouncedValue } from "@mantine/hooks";
 import { useTranslation } from "react-i18next";
 
-export default function MathBlockView(props: NodeViewProps) {
+function MathBlockView(props: NodeViewProps) {
   const { t } = useTranslation();
   const { node, updateAttributes, editor, getPos } = props;
   const mathResultContainer = useRef<HTMLDivElement>(null);
@@ -155,3 +156,5 @@ export default function MathBlockView(props: NodeViewProps) {
     </Popover>
   );
 }
+
+export default React.memo(MathBlockView);

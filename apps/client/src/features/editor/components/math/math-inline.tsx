@@ -2,13 +2,14 @@ import "katex/dist/katex.min.css";
 import katex from "katex";
 //import "katex/dist/contrib/mhchem.min.js";
 import { useEffect, useRef, useState } from "react";
+import React from "react";
 import { NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { Popover, Textarea } from "@mantine/core";
 import classes from "./math.module.css";
 import { v4 } from "uuid";
 import { useTranslation } from "react-i18next";
 
-export default function MathInlineView(props: NodeViewProps) {
+function MathInlineView(props: NodeViewProps) {
   const { t } = useTranslation();
   const { node, updateAttributes, editor, getPos } = props;
   const mathResultContainer = useRef<HTMLDivElement>(null);
@@ -135,3 +136,5 @@ export default function MathInlineView(props: NodeViewProps) {
     </>
   );
 }
+
+export default React.memo(MathInlineView);

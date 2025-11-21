@@ -1,5 +1,5 @@
 import "@/features/editor/styles/index.css";
-import React, { useMemo } from "react";
+import React, { useMemo, startTransition } from "react";
 import { EditorProvider } from "@tiptap/react";
 import { mainExtensions } from "@/features/editor/extensions/extensions";
 import { Document } from "@tiptap/extension-document";
@@ -44,23 +44,25 @@ export default function ReadonlyPageEditor({
     <>
       <EditorProvider
         editable={false}
-        immediatelyRender={true}
+        immediatelyRender={false}
         extensions={titleExtensions}
         content={title}
       ></EditorProvider>
 
       <EditorProvider
         editable={false}
-        immediatelyRender={true}
+        immediatelyRender={false}
         extensions={extensions}
         content={content}
         onCreate={({ editor }) => {
           if (editor) {
-            if (pageId) {
-              editor.storage.pageId = pageId;
-            }
-            // @ts-ignore
-            setReadOnlyEditor(editor);
+            startTransition(() => {
+              if (pageId) {
+                editor.storage.pageId = pageId;
+              }
+              // @ts-ignore
+              setReadOnlyEditor(editor);
+            });
           }
         }}
       ></EditorProvider>

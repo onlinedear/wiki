@@ -7,8 +7,10 @@ import { SSO_PROVIDER } from "@/ee/security/contants.ts";
 import { IAuthProvider } from "@/ee/security/types/security.types.ts";
 import SsoProviderModal from "@/ee/security/components/sso-provider-modal.tsx";
 import { OpenIdIcon } from "@/components/icons/openid-icon.tsx";
+import { useTranslation } from "react-i18next";
 
 export default function CreateSsoProvider() {
+  const { t } = useTranslation();
   const [opened, { open, close }] = useDisclosure(false);
   const [provider, setProvider] = useState<IAuthProvider | null>(null);
 
@@ -66,7 +68,7 @@ export default function CreateSsoProvider() {
         >
           <Menu.Target>
             <Button rightSection={<IconChevronDown size={16} />} pr={12}>
-              Create SSO
+              {t("Create SSO")}
             </Button>
           </Menu.Target>
 
@@ -82,14 +84,14 @@ export default function CreateSsoProvider() {
               onClick={handleCreateOIDC}
               leftSection={<OpenIdIcon size={16} />}
             >
-              OpenID (OIDC)
+              {t("OpenID (OIDC)")}
             </Menu.Item>
 
             <Menu.Item
               onClick={handleCreateLDAP}
               leftSection={<IconServer size={16} />}
             >
-              LDAP / Active Directory
+              {t("LDAP / Active Directory")}
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>

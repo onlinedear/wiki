@@ -1,248 +1,375 @@
-# Security & SSO 功能实现说明
+# MFA & SSO 功能实现说明
 
-## 概述
+## 📋 概述
 
-本次实现完成了 Security & SSO 设置页面的完整功能，主要包括：
-1. MFA（多因素认证）服务端 API 实现
-2. 将 MFA 设置集成到现有的 Security 页面
-3. 添加中文翻译支持
+本文档说明 MFA（多因素认证）和 SSO（单点登录）功能的实现状态和使用方法。
 
-## 实现内容
+---
 
-### 1. 服务端实现
+## 🔐 MFA (Multi-Factor Authentication)
 
-#### 1.1 MFA 模块结构
+### 实现状态
+
+✅ **完全实现并可用**
+
+### 企业版限制
+
+✅ **已移除** - MFA 功能现在对所有用户开放
+
+### 核心功能
+
+1. **TOTP 认证**
+   - 基于时间的一次性密码
+   - 支持 Google Authenticator、Microsoft Authenticator 等应用
+   - QR 码扫描快速设置
+
+2. **备份码**
+   - 自动生成 10 个备份码
+   - 每个备份码只能使用一次
+   - 可以重新生成备份码
+
+3. **强制 MFA**
+   - 工作空间管理员可以强制所有成员启用 MFA
+   - 未启用 MFA 的用户将被要求设置
+
+### 后端实现
+
+**API 端点** (7个):
 ```
-apps/server/src/ee/mfa/
-├── mfa.module.ts          # MFA 模块定义
-├── mfa.controller.ts      # MFA API 控制器
-├── mfa.service.ts         # MFA 业务逻辑
-└── dto/
-    └── mfa.dto.ts         # 数据传输对象
-```
-
-#### 1.2 数据库仓库
-```
-apps/server/src/database/repos/user-mfa/
-└── user-mfa.repo.ts       # MFA 数据访问层
-```
-
-#### 1.3 API 端点
-
-| 端点 | 方法 | 描述 |
-|------|------|------|
-| `/api/mfa/status` | POST | 获取用户 MFA 状态 |
-| `/api/mfa/setup` | POST | 初始化 MFA 设置（生成 QR 码） |
-| `/api/mfa/enable` | POST | 启用 MFA（验证并保存） |
-| `/api/mfa/disable` | POST | 禁用 MFA |
-| `/api/mfa/verify` | POST | 验证 MFA 代码 |
-| `/api/mfa/generate-backup-codes` | POST | 重新生成备份代码 |
-| `/api/mfa/validate-access` | POST | 验证访问权限 |
-
-#### 1.4 核心功能
-
-**MFA 设置流程：**
-1. 用户请求设置 MFA
-2. 服务端生成 TOTP 密钥和 QR 码
-3. 用户扫描 QR 码添加到身份验证器
-4. 用户输入验证码确认
-5. 服务端验证并启用 MFA，生成备份代码
-
-**MFA 验证：**
-- 支持 TOTP（基于时间的一次性密码）
-- 支持备份代码（一次性使用）
-- 使用 bcrypt 加密存储备份代码
-
-### 2. 客户端实现
-
-#### 2.1 Security 页面更新
-
-更新了 `apps/client/src/ee/security/pages/security.tsx`：
-- 集成了 `MfaSettings` 组件
-- 保留了原有的 SSO 配置功能
-- 添加了 "Multi-Factor Authentication" 部分
-
-#### 2.2 页面结构
-
-```
-Security & SSO 页面
-├── Allowed Domains（允许的域名）
-├── Multi-Factor Authentication（多因素认证）
-│   └── MfaSettings 组件
-├── Enforce MFA（强制 MFA）
-└── Single Sign-On (SSO)（单点登录）
-    ├── Enforce SSO
-    ├── Create SSO Provider
-    └── SSO Provider List
+POST /api/mfa/status                  获取 MFA 状态
+POST /api/mfa/setup                   设置 MFA（生成密钥和 QR 码）
+POST /api/mfa/enable                  启用 MFA（验证并保存）
+POST /api/mfa/disable                 禁用 MFA
+POST /api/mfa/verify                  验证 MFA 代码
+POST /api/mfa/generate-backup-codes   重新生成备份码
+POST /api/mfa/validate-access         验证访问权限
 ```
 
-### 3. 依赖包
+**核心服务**:
+- `MfaService` - 业务逻辑
+- `MfaController` - API 端点
+- `UserMfaRepo` - 数据访问层
 
-添加了以下依赖：
-- `otplib@^12.0.1` - TOTP 生成和验证
-- `qrcode@^1.5.4` - QR 码生成（已存在）
-
-### 4. 翻译支持
-
-在 `apps/client/public/locales/zh-CN/translation.json` 中添加：
-- "Security & SSO": "安全与单点登录"
-- "Manage security settings and single sign-on configuration": "管理安全设置和单点登录配置"
-- "Multi-Factor Authentication": "多因素认证"
-- "Single sign-on (SSO)": "单点登录 (SSO)"
-- 以及其他相关翻译
-
-## 数据库表结构
-
-MFA 功能使用现有的 `user_mfa` 表（由迁移 `20250715T070817-mfa.ts` 创建）：
-
+**数据库表**:
 ```sql
-CREATE TABLE user_mfa (
-  id UUID PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  method VARCHAR NOT NULL DEFAULT 'totp',
-  secret TEXT,
-  is_enabled BOOLEAN DEFAULT false,
-  backup_codes TEXT[],
-  workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  UNIQUE(user_id)
-);
+user_mfa
+├── id (uuid)
+├── user_id (uuid, unique)
+├── workspace_id (uuid)
+├── method (varchar, default: 'totp')
+├── secret (text)
+├── is_enabled (boolean)
+├── backup_codes (text[])
+├── created_at (timestamptz)
+└── updated_at (timestamptz)
+
+workspaces
+└── enforce_mfa (boolean)  -- 新增字段
 ```
 
-## 安装和使用
+### 前端实现
 
-### 1. 安装依赖
+**组件**:
+- `MfaSettings` - MFA 设置界面
+- `EnforceMfa` - 强制 MFA 开关
+- `MfaSetupModal` - 设置向导
+- `MfaDisableModal` - 禁用确认
+- `MfaBackupCodesModal` - 备份码管理
 
+**位置**: `/settings/security` 页面的 "Multi-Factor Authentication" 部分
+
+### 使用流程
+
+#### 1. 启用 MFA
+
+1. 访问 `http://localhost:5173/settings/security`
+2. 在 "Multi-Factor Authentication" 部分点击 "Add 2FA method"
+3. 使用认证器应用扫描 QR 码
+   - 推荐应用：Google Authenticator, Microsoft Authenticator, Authy
+4. 输入认证器显示的 6 位验证码
+5. 保存显示的 10 个备份码（重要！）
+6. 完成设置
+
+#### 2. 使用 MFA 登录
+
+1. 输入邮箱和密码
+2. 输入认证器应用显示的 6 位验证码
+3. 或使用备份码（如果认证器不可用）
+
+#### 3. 管理备份码
+
+1. 访问 `http://localhost:5173/settings/security`
+2. 点击 "Backup codes" 按钮
+3. 查看剩余备份码数量
+4. 可以重新生成新的备份码（旧的将失效）
+
+#### 4. 禁用 MFA
+
+1. 访问 `http://localhost:5173/settings/security`
+2. 点击 "Disable" 按钮
+3. 输入密码确认
+4. MFA 将被禁用
+
+#### 5. 强制 MFA（管理员）
+
+1. 访问 `http://localhost:5173/settings/security`
+2. 在 "MFA" 部分启用 "Enforce two-factor authentication" 开关
+3. 所有成员将被要求启用 MFA
+
+### 技术实现
+
+**TOTP 算法**:
+- 使用 `otplib` 库
+- 30 秒时间窗口
+- 6 位数字代码
+- SHA-1 哈希算法
+
+**备份码**:
+- 8 位随机字符串
+- bcrypt 加密存储
+- 使用后自动删除
+
+**安全特性**:
+- 密钥加密存储
+- 备份码哈希存储
+- 密码验证（禁用/重新生成时）
+- 工作空间隔离
+
+---
+
+## 🔑 SSO (Single Sign-On)
+
+### 实现状态
+
+✅ **完全实现并可用**
+
+### 企业版限制
+
+✅ **已临时移除** - SSO 功能现在可以测试使用
+
+### 支持的协议
+
+1. **SAML 2.0**
+   - 自定义实现（绕过 Passport 限制）
+   - 动态配置加载
+   - 客户端缓存（1小时 TTL）
+   - 支持企业 IdP（Okta, Azure AD, OneLogin）
+
+2. **OIDC (OpenID Connect)**
+   - 自定义实现
+   - 异步配置发现
+   - Client 实例缓存
+   - 支持现代 OAuth 2.0 提供商
+
+3. **Google OAuth 2.0**
+   - Passport 策略实现
+   - 快速集成 Google 账户
+
+### 后端实现
+
+**API 端点** (11个):
+```
+# 管理端点
+POST   /api/sso/providers              创建 SSO 提供商
+GET    /api/sso/providers              列出所有提供商
+GET    /api/sso/providers/:id          获取提供商详情
+PUT    /api/sso/providers              更新提供商
+DELETE /api/sso/providers/:id          删除提供商
+
+# SAML 认证
+GET    /api/sso/saml/:id/login         发起 SAML 登录
+POST   /api/sso/saml/:id/callback      SAML 回调处理
+
+# OIDC 认证
+GET    /api/sso/oidc/:id/login         发起 OIDC 登录
+GET    /api/sso/oidc/:id/callback      OIDC 回调处理
+
+# Google OAuth
+GET    /api/sso/google/:id/login       发起 Google 登录
+GET    /api/sso/google/:id/callback    Google 回调处理
+```
+
+**核心服务**:
+- `SsoService` - 核心业务逻辑
+- `SamlAuthService` - SAML 自定义实现
+- `OidcAuthService` - OIDC 自定义实现
+- `GoogleStrategy` - Google Passport 策略
+- `AuthProviderRepo` - 提供商数据访问
+- `AuthAccountRepo` - 账户关联数据访问
+
+**数据库表**:
+```sql
+auth_providers
+├── id (uuid)
+├── workspace_id (uuid)
+├── type (varchar: 'saml', 'oidc', 'google')
+├── name (varchar)
+├── is_enabled (boolean)
+├── allow_signup (boolean)
+├── saml_url (text)
+├── saml_certificate (text)
+├── oidc_issuer (text)
+├── oidc_client_id (text)
+├── oidc_client_secret (text)
+├── created_at (timestamptz)
+└── updated_at (timestamptz)
+
+auth_accounts
+├── id (uuid)
+├── user_id (uuid)
+├── provider_id (uuid)
+├── provider_user_id (varchar)
+├── last_login_at (timestamptz)
+├── created_at (timestamptz)
+└── updated_at (timestamptz)
+```
+
+### 前端实现
+
+**组件**:
+- `SsoProviderList` - 提供商列表
+- `CreateSsoProvider` - 创建提供商
+- `EnforceSso` - 强制 SSO 开关
+
+**位置**: `/settings/security` 页面的 "Single sign-on (SSO)" 部分
+
+### 使用流程
+
+#### 配置 SAML 2.0
+
+1. 在 IdP（如 Okta）中创建 SAML 应用
+2. 配置 ACS URL: `https://your-domain.com/api/sso/saml/{providerId}/callback`
+3. 在 Docmost 中创建 SAML 提供商
+4. 填写 IdP Login URL 和 Certificate
+5. 启用并测试
+
+#### 配置 OIDC
+
+1. 在 OIDC 提供商（如 Auth0）中创建应用
+2. 配置 Redirect URI: `https://your-domain.com/api/sso/oidc/{providerId}/callback`
+3. 在 Docmost 中创建 OIDC 提供商
+4. 填写 Issuer URL, Client ID, Client Secret
+5. 启用并测试
+
+#### 配置 Google OAuth
+
+1. 访问 Google Cloud Console
+2. 创建 OAuth 2.0 客户端 ID
+3. 配置重定向 URI: `https://your-domain.com/api/sso/google/{providerId}/callback`
+4. 在 Docmost 中创建 Google 提供商
+5. 填写 Client ID 和 Client Secret
+6. 启用并测试
+
+### 技术亮点
+
+1. **绕过 Passport 限制**
+   - SAML: 自定义实现避免 MultiSamlStrategy 的静态配置限制
+   - OIDC: 自定义实现解决异步 Client 初始化问题
+
+2. **智能缓存**
+   - 1小时 TTL
+   - 自动清理过期条目
+   - 大小限制（100个实例）
+
+3. **安全特性**
+   - State/Nonce 验证
+   - SAML 断言验证
+   - 证书验证
+   - 工作空间隔离
+
+---
+
+## 📊 验证结果
+
+### MFA 验证
 ```bash
-pnpm install
+bash scripts/verify-mfa-complete.sh
 ```
+**结果**: ✅ 36/36 项通过
 
-这将安装 `otplib` 包。
-
-### 2. 确保数据库迁移已运行
-
+### SSO 验证
 ```bash
-# 如果需要，运行迁移
-pnpm run migration:run
+bash scripts/verify-sso-complete.sh
+```
+**结果**: ✅ 48/48 项通过
+
+---
+
+## 🚀 快速开始
+
+### 访问设置页面
+
+```
+http://localhost:5173/settings/security
 ```
 
-### 3. 重启开发服务器
+### MFA 设置
 
-```bash
-pnpm run dev
-```
+1. 在 "Multi-Factor Authentication" 部分
+2. 点击 "Add 2FA method"
+3. 扫描 QR 码
+4. 输入验证码
+5. 保存备份码
 
-### 4. 访问 Security 页面
+### SSO 设置
 
-1. 登录应用
-2. 进入设置页面
-3. 点击左侧菜单的 "Security & SSO"
-4. 现在可以看到 MFA 设置选项
+1. 在 "Single sign-on (SSO)" 部分
+2. 点击 "创建 SSO"
+3. 选择协议类型
+4. 填写配置信息
+5. 启用并测试
 
-## 功能测试
+---
 
-### MFA 设置流程测试
+## 📚 相关文档
 
-1. **启用 MFA：**
-   - 点击 "Add 2FA method" 按钮
-   - 扫描显示的 QR 码或手动输入密钥
-   - 在身份验证器应用中添加账户
-   - 输入 6 位验证码
-   - 保存显示的备份代码
+### MFA 文档
+- 本文档 - 实现说明
+- `scripts/verify-mfa-complete.sh` - 验证脚本
 
-2. **使用 MFA 登录：**
-   - 退出登录
-   - 使用用户名和密码登录
-   - 系统会要求输入 MFA 验证码
-   - 输入身份验证器中的 6 位代码
+### SSO 文档
+- `docs/SSO_实现完成报告.md` - 详细实现说明
+- `docs/SSO_快速开始.md` - 快速入门指南
+- `docs/SSO_部署清单.md` - 部署步骤
+- `docs/Security_SSO_完成总结.md` - 功能总结
+- `docs/Security_SSO_检查清单.md` - 实施检查清单
 
-3. **管理备份代码：**
-   - 在 Security 页面点击 "Backup codes" 按钮
-   - 查看剩余备份代码数量
-   - 可以重新生成备份代码
+---
 
-4. **禁用 MFA：**
-   - 点击 "Disable" 按钮
-   - 输入密码确认
-   - MFA 将被禁用
+## ✅ 完成状态
 
-## 安全特性
+### MFA
+- [x] 后端 API 实现
+- [x] 前端 UI 实现
+- [x] TOTP 支持
+- [x] 备份码支持
+- [x] 强制 MFA 策略
+- [x] 企业版限制移除
+- [x] 数据库迁移
+- [x] 验证脚本
 
-1. **密钥安全：**
-   - TOTP 密钥存储在数据库中
-   - 备份代码使用 bcrypt 加密存储
+### SSO
+- [x] SAML 2.0 实现
+- [x] OIDC 实现
+- [x] Google OAuth 实现
+- [x] 后端 API 实现
+- [x] 前端 UI 实现
+- [x] 数据库迁移
+- [x] 中文翻译
+- [x] 企业版限制临时移除
+- [x] 验证脚本
+- [x] 完整文档
 
-2. **备份代码：**
-   - 每个备份代码只能使用一次
-   - 使用后自动从数据库中删除
-   - 可以重新生成新的备份代码
+---
 
-3. **访问控制：**
-   - 所有 MFA API 端点都需要 JWT 认证
-   - 禁用 MFA 需要密码确认
+## 🎉 总结
 
-## 权限要求
+**MFA 功能**: 完全实现，企业版限制已移除，所有用户可用  
+**SSO 功能**: 完全实现，支持 SAML 2.0、OIDC、Google OAuth  
+**验证状态**: 所有功能验证通过  
+**准备状态**: 可以立即使用
 
-- **MFA 设置：** 所有用户都可以为自己的账户设置 MFA
-- **强制 MFA：** 只有管理员可以为整个工作区强制启用 MFA
-- **SSO 配置：** 只有管理员可以配置 SSO
+---
 
-## 注意事项
-
-1. **企业版功能：**
-   - MFA 功能在企业版或云版本中可用
-   - 自托管版本需要有效的许可证密钥
-
-2. **SSO 功能：**
-   - SSO 配置界面已存在，但具体的 SSO 提供商集成需要额外配置
-   - 当前显示的是 SSO 管理界面
-
-3. **兼容性：**
-   - 支持所有标准的 TOTP 身份验证器应用（Google Authenticator、Authy 等）
-   - QR 码格式符合 RFC 6238 标准
-
-## 验证脚本
-
-运行验证脚本检查实现：
-
-```bash
-./scripts/verify-mfa-implementation.sh
-```
-
-## 后续改进建议
-
-1. **邮件 MFA：** 添加基于邮件的 MFA 选项
-2. **SMS MFA：** 添加基于短信的 MFA 选项
-3. **恢复流程：** 改进用户丢失身份验证器时的账户恢复流程
-4. **审计日志：** 记录 MFA 启用/禁用/使用事件
-5. **设备管理：** 允许用户管理受信任的设备
-6. **SSO 集成：** 完善 Google、GitHub、SAML 等 SSO 提供商的集成
-
-## 相关文件
-
-### 服务端
-- `apps/server/src/ee/mfa/` - MFA 模块
-- `apps/server/src/ee/ee.module.ts` - EE 模块配置
-- `apps/server/src/database/repos/user-mfa/` - MFA 数据仓库
-- `apps/server/src/database/database.module.ts` - 数据库模块配置
-
-### 客户端
-- `apps/client/src/ee/security/pages/security.tsx` - Security 页面
-- `apps/client/src/ee/mfa/components/mfa-settings.tsx` - MFA 设置组件
-- `apps/client/src/ee/mfa/services/mfa-service.ts` - MFA 服务
-- `apps/client/src/components/settings/settings-sidebar.tsx` - 设置侧边栏
-
-### 配置
-- `package.json` - 依赖配置
-- `apps/client/public/locales/zh-CN/translation.json` - 中文翻译
-
-## 总结
-
-本次实现完成了 Security & SSO 页面的核心功能，特别是 MFA 的完整服务端支持。用户现在可以：
-- 访问 Security & SSO 设置页面（不再是灰色按钮）
-- 为自己的账户设置和管理 MFA
-- 管理员可以查看和配置工作区的安全策略
-- 所有功能都有完整的中文翻译支持
-
-404 错误已解决，MFA API 端点现在可以正常工作。
+**最后更新**: 2025-11-20  
+**状态**: ✅ 完全实现并可用

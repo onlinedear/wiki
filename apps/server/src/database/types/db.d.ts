@@ -3,18 +3,13 @@
  * Please do not edit it manually.
  */
 
-import type { ColumnType } from 'kysely';
+import type { ColumnType } from "kysely";
 
-export type Generated<T> =
-  T extends ColumnType<infer S, infer I, infer U>
-    ? ColumnType<S, I | undefined, U>
-    : ColumnType<T, T | undefined, T>;
+export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S, I | undefined, U>
+  : ColumnType<T, T | undefined, T>;
 
-export type Int8 = ColumnType<
-  string,
-  bigint | number | string,
-  bigint | number | string
->;
+export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>;
 
 export type Json = JsonValue;
 
@@ -32,20 +27,20 @@ export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export interface ApiKeys {
   createdAt: Generated<Timestamp>;
+  creatorId: string;
   deletedAt: Timestamp | null;
+  description: string | null;
   expiresAt: Timestamp | null;
   id: Generated<string>;
   lastUsedAt: Timestamp | null;
-  name: string | null;
-  updatedAt: Generated<Timestamp>;
-  creatorId: string;
-  workspaceId: string;
-  token: string;
-  scopes: string[];
-  status: Generated<string>;
-  description: string | null;
   lastUsedIp: string | null;
+  name: string | null;
+  scopes: Generated<Json>;
+  status: Generated<string>;
+  token: string;
+  updatedAt: Generated<Timestamp>;
   usageCount: Generated<number>;
+  workspaceId: string;
 }
 
 export interface Attachments {
@@ -72,6 +67,7 @@ export interface AuthAccounts {
   createdAt: Generated<Timestamp>;
   deletedAt: Timestamp | null;
   id: Generated<string>;
+  lastLoginAt: Timestamp | null;
   providerUserId: string;
   updatedAt: Generated<Timestamp>;
   userId: string;
@@ -83,25 +79,25 @@ export interface AuthProviders {
   createdAt: Generated<Timestamp>;
   creatorId: string | null;
   deletedAt: Timestamp | null;
+  groupSync: Generated<boolean>;
   id: Generated<string>;
   isEnabled: Generated<boolean>;
-  groupSync: Generated<boolean>;
   ldapBaseDn: string | null;
   ldapBindDn: string | null;
   ldapBindPassword: string | null;
+  ldapConfig: Generated<Json | null>;
   ldapTlsCaCert: string | null;
   ldapTlsEnabled: Generated<boolean | null>;
   ldapUrl: string | null;
-  ldapUserAttributes: Json | null;
+  ldapUserAttributes: Generated<Json | null>;
   ldapUserSearchFilter: string | null;
-  ldapConfig: Json | null;
-  settings: Json | null;
   name: string;
   oidcClientId: string | null;
   oidcClientSecret: string | null;
   oidcIssuer: string | null;
   samlCertificate: string | null;
   samlUrl: string | null;
+  settings: Generated<Json | null>;
   type: string;
   updatedAt: Generated<Timestamp>;
   workspaceId: string;
@@ -146,6 +142,31 @@ export interface Billing {
   workspaceId: string;
 }
 
+export interface CommentMentions {
+  commentId: string;
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  mentionedUserId: string;
+}
+
+export interface CommentNotifications {
+  commentId: string;
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  isRead: Generated<boolean>;
+  readAt: Timestamp | null;
+  type: string;
+  userId: string;
+}
+
+export interface CommentReactions {
+  commentId: string;
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  reactionType: string;
+  userId: string;
+}
+
 export interface Comments {
   content: Json | null;
   createdAt: Generated<Timestamp>;
@@ -163,31 +184,6 @@ export interface Comments {
   type: string | null;
   updatedAt: Generated<Timestamp>;
   workspaceId: string;
-}
-
-export interface CommentReactions {
-  id: Generated<string>;
-  commentId: string;
-  userId: string;
-  reactionType: string;
-  createdAt: Generated<Timestamp>;
-}
-
-export interface CommentMentions {
-  id: Generated<string>;
-  commentId: string;
-  mentionedUserId: string;
-  createdAt: Generated<Timestamp>;
-}
-
-export interface CommentNotifications {
-  id: Generated<string>;
-  userId: string;
-  commentId: string;
-  type: string;
-  isRead: Generated<boolean>;
-  createdAt: Generated<Timestamp>;
-  readAt: Timestamp | null;
 }
 
 export interface FileTasks {
@@ -329,12 +325,12 @@ export interface Users {
   deletedAt: Timestamp | null;
   email: string;
   emailVerifiedAt: Timestamp | null;
+  hasGeneratedPassword: Generated<boolean>;
   id: Generated<string>;
   invitedById: string | null;
   lastActiveAt: Timestamp | null;
   lastLoginAt: Timestamp | null;
   locale: string | null;
-  hasGeneratedPassword: Generated<boolean | null>;
   name: string | null;
   password: string | null;
   role: string | null;
@@ -398,10 +394,10 @@ export interface DB {
   authProviders: AuthProviders;
   backlinks: Backlinks;
   billing: Billing;
-  comments: Comments;
-  commentReactions: CommentReactions;
   commentMentions: CommentMentions;
   commentNotifications: CommentNotifications;
+  commentReactions: CommentReactions;
+  comments: Comments;
   fileTasks: FileTasks;
   groups: Groups;
   groupUsers: GroupUsers;

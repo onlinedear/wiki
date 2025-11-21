@@ -6,6 +6,7 @@ import {
   Group,
   Text,
   Tooltip,
+  Menu,
 } from "@mantine/core";
 import {
   IconBrandNotion,
@@ -14,6 +15,9 @@ import {
   IconFileTypeZip,
   IconMarkdown,
   IconX,
+  IconChevronDown,
+  IconCloud,
+  IconUpload,
 } from "@tabler/icons-react";
 import {
   importPage,
@@ -33,6 +37,7 @@ import { workspaceAtom } from "@/features/user/atoms/current-user-atom.ts";
 import { getFileTaskById } from "@/features/file-task/services/file-task-service.ts";
 import { queryClient } from "@/main.tsx";
 import { useQueryEmit } from "@/features/websocket/use-query-emit.ts";
+import { ConfluenceOnlineImportModal } from "@/features/confluence/components/confluence-online-import-modal.tsx";
 
 interface PageImportModalProps {
   spaceId: string;
@@ -89,8 +94,7 @@ function ImportFormatSelection({ spaceId, onClose }: ImportFormatSelection) {
   const notionFileRef = useRef<() => void>(null);
   const confluenceFileRef = useRef<() => void>(null);
   const zipFileRef = useRef<() => void>(null);
-
-  const canUseConfluence = isCloud() || workspace?.hasLicenseKey;
+  const [confluenceOnlineModalOpened, setConfluenceOnlineModalOpened] = useState(false);
 
   const handleZipUpload = async (selectedFile: File, source: string) => {
     if (!selectedFile) {
@@ -333,28 +337,40 @@ function ImportFormatSelection({ spaceId, onClose }: ImportFormatSelection) {
             </Button>
           )}
         </FileButton>
-        <FileButton
-          onChange={(file) => handleZipUpload(file, "confluence")}
-          accept="application/zip"
-          resetRef={confluenceFileRef}
-        >
-          {(props) => (
-            <Tooltip
-              label={t("Available in enterprise edition")}
-              disabled={canUseConfluence}
+        <Menu position="bottom-start" withinPortal>
+          <Menu.Target>
+            <Button
+              justify="space-between"
+              variant="default"
+              leftSection={<ConfluenceIcon size={18} />}
+              rightSection={<IconChevronDown size={16} />}
             >
-              <Button
-                disabled={!canUseConfluence}
-                justify="start"
-                variant="default"
-                leftSection={<ConfluenceIcon size={18} />}
-                {...props}
-              >
-                Confluence
-              </Button>
-            </Tooltip>
-          )}
-        </FileButton>
+              Confluence
+            </Button>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item
+              leftSection={<IconCloud size={16} />}
+              onClick={() => setConfluenceOnlineModalOpened(true)}
+            >
+              {t('Import from Online')}
+            </Menu.Item>
+            <FileButton
+              onChange={(file) => handleZipUpload(file, "confluence")}
+              accept="application/zip"
+              resetRef={confluenceFileRef}
+            >
+              {(props) => (
+                <Menu.Item
+                  leftSection={<IconUpload size={16} />}
+                  {...props}
+                >
+                  {t('Upload ZIP Export')}
+                </Menu.Item>
+              )}
+            </FileButton>
+          </Menu.Dropdown>
+        </Menu>
       </SimpleGrid>
 
       <Group justify="center" gap="xl" mih={150}>
@@ -389,6 +405,12 @@ function ImportFormatSelection({ spaceId, onClose }: ImportFormatSelection) {
           </FileButton>
         </div>
       </Group>
+
+      <ConfluenceOnlineImportModal
+        spaceId={spaceId}
+        opened={confluenceOnlineModalOpened}
+        onClose={() => setConfluenceOnlineModalOpened(false)}
+      />
     </>
   );
 }

@@ -8,8 +8,9 @@ import {
   buildSharedPageUrl,
 } from "@/features/page/page.utils.ts";
 import classes from "./mention.module.css";
+import React from "react";
 
-export default function MentionView(props: NodeViewProps) {
+function MentionView(props: NodeViewProps) {
   const { node } = props;
   const { label, entityType, entityId, slugId } = node.attrs;
   const { spaceSlug } = useParams();
@@ -69,3 +70,5 @@ export default function MentionView(props: NodeViewProps) {
     </NodeViewWrapper>
   );
 }
+
+export default React.memo(MentionView);

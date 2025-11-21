@@ -30,6 +30,8 @@ import { BacklinkRepo } from '@docmost/db/repos/backlink/backlink.repo';
 import { ShareRepo } from '@docmost/db/repos/share/share.repo';
 import { PageListener } from '@docmost/db/listeners/page.listener';
 import { UserMfaRepo } from './repos/user-mfa/user-mfa.repo';
+import { AuthProviderRepo } from './repos/auth-provider/auth-provider.repo';
+import { AuthAccountRepo } from './repos/auth-account/auth-account.repo';
 
 // https://github.com/brianc/node-postgres/issues/811
 types.setTypeParser(types.builtins.INT8, (val) => Number(val));
@@ -85,6 +87,8 @@ types.setTypeParser(types.builtins.INT8, (val) => Number(val));
     BacklinkRepo,
     ShareRepo,
     UserMfaRepo,
+    AuthProviderRepo,
+    AuthAccountRepo,
     PageListener,
   ],
   exports: [
@@ -105,6 +109,8 @@ types.setTypeParser(types.builtins.INT8, (val) => Number(val));
     BacklinkRepo,
     ShareRepo,
     UserMfaRepo,
+    AuthProviderRepo,
+    AuthAccountRepo,
   ],
 })
 export class DatabaseModule

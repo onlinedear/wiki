@@ -8,6 +8,7 @@ import {
   useComputedColorScheme,
 } from "@mantine/core";
 import { useRef, useState } from "react";
+import React from "react";
 import { uploadFile } from "@/features/page/services/page-service.ts";
 import { useDisclosure } from "@mantine/hooks";
 import { getDrawioUrl, getFileUrl } from "@/lib/config.ts";
@@ -23,7 +24,7 @@ import clsx from "clsx";
 import { IconEdit } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 
-export default function DrawioView(props: NodeViewProps) {
+function DrawioView(props: NodeViewProps) {
   const { t } = useTranslation();
   const { node, updateAttributes, editor, selected } = props;
   const { src, title, width, attachmentId } = node.attrs;
@@ -183,3 +184,5 @@ export default function DrawioView(props: NodeViewProps) {
     </NodeViewWrapper>
   );
 }
+
+export default React.memo(DrawioView);

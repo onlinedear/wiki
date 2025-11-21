@@ -8,8 +8,9 @@ import {
 import { Alert } from "@mantine/core";
 import classes from "./callout.module.css";
 import { CalloutType } from "@docmost/editor-ext";
+import React from "react";
 
-export default function CalloutView(props: NodeViewProps) {
+function CalloutView(props: NodeViewProps) {
   const { node } = props;
   const { type, icon } = node.attrs;
 
@@ -67,3 +68,5 @@ function getCalloutColor(type: CalloutType) {
       return "blue";
   }
 }
+
+export default React.memo(CalloutView);

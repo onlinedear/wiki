@@ -22,6 +22,36 @@ import {
 } from "@/lib/config.ts";
 import posthog from "posthog-js";
 
+// Suppress known Tiptap warnings in development
+// These are known issues with Tiptap's ReactNodeViewRenderer and React 18
+// See: https://github.com/ueberdosis/tiptap/issues/3764
+if (import.meta.env.DEV) {
+  const originalError = console.error;
+  const originalWarn = console.warn;
+  
+  console.error = (...args) => {
+    if (
+      typeof args[0] === 'string' &&
+      (args[0].includes('flushSync was called from inside a lifecycle method') ||
+       args[0].includes('Function components cannot be given refs'))
+    ) {
+      return;
+    }
+    originalError.apply(console, args);
+  };
+  
+  console.warn = (...args) => {
+    if (
+      typeof args[0] === 'string' &&
+      (args[0].includes('flushSync was called from inside a lifecycle method') ||
+       args[0].includes('Function components cannot be given refs'))
+    ) {
+      return;
+    }
+    originalWarn.apply(console, args);
+  };
+}
+
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

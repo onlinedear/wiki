@@ -1,5 +1,5 @@
 import "@/features/editor/styles/index.css";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, startTransition } from "react";
 import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
 import {
@@ -217,7 +217,7 @@ export default function PageEditor({
     {
       extensions,
       editable,
-      immediatelyRender: true,
+      immediatelyRender: false,
       shouldRerenderOnTransaction: false,
       editorProps: {
         scrollThreshold: 80,
@@ -261,9 +261,11 @@ export default function PageEditor({
       },
       onCreate({ editor }) {
         if (editor) {
-          // @ts-ignore
-          setEditor(editor);
-          editor.storage.pageId = pageId;
+          startTransition(() => {
+            // @ts-ignore
+            setEditor(editor);
+            editor.storage.pageId = pageId;
+          });
         }
       },
       onUpdate({ editor }) {
@@ -385,7 +387,7 @@ export default function PageEditor({
     return (
       <EditorProvider
         editable={false}
-        immediatelyRender={true}
+        immediatelyRender={false}
         extensions={mainExtensions}
         content={content}
       />

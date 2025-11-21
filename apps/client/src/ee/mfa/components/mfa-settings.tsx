@@ -28,7 +28,7 @@ export function MfaSettings() {
     return null;
   }
 
-  const canUseMfa = isCloud() || hasLicenseKey;
+  const canUseMfa = true; // MFA available for all users
 
   // Check if MFA is truly enabled
   const isMfaEnabled = mfaStatus?.isEnabled === true;

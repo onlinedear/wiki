@@ -33,7 +33,7 @@ const schema = z.object({
     .url({ message: i18n.t("Please enter a valid url") }),
 });
 
-export default function EmbedView(props: NodeViewProps) {
+function EmbedView(props: NodeViewProps) {
   const { t } = useTranslation();
   const { node, selected, updateAttributes, editor } = props;
   const { src, provider, height: nodeHeight } = node.attrs;
@@ -162,3 +162,5 @@ export default function EmbedView(props: NodeViewProps) {
     </NodeViewWrapper>
   );
 }
+
+export default React.memo(EmbedView);

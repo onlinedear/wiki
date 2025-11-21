@@ -4,8 +4,9 @@ import { getFileUrl } from "@/lib/config.ts";
 import { IconDownload, IconPaperclip } from "@tabler/icons-react";
 import { useHover } from "@mantine/hooks";
 import { formatBytes } from "@/lib";
+import React from "react";
 
-export default function AttachmentView(props: NodeViewProps) {
+function AttachmentView(props: NodeViewProps) {
   const { node, selected } = props;
   const { url, name, size } = node.attrs;
   const { hovered, ref } = useHover();
@@ -46,3 +47,5 @@ export default function AttachmentView(props: NodeViewProps) {
     </NodeViewWrapper>
   );
 }
+
+export default React.memo(AttachmentView);

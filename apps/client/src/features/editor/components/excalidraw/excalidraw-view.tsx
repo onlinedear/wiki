@@ -9,6 +9,7 @@ import {
   useComputedColorScheme,
 } from "@mantine/core";
 import { useState } from "react";
+import React from "react";
 import { uploadFile } from "@/features/page/services/page-service.ts";
 import { svgStringToFile } from "@/lib";
 import { useDisclosure } from "@mantine/hooks";
@@ -31,7 +32,7 @@ const Excalidraw = lazy(() =>
   })),
 );
 
-export default function ExcalidrawView(props: NodeViewProps) {
+function ExcalidrawView(props: NodeViewProps) {
   const { t } = useTranslation();
   const { node, updateAttributes, editor, selected } = props;
   const { src, title, width, attachmentId } = node.attrs;
@@ -221,3 +222,5 @@ export default function ExcalidrawView(props: NodeViewProps) {
     </NodeViewWrapper>
   );
 }
+
+export default React.memo(ExcalidrawView);
