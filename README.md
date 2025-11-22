@@ -52,6 +52,19 @@ docker-compose up -d
 # 访问 http://localhost:3000
 ```
 
+### 一键部署到云平台
+
+**Vercel 部署**
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/onlinedear/wiki&env=APP_URL,APP_SECRET,DATABASE_URL,REDIS_URL,STORAGE_DRIVER&project-name=docmost&repository-name=docmost)
+
+点击按钮快速部署到 Vercel。查看 [Vercel 部署指南](./docs/Vercel部署指南.md) 了解详细配置。
+
+**其他平台**
+- **Railway**：支持 Docker，自动配置数据库 - [部署教程](./docs/Docmost完整部署指南.md)
+- **Render**：支持 Docker，提供托管数据库 - [部署教程](./docs/Docmost完整部署指南.md)
+- **DigitalOcean**：App Platform 一键部署 - [部署教程](./docs/Docmost完整部署指南.md)
+
 ### 手动安装
 
 查看我们的[完整部署指南](./docs/Docmost完整部署指南.md)，了解详细说明：
@@ -138,6 +151,8 @@ docmost/
 ### 快速入门
 - [快速开始指南](./docs/START_HERE.md) - 快速上手
 - [完整部署指南](./docs/Docmost完整部署指南.md) - 详细的部署说明
+- [Vercel 部署指南](./docs/Vercel部署指南.md) - Vercel 平台部署详解
+- [快速部署到 Vercel](./docs/快速部署到Vercel.md) - 3分钟一键部署
 - [API 密钥使用指南](./docs/API密钥使用完整指南.md) - API 认证和使用
 
 ### 功能文档

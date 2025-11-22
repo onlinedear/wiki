@@ -11,6 +11,8 @@
 ### 📖 部署与使用指南
 
 - [Docmost完整部署指南.md](./Docmost完整部署指南.md) - 完整的部署文档，包含 Docker、云平台、Kubernetes 等多种部署方式
+- [Vercel部署指南.md](./Vercel部署指南.md) - Vercel 平台详细部署指南，包含配置说明和故障排查
+- [快速部署到Vercel.md](./快速部署到Vercel.md) - Vercel 一键部署快速指南，3分钟完成部署
 - [API密钥使用完整指南.md](./API密钥使用完整指南.md) - API 密钥的详细使用说明
 
 ### 🔐 安全功能
