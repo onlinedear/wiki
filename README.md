@@ -1,337 +1,245 @@
 <div align="center">
     <h1><b>Docmost</b></h1>
     <p>
-        Open-source collaborative wiki and documentation software
+        开源协作式 Wiki 和文档管理平台
         <br />
         <a href="https://github.com/onlinedear/wiki"><strong>GitHub</strong></a> | 
-        <a href="https://docmost.com/docs"><strong>Documentation</strong></a> |
-        <a href="https://github.com/onlinedear/wiki/discussions"><strong>Discussions</strong></a>
+        <a href="https://docmost.com/docs"><strong>文档</strong></a> |
+        <a href="https://github.com/onlinedear/wiki/discussions"><strong>讨论区</strong></a>
     </p>
     <p>
-        <img src="https://img.shields.io/github/v/release/onlinedear/wiki?style=flat-square" alt="Release">
-        <img src="https://img.shields.io/github/license/onlinedear/wiki?style=flat-square" alt="License">
+        <img src="https://img.shields.io/github/v/release/onlinedear/wiki?style=flat-square" alt="版本">
+        <img src="https://img.shields.io/github/license/onlinedear/wiki?style=flat-square" alt="许可证">
         <img src="https://img.shields.io/github/stars/onlinedear/wiki?style=flat-square" alt="Stars">
     </p>
 </div>
 
 <br />
 
-## 📖 About Docmost
+## 📖 关于 Docmost
 
-Docmost is a powerful open-source collaborative wiki and documentation platform built for modern teams. It combines real-time collaboration, rich content editing, and flexible organization to help teams create, share, and maintain their knowledge base.
+Docmost 是一个强大的开源协作式 Wiki 和文档管理平台，专为现代团队打造。它结合了实时协作、富文本编辑和灵活的组织结构，帮助团队创建、共享和维护知识库。
 
-### ✨ Key Highlights
+### ✨ 核心亮点
 
-- **Real-time Collaboration** - Multiple users can edit documents simultaneously with live cursors and updates
-- **Rich Editor** - Powered by Tiptap with support for markdown, tables, code blocks, and more
-- **Flexible Organization** - Organize content in spaces (document libraries) with nested pages
-- **Advanced Permissions** - Fine-grained access control with user groups and role-based permissions
-- **Enterprise Ready** - SSO, MFA, API keys, and audit logs (Enterprise Edition)
-- **Self-hosted** - Full control over your data with Docker deployment
-- **Multi-language** - Support for 10+ languages with active community translations
+- **实时协作** - 多人同时编辑文档，实时显示光标位置和更新内容
+- **富文本编辑器** - 基于 Tiptap 构建，支持 Markdown、表格、代码块等丰富内容
+- **灵活组织** - 使用文档库（Spaces）和嵌套页面组织内容
+- **高级权限管理** - 基于用户组和角色的细粒度访问控制
+- **企业级功能** - SSO 单点登录、MFA 多因素认证、API 密钥、审计日志（企业版）
+- **私有部署** - 完全掌控数据，支持 Docker 一键部署
+- **多语言支持** - 支持 10+ 种语言，活跃的社区翻译
 
-## 🚀 Quick Start
+## 🚀 快速开始
 
-### Using Docker (Recommended)
+### 使用 Docker 部署（推荐）
 
 ```bash
-# Download docker-compose.yml
+# 下载 docker-compose.yml
 curl -O https://raw.githubusercontent.com/onlinedear/wiki/main/docker-compose.yml
 
-# Generate a secure secret
+# 生成安全密钥
 openssl rand -hex 32
 
-# Edit docker-compose.yml with your configuration
-# - Set APP_URL to your domain
-# - Set APP_SECRET to the generated secret
-# - Set strong database password
+# 编辑 docker-compose.yml 配置文件
+# - 设置 APP_URL 为你的域名
+# - 设置 APP_SECRET 为生成的密钥
+# - 设置强密码保护数据库
 
-# Start Docmost
+# 启动 Docmost
 docker-compose up -d
 
-# Access at http://localhost:3000
+# 访问 http://localhost:3000
 ```
 
-### Manual Installation
+### 手动安装
 
-See our [complete deployment guide](./docs/Docmost完整部署指南.md) for detailed instructions on:
-- Manual deployment on Ubuntu/Debian/CentOS
-- Cloud platform deployment (AWS, GCP, Azure)
-- Kubernetes deployment
-- Production configuration and optimization
+查看我们的[完整部署指南](./docs/Docmost完整部署指南.md)，了解详细说明：
+- Ubuntu/Debian/CentOS 手动部署
+- 云平台部署（AWS、GCP、Azure）
+- Kubernetes 部署
+- 生产环境配置和优化
 
-## 📚 Features
+## 📚 功能特性
 
-### Core Features
+### 核心功能
 
-- **📝 Real-time Collaborative Editing** - Work together with live updates and cursor tracking
-- **🎨 Rich Content Editor** - Markdown support, tables, code blocks, task lists, and more
-- **📊 Diagrams** - Integrated Draw.io, Excalidraw, and Mermaid support
-- **📁 Spaces** - Organize documents in separate workspaces with custom permissions
-- **🔍 Full-text Search** - Fast and accurate search across all content
-- **💬 Comments** - Threaded comments with mentions, reactions, and notifications
-- **📎 File Attachments** - Upload and embed files, images, and documents
-- **🔗 Embeds** - Embed content from Airtable, Loom, Miro, YouTube, and more
-- **📜 Page History** - Track changes and restore previous versions
-- **👥 User & Group Management** - Organize users into groups with role-based access
-- **🔐 Permissions** - Fine-grained access control with CASL-based authorization
-- **🌍 Internationalization** - Support for 10+ languages
-- **🔗 Sharing** - Generate public links for external sharing
+- **📝 实时协作编辑** - 多人同时编辑，实时更新和光标跟踪
+- **🎨 富文本编辑器** - 支持 Markdown、表格、代码块、任务列表等
+- **📊 图表支持** - 集成 Draw.io、Excalidraw 和 Mermaid 图表工具
+- **📁 文档库（Spaces）** - 使用独立的工作空间组织文档，支持自定义权限
+- **🔍 全文搜索** - 快速准确地搜索所有内容和附件
+- **💬 评论系统** - 支持嵌套评论、@提及、表情反馈和通知
+- **📎 文件附件** - 上传和嵌入文件、图片和文档
+- **🔗 内容嵌入** - 嵌入 Airtable、Loom、Miro、YouTube 等平台内容
+- **📜 页面历史** - 跟踪变更记录并恢复历史版本
+- **👥 用户和用户组管理** - 将用户组织成组，实现基于角色的访问控制
+- **🔐 权限管理** - 基于 CASL 的细粒度访问控制
+- **🌍 国际化** - 支持 10+ 种语言
+- **🔗 分享功能** - 生成公开链接供外部访问
+- **📥 Confluence 导入** - 支持从 Confluence 在线导入内容
 
-### Enterprise Edition Features
+### 企业版功能
 
-- **🔒 Single Sign-On (SSO)** - SAML 2.0 and OAuth 2.0 integration
-- **🔐 Multi-Factor Authentication (MFA)** - TOTP-based 2FA for enhanced security
-- **🔑 API Keys** - Programmatic access with fine-grained permissions
-- **📊 Audit Logs** - Track all user activities and changes
-- **🏢 LDAP Integration** - Connect with Active Directory and LDAP servers
-- **💳 Billing Management** - Subscription and license management
+- **� 单点l登录（SSO）** - 支持 SAML 2.0 和 OAuth 2.0 集成
+- **� A多因素认证（MFA）** - 基于 TOTP 的双因素认证，增强安全性
+- **� APIi 密钥** - 支持程序化访问，细粒度权限控制
+- **📊 审计日志** - 跟踪所有用户活动和变更记录
+- **🏢 LDAP 集成** - 连接 Active Directory 和 LDAP 服务器
+- **💳 账单管理** - 订阅和许可证管理
 
-## 🏗️ Architecture
+## 🏗️ 技术架构
 
-Docmost is built as a modern monorepo with separate client and server applications:
+Docmost 采用现代化的 Monorepo 架构，前后端分离：
 
-### Technology Stack
+### 技术栈
 
-**Frontend**
-- React 18 with TypeScript
-- Vite for fast development and building
-- Mantine UI component library
-- TanStack Query for data fetching
-- Jotai for state management
-- Tiptap editor with Yjs for collaboration
+**前端**
+- React 18 + TypeScript
+- Vite 构建工具，快速开发和构建
+- Mantine UI 组件库
+- TanStack Query 数据获取
+- Jotai 状态管理
+- Tiptap 编辑器 + Yjs 实时协作
 
-**Backend**
-- NestJS framework with TypeScript
-- PostgreSQL 16+ database
-- Kysely query builder
-- Redis for caching and pub/sub
-- Hocuspocus for real-time collaboration
-- S3-compatible storage
+**后端**
+- NestJS 框架 + TypeScript
+- PostgreSQL 16+ 数据库
+- Kysely 类型安全的 SQL 查询构建器
+- Redis 缓存和发布订阅
+- Hocuspocus 实时协作服务器
+- S3 兼容对象存储
 
-**Real-time Collaboration**
-- Yjs CRDT for conflict-free editing
-- Hocuspocus WebSocket server
-- Redis adapter for scaling
+**实时协作**
+- Yjs CRDT 无冲突编辑
+- Hocuspocus WebSocket 服务器
+- Redis 适配器支持横向扩展
 
-### Project Structure
+### 项目结构
 
 ```
 docmost/
 ├── apps/
-│   ├── client/          # React frontend application
-│   └── server/          # NestJS backend application
+│   ├── client/          # React 前端应用
+│   └── server/          # NestJS 后端应用
 ├── packages/
-│   ├── editor-ext/      # Shared Tiptap editor extensions
-│   └── ee/              # Enterprise Edition license marker
-├── docs/                # Documentation and guides
-├── scripts/             # Utility and verification scripts
-├── examples/            # Usage examples and templates
-└── data/                # Local development data
+│   ├── editor-ext/      # 共享的 Tiptap 编辑器扩展
+│   └── ee/              # 企业版许可证标记
+├── docs/                # 文档和指南
+├── scripts/             # 实用工具和验证脚本
+├── examples/            # 使用示例和模板
+└── data/                # 本地开发数据
 ```
 
-For detailed structure information, see [Project Structure](./docs/structure.md).
+详细的结构信息，请查看[项目结构文档](./.kiro/steering/structure.md)。
 
-## 📖 Documentation
+## 📖 文档
 
-### Getting Started
-- [Quick Start Guide](./docs/START_HERE.md) - Get up and running quickly
-- [Deployment Guide](./docs/Docmost完整部署指南.md) - Complete deployment instructions
-- [API Key Usage Guide](./docs/API密钥使用完整指南.md) - API authentication and usage
+### 快速入门
+- [快速开始指南](./docs/START_HERE.md) - 快速上手
+- [完整部署指南](./docs/Docmost完整部署指南.md) - 详细的部署说明
+- [API 密钥使用指南](./docs/API密钥使用完整指南.md) - API 认证和使用
 
-### Feature Documentation
-- [MFA/SSO Implementation](./docs/MFA_SSO_实现说明.md) - Multi-factor authentication and SSO
-- [Comment System](./docs/评论管理功能说明.md) - Comments, reactions, and notifications
-- [API Key Management](./docs/API_KEY_README.md) - API key features and management
+### 功能文档
+- [MFA/SSO 实现说明](./docs/MFA_SSO_实现说明.md) - 多因素认证和单点登录
+- [SSO 快速开始](./docs/SSO_快速开始.md) - SSO 配置和使用
+- [评论管理功能](./docs/评论管理功能说明.md) - 评论、反馈和通知系统
+- [API 密钥管理](./docs/个人API密钥功能说明.md) - API 密钥功能和管理
+- [Confluence 导入](./docs/Confluence在线导入功能说明.md) - 从 Confluence 导入内容
+- [附件搜索功能](./docs/附件搜索功能说明.md) - 附件全文搜索
 
-### Development
-- [Development Setup](https://docmost.com/docs/self-hosting/development) - Local development guide
-- [Contributing Guidelines](./CONTRIBUTING.md) - How to contribute to Docmost
+### 开发文档
+- [技术栈说明](./.kiro/steering/tech.md) - 技术栈详细说明
+- [项目结构](./.kiro/steering/structure.md) - 项目结构详解
 
-For a complete list of documentation, see the [docs directory](./docs/README.md).
+完整的文档列表，请查看 [docs 目录](./docs/README.md)。
 
-## 🛠️ Development
+## 🛠️ 开发
 
-### Prerequisites
+### 环境要求
 
 - Node.js 22.x
 - pnpm 10.4.0
 - PostgreSQL 16+
 - Redis 7.2+
 
-### Setup
+### 开发环境配置
 
 ```bash
-# Clone the repository
+# 克隆仓库
 git clone https://github.com/onlinedear/wiki.git
 cd wiki
 
-# Install dependencies
+# 安装依赖
 pnpm install
 
-# Copy environment file
+# 复制环境变量文件
 cp .env.example .env
 
-# Configure your .env file with database and Redis URLs
+# 配置 .env 文件，设置数据库和 Redis 连接信息
 
-# Run database migrations
+# 运行数据库迁移
 cd apps/server
 pnpm migration:up
 cd ../..
 
-# Start development servers
+# 启动开发服务器
 pnpm dev
 ```
 
-The application will be available at:
-- Frontend: http://localhost:5173
-- Backend: http://localhost:3000
+应用将在以下地址可用：
+- 前端：http://localhost:5173
+- 后端：http://localhost:3000
 
-### Available Scripts
+### 可用脚本
 
 ```bash
-# Development
-pnpm dev              # Start both client and server in dev mode
-pnpm client:dev       # Start only frontend
-pnpm server:dev       # Start only backend
+# 开发
+pnpm dev              # 同时启动前端和后端开发服务器
+pnpm client:dev       # 仅启动前端
+pnpm server:dev       # 仅启动后端
+pnpm collab:dev       # 启动协作服务器
 
-# Building
-pnpm build            # Build all apps
-pnpm client:build     # Build frontend
-pnpm server:build     # Build backend
+# 构建
+pnpm build            # 构建所有应用
+pnpm client:build     # 构建前端
+pnpm server:build     # 构建后端
+pnpm editor-ext:build # 构建编辑器扩展
 
-# Production
-pnpm start            # Start production server
+# 生产环境
+pnpm start            # 启动生产服务器
 
-# Database
+# 数据库
 cd apps/server
-pnpm migration:up     # Run migrations
-pnpm migration:down   # Rollback migration
-pnpm migration:codegen # Generate types from schema
+pnpm migration:up       # 运行迁移
+pnpm migration:down     # 回滚迁移
+pnpm migration:create   # 创建新迁移
+pnpm migration:codegen  # 从数据库生成类型定义
+
+# 代码质量
+pnpm lint             # 代码检查
+pnpm format           # 代码格式化（Prettier）
+pnpm test             # 运行测试
 ```
 
-## 🔒 Security
+## 🔒 安全
 
-### Reporting Security Issues
 
-If you discover a security vulnerability, please email security@docmost.com. Do not create public GitHub issues for security vulnerabilities.
 
-### Security Features
+### 安全特性
 
-- SHA-256 password hashing with bcrypt
-- JWT-based authentication
-- CSRF protection
-- Rate limiting
-- SQL injection prevention via parameterized queries
-- XSS protection with content sanitization
-- Secure file upload validation
+- 使用 bcrypt 进行 SHA-256 密码哈希
+- 基于 JWT 的身份认证
+- CSRF 保护
+- 请求频率限制
+- 通过参数化查询防止 SQL 注入
+- 内容清理防止 XSS 攻击
+- 安全的文件上传验证
+- 支持多因素认证（MFA）
+- 支持单点登录（SSO）
 
-## 📄 License
-
-### Open Source License
-
-Docmost core is licensed under the **AGPL 3.0** license. This includes all code except for the Enterprise Edition features.
-
-### Enterprise Edition License
-
-Enterprise features are available under a proprietary license. All files in the following directories are licensed under the Docmost Enterprise license defined in `packages/ee/LICENSE`:
-
-- `apps/server/src/ee/`
-- `apps/client/src/ee/`
-- `packages/ee/`
-
-Enterprise features include:
-- Single Sign-On (SSO)
-- Multi-Factor Authentication (MFA)
-- API Keys
-- Audit Logs
-- LDAP Integration
-- Priority Support
-
-For Enterprise Edition licensing, contact sales@docmost.com.
-
-## 🤝 Contributing
-
-We welcome contributions from the community! Here's how you can help:
-
-1. **Report Bugs** - Open an issue with detailed reproduction steps
-2. **Suggest Features** - Share your ideas in GitHub Discussions
-3. **Submit Pull Requests** - Fix bugs or add features
-4. **Improve Documentation** - Help us improve our docs
-5. **Translate** - Help translate Docmost into your language
-
-### Development Guidelines
-
-- Follow the existing code style and conventions
-- Write meaningful commit messages
-- Add tests for new features
-- Update documentation as needed
-- Ensure all tests pass before submitting PR
-
-See our [Contributing Guide](./CONTRIBUTING.md) for detailed information.
-
-## 🌍 Community & Support
-
-- **GitHub Discussions** - Ask questions and share ideas
-- **Twitter/X** - Follow [@DocmostHQ](https://twitter.com/DocmostHQ) for updates
-- **Documentation** - Visit [docmost.com/docs](https://docmost.com/docs)
-- **Email** - Contact support@docmost.com
-
-## 🙏 Acknowledgments
-
-Special thanks to the following projects and organizations:
-
-### Open Source Projects
-
-- [Tiptap](https://tiptap.dev/) - Headless editor framework
-- [Yjs](https://yjs.dev/) - CRDT framework for real-time collaboration
-- [NestJS](https://nestjs.com/) - Progressive Node.js framework
-- [React](https://react.dev/) - UI library
-- [Mantine](https://mantine.dev/) - React component library
-- [PostgreSQL](https://www.postgresql.org/) - Database
-- [Redis](https://redis.io/) - In-memory data store
-
-### Services
-
-<img width="100" alt="Crowdin" src="https://github.com/user-attachments/assets/a6c3d352-e41b-448d-b6cd-3fbca3109f07" />
-
-[Crowdin](https://crowdin.com/) for providing access to their localization platform.
-
-<img width="48" alt="Algolia" src="https://github.com/user-attachments/assets/6ccad04a-9589-4965-b6a1-d5cb1f4f9e94" />
-
-[Algolia](https://www.algolia.com/) for providing full-text search to the docs.
-
-## 📊 Project Status
-
-Docmost is actively maintained and under continuous development. We release new features and improvements regularly.
-
-- **Current Version**: 0.23.2
-- **Status**: Production Ready
-- **Release Cycle**: Regular updates and security patches
-
-## 📸 Screenshots
-
-<p align="center">
-<img alt="Docmost Home" src="https://docmost.com/screenshots/home.png" width="70%">
-<br />
-<em>Home Dashboard</em>
-</p>
-
-<p align="center">
-<img alt="Docmost Editor" src="https://docmost.com/screenshots/editor.png" width="70%">
-<br />
-<em>Rich Text Editor with Real-time Collaboration</em>
-</p>
 
 ---
 
-<div align="center">
-    <p>
-        Made with ❤️ by the Docmost team and contributors
-        <br />
-        <a href="https://github.com/onlinedear/wiki">GitHub</a> •
-        <a href="https://docmost.com/docs">Docs</a> •
-        <a href="https://github.com/onlinedear/wiki/issues">Issues</a>
-    </p>
-</div>
+
 

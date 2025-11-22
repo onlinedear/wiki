@@ -1,4 +1,12 @@
 #!/bin/bash
+###
+ # @creator: "${author}"
+ # @created: "${createTime}"
+ # @last_modified_by: "${author}"
+ # @last_modified: "${updateTime}"
+ # @version: "v1.0"
+ # @visibility: "internal"
+### 
 
 echo "==================================="
 echo "测试附件搜索 API"
