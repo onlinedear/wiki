@@ -85,43 +85,48 @@ const CommandList = ({
       ?.scrollIntoView({ block: "nearest" });
   }, [selectedIndex]);
 
+  let globalIndex = 0;
+
   return flatItems.length > 0 ? (
     <Paper id="slash-command" shadow="md" p="xs" withBorder>
       <ScrollArea viewportRef={viewportRef} h={350} w={270} scrollbarSize={8}>
         {Object.entries(items).map(([category, categoryItems]) => (
           <div key={category}>
             <Text c="dimmed" mb={4} fw={500} tt="capitalize">
-              {category}
+              {t(category)}
             </Text>
-            {categoryItems.map((item: SlashMenuItemType, index: number) => (
-              <UnstyledButton
-                data-item-index={index}
-                key={index}
-                onClick={() => selectItem(index)}
-                className={clsx(classes.menuBtn, {
-                  [classes.selectedItem]: index === selectedIndex,
-                })}
-              >
-                <Group>
-                  <ActionIcon
-                    variant="default"
-                    component="div"
-                  >
-                    <item.icon size={18} />
-                  </ActionIcon>
+            {categoryItems.map((item: SlashMenuItemType) => {
+              const currentIndex = globalIndex++;
+              return (
+                <UnstyledButton
+                  data-item-index={currentIndex}
+                  key={currentIndex}
+                  onClick={() => selectItem(currentIndex)}
+                  className={clsx(classes.menuBtn, {
+                    [classes.selectedItem]: currentIndex === selectedIndex,
+                  })}
+                >
+                  <Group>
+                    <ActionIcon
+                      variant="default"
+                      component="div"
+                    >
+                      <item.icon size={18} />
+                    </ActionIcon>
 
-                  <div style={{ flex: 1 }}>
-                    <Text size="sm" fw={500}>
-                      {t(item.title)}
-                    </Text>
+                    <div style={{ flex: 1 }}>
+                      <Text size="sm" fw={500}>
+                        {t(item.title)}
+                      </Text>
 
-                    <Text c="dimmed" size="xs">
-                      {t(item.description)}
-                    </Text>
-                  </div>
-                </Group>
-              </UnstyledButton>
-            ))}
+                      <Text c="dimmed" size="xs">
+                        {t(item.description)}
+                      </Text>
+                    </div>
+                  </Group>
+                </UnstyledButton>
+              );
+            })}
           </div>
         ))}
       </ScrollArea>

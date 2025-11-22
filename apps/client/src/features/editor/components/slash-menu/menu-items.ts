@@ -61,15 +61,6 @@ const CommandGroups: SlashMenuGroupedItemsType = {
       },
     },
     {
-      title: "To-do list",
-      description: "Track tasks with a to-do list.",
-      searchTerms: ["todo", "task", "list", "check", "checkbox"],
-      icon: IconCheckbox,
-      command: ({ editor, range }: CommandProps) => {
-        editor.chain().focus().deleteRange(range).toggleTaskList().run();
-      },
-    },
-    {
       title: "Heading 1",
       description: "Big section heading.",
       searchTerms: ["title", "big", "large"],
@@ -112,15 +103,6 @@ const CommandGroups: SlashMenuGroupedItemsType = {
       },
     },
     {
-      title: "Bullet list",
-      description: "Create a simple bullet list.",
-      searchTerms: ["unordered", "point", "list"],
-      icon: IconList,
-      command: ({ editor, range }: CommandProps) => {
-        editor.chain().focus().deleteRange(range).toggleBulletList().run();
-      },
-    },
-    {
       title: "Numbered list",
       description: "Create a list with numbering.",
       searchTerms: ["numbered", "ordered", "list"],
@@ -130,12 +112,13 @@ const CommandGroups: SlashMenuGroupedItemsType = {
       },
     },
     {
-      title: "Quote",
-      description: "Create block quote.",
-      searchTerms: ["blockquote", "quotes"],
-      icon: IconBlockquote,
-      command: ({ editor, range }: CommandProps) =>
-        editor.chain().focus().deleteRange(range).toggleBlockquote().run(),
+      title: "Bullet list",
+      description: "Create a simple bullet list.",
+      searchTerms: ["unordered", "point", "list"],
+      icon: IconList,
+      command: ({ editor, range }: CommandProps) => {
+        editor.chain().focus().deleteRange(range).toggleBulletList().run();
+      },
     },
     {
       title: "Code",
@@ -146,12 +129,31 @@ const CommandGroups: SlashMenuGroupedItemsType = {
         editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
     },
     {
+      title: "Quote",
+      description: "Create block quote.",
+      searchTerms: ["blockquote", "quotes"],
+      icon: IconBlockquote,
+      command: ({ editor, range }: CommandProps) =>
+        editor.chain().focus().deleteRange(range).toggleBlockquote().run(),
+    },
+    {
       title: "Divider",
       description: "Insert horizontal rule divider",
       searchTerms: ["horizontal rule", "hr"],
       icon: IconMenu4,
       command: ({ editor, range }: CommandProps) =>
         editor.chain().focus().deleteRange(range).setHorizontalRule().run(),
+    },
+  ],
+  common: [
+    {
+      title: "To-do list",
+      description: "Track tasks with a to-do list.",
+      searchTerms: ["todo", "task", "list", "check", "checkbox"],
+      icon: IconCheckbox,
+      command: ({ editor, range }: CommandProps) => {
+        editor.chain().focus().deleteRange(range).toggleTaskList().run();
+      },
     },
     {
       title: "Image",
@@ -269,6 +271,17 @@ const CommandGroups: SlashMenuGroupedItemsType = {
         editor.chain().focus().deleteRange(range).toggleCallout().run(),
     },
     {
+      title: "Subpages (Child pages)",
+      description: "List all subpages of the current page",
+      searchTerms: ["subpages", "child", "children", "nested", "hierarchy"],
+      icon: IconSitemap,
+      command: ({ editor, range }: CommandProps) => {
+        editor.chain().focus().deleteRange(range).insertSubpages().run();
+      },
+    },
+  ],
+  advanced: [
+    {
       title: "Math inline",
       description: "Insert inline math equation.",
       searchTerms: [
@@ -360,15 +373,6 @@ const CommandGroups: SlashMenuGroupedItemsType = {
       },
     },
     {
-      title: "Subpages (Child pages)",
-      description: "List all subpages of the current page",
-      searchTerms: ["subpages", "child", "children", "nested", "hierarchy"],
-      icon: IconSitemap,
-      command: ({ editor, range }: CommandProps) => {
-        editor.chain().focus().deleteRange(range).insertSubpages().run();
-      },
-    },
-    {
       title: "Iframe embed",
       description: "Embed any Iframe",
       searchTerms: ["iframe"],
@@ -379,34 +383,6 @@ const CommandGroups: SlashMenuGroupedItemsType = {
           .focus()
           .deleteRange(range)
           .setEmbed({ provider: "iframe" })
-          .run();
-      },
-    },
-    {
-      title: "Airtable",
-      description: "Embed Airtable",
-      searchTerms: ["airtable"],
-      icon: AirtableIcon,
-      command: ({ editor, range }: CommandProps) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setEmbed({ provider: "airtable" })
-          .run();
-      },
-    },
-    {
-      title: "Loom",
-      description: "Embed Loom video",
-      searchTerms: ["loom"],
-      icon: LoomIcon,
-      command: ({ editor, range }: CommandProps) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setEmbed({ provider: "loom" })
           .run();
       },
     },
@@ -425,62 +401,6 @@ const CommandGroups: SlashMenuGroupedItemsType = {
       },
     },
     {
-      title: "Typeform",
-      description: "Embed Typeform",
-      searchTerms: ["typeform"],
-      icon: TypeformIcon,
-      command: ({ editor, range }: CommandProps) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setEmbed({ provider: "typeform" })
-          .run();
-      },
-    },
-    {
-      title: "Miro",
-      description: "Embed Miro board",
-      searchTerms: ["miro"],
-      icon: MiroIcon,
-      command: ({ editor, range }: CommandProps) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setEmbed({ provider: "miro" })
-          .run();
-      },
-    },
-    {
-      title: "YouTube",
-      description: "Embed YouTube video",
-      searchTerms: ["youtube", "yt"],
-      icon: YoutubeIcon,
-      command: ({ editor, range }: CommandProps) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setEmbed({ provider: "youtube" })
-          .run();
-      },
-    },
-    {
-      title: "Vimeo",
-      description: "Embed Vimeo video",
-      searchTerms: ["vimeo"],
-      icon: VimeoIcon,
-      command: ({ editor, range }: CommandProps) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setEmbed({ provider: "vimeo" })
-          .run();
-      },
-    },
-    {
       title: "Framer",
       description: "Embed Framer prototype",
       searchTerms: ["framer"],
@@ -491,34 +411,6 @@ const CommandGroups: SlashMenuGroupedItemsType = {
           .focus()
           .deleteRange(range)
           .setEmbed({ provider: "framer" })
-          .run();
-      },
-    },
-    {
-      title: "Google Drive",
-      description: "Embed Google Drive content",
-      searchTerms: ["google drive", "gdrive"],
-      icon: GoogleDriveIcon,
-      command: ({ editor, range }: CommandProps) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setEmbed({ provider: "gdrive" })
-          .run();
-      },
-    },
-    {
-      title: "Google Sheets",
-      description: "Embed Google Sheets content",
-      searchTerms: ["google sheets", "gsheets"],
-      icon: GoogleSheetsIcon,
-      command: ({ editor, range }: CommandProps) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setEmbed({ provider: "gsheets" })
           .run();
       },
     },
