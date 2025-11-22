@@ -8,5 +8,7 @@ export default function useCurrentUser(): UseQueryResult<ICurrentUser> {
     queryFn: async () => {
       return await getMyInfo();
     },
+    retry: false,
+    throwOnError: false,
   });
 }

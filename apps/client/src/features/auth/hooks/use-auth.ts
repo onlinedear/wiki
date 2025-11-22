@@ -54,7 +54,7 @@ export default function useAuth() {
       setIsLoading(false);
       console.log(err);
       notifications.show({
-        message: err.response?.data.message,
+        message: t(err.response?.data.message),
         color: "red",
       });
     }

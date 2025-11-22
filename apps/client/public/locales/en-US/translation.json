@@ -153,7 +153,13 @@
   "Settings": "Settings",
   "Setup workspace": "Setup workspace",
   "Sign In": "Sign In",
+  "Register": "Register",
   "Sign Up": "Sign Up",
+  "Don't have an account?": "Don't have an account?",
+  "Already have an account?": "Already have an account?",
+  "Confirm your password": "Confirm your password",
+  "Registration Disabled": "Registration Disabled",
+  "Registration is disabled when SSO is enforced.": "Registration is disabled when SSO is enforced.",
   "Slug": "Slug",
   "Space": "Space",
   "Space description": "Space description",
@@ -557,5 +563,7 @@
   "Select expiration date": "Select expiration date",
   "This action cannot be undone. Any applications using this API key will stop working.": "This action cannot be undone. Any applications using this API key will stop working.",
   "Update API key": "Update API key",
-  "Manage API keys for all users in the workspace": "Manage API keys for all users in the workspace"
+  "Manage API keys for all users in the workspace": "Manage API keys for all users in the workspace",
+  "Third-party integrations": "Third-party integrations",
+  "Manage connections to external systems and services": "Manage connections to external systems and services"
 }

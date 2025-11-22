@@ -113,7 +113,7 @@ export class UserRepo {
         insertableUser.name || insertableUser.email.split('@')[0].toLowerCase(),
       email: insertableUser.email.toLowerCase(),
       password: await hashPassword(insertableUser.password),
-      locale: 'en-US',
+      locale: insertableUser.locale || 'zh-CN',
       role: insertableUser?.role,
       lastLoginAt: new Date(),
     };

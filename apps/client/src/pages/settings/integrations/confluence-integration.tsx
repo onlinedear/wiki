@@ -7,6 +7,7 @@ import {
   Paper,
   PasswordInput,
   Alert,
+  Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -20,7 +21,7 @@ import {
   testConfluenceConnection,
 } from '@/features/confluence/services/confluence-service';
 
-export default function ConfluenceConfig() {
+export default function ConfluenceIntegration() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [testing, setTesting] = useState(false);
@@ -37,7 +38,6 @@ export default function ConfluenceConfig() {
           ? 'Please enter a valid Confluence URL'
           : null,
       accessToken: (value) => {
-        // Token is only required when creating new config or updating
         if (!hasConfig && !value) {
           return 'Access token is required';
         }
@@ -51,24 +51,14 @@ export default function ConfluenceConfig() {
   }, []);
 
   const loadConfig = async () => {
-    console.log('Loading Confluence config...');
     try {
       const response = await getConfluenceConfig();
-      console.log('Loaded config response:', response);
-      
-      // Handle both wrapped and unwrapped responses
       const config = response?.data || response;
-      console.log('Parsed config:', config);
       
       if (config?.confluenceUrl) {
         form.setFieldValue('confluenceUrl', config.confluenceUrl);
         setHasConfig(config.hasAccessToken);
-        console.log('Config loaded successfully:', { 
-          confluenceUrl: config.confluenceUrl, 
-          hasAccessToken: config.hasAccessToken 
-        });
       } else {
-        console.log('No config found');
         setHasConfig(false);
       }
     } catch (error) {
@@ -78,7 +68,6 @@ export default function ConfluenceConfig() {
   };
 
   const handleSave = async (values: typeof form.values) => {
-    // If updating existing config and no new token provided, skip validation
     if (hasConfig && !values.accessToken) {
       notifications.show({
         title: t('Info'),
@@ -90,8 +79,7 @@ export default function ConfluenceConfig() {
 
     setLoading(true);
     try {
-      const result = await saveConfluenceConfig(values);
-      console.log('Save config result:', result);
+      await saveConfluenceConfig(values);
       notifications.show({
         title: t('Success'),
         message: t('Confluence configuration saved successfully'),
@@ -99,12 +87,9 @@ export default function ConfluenceConfig() {
         icon: <IconCheck size={18} />,
       });
       setHasConfig(true);
-      // Clear the token field after successful save (for security)
       form.setFieldValue('accessToken', '');
-      // Reload config to verify it was saved
       await loadConfig();
     } catch (error) {
-      console.error('Save config error:', error);
       notifications.show({
         title: t('Error'),
         message: error?.response?.data?.message || t('Failed to save configuration'),
@@ -182,13 +167,11 @@ export default function ConfluenceConfig() {
   };
 
   return (
-    <Paper p="md">
+    <Paper p="md" withBorder>
       <Stack gap="md">
         <div>
-          <Text size="lg" fw={500} mb="xs">
-            {t('Confluence Integration')}
-          </Text>
-          <Text size="sm" c="dimmed">
+          <Title order={3}>{t('Confluence Integration')}</Title>
+          <Text size="sm" c="dimmed" mt="xs">
             {t('Configure your Confluence connection to import pages directly from your Confluence instance')}
           </Text>
         </div>

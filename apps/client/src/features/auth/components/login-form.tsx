@@ -11,6 +11,7 @@ import {
   Box,
   Anchor,
   Group,
+  Text,
 } from "@mantine/core";
 import classes from "./auth.module.css";
 import { useRedirectIfAuthenticated } from "@/features/auth/hooks/use-redirect-if-authenticated.ts";
@@ -105,6 +106,17 @@ export function LoginForm() {
                 {t("Sign In")}
               </Button>
             </form>
+
+            <Text ta="center" mt="md" size="sm">
+              {t("Don't have an account?")}{" "}
+              <Anchor
+                to={APP_ROUTE.AUTH.REGISTER}
+                component={Link}
+                underline="never"
+              >
+                {t("Register")}
+              </Anchor>
+            </Text>
           </>
         )}
       </Box>

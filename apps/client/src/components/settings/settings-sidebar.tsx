@@ -13,6 +13,7 @@ import {
   IconKey,
   IconWorld,
   IconMessageCircle,
+  IconPlugConnected,
 } from "@tabler/icons-react";
 import { Link, useLocation } from "react-router-dom";
 import classes from "./settings.module.css";
@@ -67,6 +68,11 @@ const groupedData: DataGroup[] = [
         label: "API keys",
         icon: IconKey,
         path: "/settings/account/api-keys",
+      },
+      {
+        label: "Third-party integrations",
+        icon: IconPlugConnected,
+        path: "/settings/account/integrations",
       },
     ],
   },
@@ -174,6 +180,11 @@ export default function SettingsSidebar() {
 
   const menuItems = groupedData.map((group) => {
     if (group.heading === "System" && (!isAdmin || isCloud())) {
+      return null;
+    }
+
+    // Hide Workspace section for non-admin users
+    if (group.heading === "Workspace" && !isAdmin) {
       return null;
     }
 

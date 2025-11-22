@@ -26,6 +26,19 @@ api.interceptors.response.use(
         case 401: {
           const url = new URL(error.request.responseURL)?.pathname;
           if (url === "/api/auth/collab-token") return;
+          if (url === "/api/users/me") {
+            // Silent fail for user info check on auth pages
+            const authPaths = [
+              APP_ROUTE.AUTH.LOGIN,
+              APP_ROUTE.AUTH.REGISTER,
+              APP_ROUTE.AUTH.SIGNUP,
+              APP_ROUTE.AUTH.FORGOT_PASSWORD,
+              APP_ROUTE.AUTH.PASSWORD_RESET,
+            ];
+            if (authPaths.some((path) => window.location.pathname.startsWith(path))) {
+              return Promise.reject(error);
+            }
+          }
           if (window.location.pathname.startsWith("/share/")) return;
 
           // Handle unauthorized error
@@ -65,6 +78,7 @@ api.interceptors.response.use(
 function redirectToLogin() {
   const exemptPaths = [
     APP_ROUTE.AUTH.LOGIN,
+    APP_ROUTE.AUTH.REGISTER,
     APP_ROUTE.AUTH.SIGNUP,
     APP_ROUTE.AUTH.FORGOT_PASSWORD,
     APP_ROUTE.AUTH.PASSWORD_RESET,

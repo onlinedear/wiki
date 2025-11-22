@@ -44,6 +44,8 @@ export class SignupService {
           {
             ...createUserDto,
             workspaceId: workspaceId,
+            role: UserRole.MEMBER,
+            locale: 'zh-CN',
           },
           trx,
         );
@@ -86,6 +88,7 @@ export class SignupService {
             password: createAdminUserDto.password,
             role: UserRole.OWNER,
             emailVerifiedAt: new Date(),
+            locale: 'zh-CN',
           },
           trx,
         );

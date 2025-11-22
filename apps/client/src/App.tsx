@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import SetupWorkspace from "@/pages/auth/setup-workspace.tsx";
 import LoginPage from "@/pages/auth/login";
+import RegisterPage from "@/pages/auth/register";
 import Home from "@/pages/dashboard/home";
 import Page from "@/pages/page/page";
 import AccountSettings from "@/pages/settings/account/account-settings";
@@ -39,6 +40,7 @@ import WorkspaceApiKeys from "@/ee/api-key/pages/workspace-api-keys";
 import AccountApiKeys from "@/pages/settings/account/api-keys";
 import { DynamicHead } from "@/components/ui/dynamic-head";
 import CommentManagement from "@/pages/settings/comment/comment-management";
+import ThirdPartyIntegrations from "@/pages/settings/integrations/third-party-integrations";
 
 export default function App() {
   const { t } = useTranslation();
@@ -51,6 +53,7 @@ export default function App() {
       <Routes>
         <Route index element={<Navigate to="/home" />} />
         <Route path={"/login"} element={<LoginPage />} />
+        <Route path={"/register"} element={<RegisterPage />} />
         <Route path={"/invites/:invitationId"} element={<InviteSignup />} />
         <Route path={"/forgot-password"} element={<ForgotPassword />} />
         <Route path={"/password-reset"} element={<PasswordReset />} />
@@ -102,6 +105,7 @@ export default function App() {
               element={<AccountPreferences />}
             />
             <Route path={"account/api-keys"} element={<AccountApiKeys />} />
+            <Route path={"account/integrations"} element={<ThirdPartyIntegrations />} />
             <Route path={"workspace"} element={<WorkspaceSettings />} />
             <Route path={"members"} element={<WorkspaceMembers />} />
             <Route path={"api-keys"} element={<WorkspaceApiKeys />} />

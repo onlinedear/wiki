@@ -68,7 +68,10 @@ export class AuthService {
   }
 
   async register(createUserDto: CreateUserDto, workspaceId: string) {
-    const user = await this.signupService.signup(createUserDto, workspaceId);
+    const user = await this.signupService.signup(
+      createUserDto,
+      workspaceId,
+    );
     return this.tokenService.generateAccessToken(user);
   }
 

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   HttpCode,
@@ -24,6 +25,7 @@ import { VerifyUserTokenDto } from './dto/verify-user-token.dto';
 import { FastifyReply } from 'fastify';
 import { validateSsoEnforcement } from './auth.util';
 import { ModuleRef } from '@nestjs/core';
+import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -34,6 +36,31 @@ export class AuthController {
     private environmentService: EnvironmentService,
     private moduleRef: ModuleRef,
   ) {}
+
+  @HttpCode(HttpStatus.OK)
+  @Post('register')
+  async register(
+    @AuthWorkspace() workspace: Workspace,
+    @Res({ passthrough: true }) res: FastifyReply,
+    @Body() registerDto: RegisterDto,
+  ) {
+    validateSsoEnforcement(workspace);
+
+    if (registerDto.password !== registerDto.confirmPassword) {
+      throw new BadRequestException('Passwords do not match');
+    }
+
+    const authToken = await this.authService.register(
+      {
+        name: registerDto.name,
+        email: registerDto.email,
+        password: registerDto.password,
+      },
+      workspace.id,
+    );
+
+    this.setAuthCookie(res, authToken);
+  }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
