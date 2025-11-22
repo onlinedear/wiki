@@ -65,6 +65,36 @@ docker-compose up -d
 - **Render**：支持 Docker，提供托管数据库 - [部署教程](./docs/Docmost完整部署指南.md)
 - **DigitalOcean**：App Platform 一键部署 - [部署教程](./docs/Docmost完整部署指南.md)
 
+### 宝塔面板部署
+
+如果你使用宝塔面板管理服务器，可以通过 Docker 快速部署 Docmost：
+
+```bash
+# 1. 在宝塔面板安装 Docker 管理器
+# 2. 创建项目目录
+mkdir -p /www/wwwroot/docmost
+cd /www/wwwroot/docmost
+
+# 3. 下载 docker-compose.yml
+curl -O https://raw.githubusercontent.com/onlinedear/wiki/main/docker-compose.yml
+
+# 4. 生成安全密钥并编辑配置
+openssl rand -hex 32  # 用于 APP_SECRET
+openssl rand -base64 24  # 用于数据库密码
+
+# 5. 启动服务
+docker-compose up -d
+
+# 6. 在宝塔面板配置反向代理和 SSL 证书
+```
+
+查看 [宝塔面板部署指南](./docs/宝塔面板部署指南.md) 了解详细的图文教程，包括：
+- Docker 环境安装
+- 反向代理配置
+- SSL 证书申请
+- 防火墙设置
+- 日常维护操作
+
 ### 手动安装
 
 查看我们的[完整部署指南](./docs/Docmost完整部署指南.md)，了解详细说明：
@@ -153,6 +183,7 @@ docmost/
 - [完整部署指南](./docs/Docmost完整部署指南.md) - 详细的部署说明
 - [Vercel 部署指南](./docs/Vercel部署指南.md) - Vercel 平台部署详解
 - [快速部署到 Vercel](./docs/快速部署到Vercel.md) - 3分钟一键部署
+- [宝塔面板部署指南](./docs/宝塔面板部署指南.md) - 宝塔面板 Docker 部署详解
 - [API 密钥使用指南](./docs/API密钥使用完整指南.md) - API 认证和使用
 
 ### 功能文档
