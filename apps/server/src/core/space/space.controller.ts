@@ -102,6 +102,7 @@ export class SpaceController {
   ) {
     const ability = this.workspaceAbility.createForUser(user, workspace);
     if (
+      ability.cannot(WorkspaceCaslAction.Create, WorkspaceCaslSubject.Space) &&
       ability.cannot(WorkspaceCaslAction.Manage, WorkspaceCaslSubject.Space)
     ) {
       throw new ForbiddenException();

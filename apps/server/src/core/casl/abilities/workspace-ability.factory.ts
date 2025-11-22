@@ -71,6 +71,7 @@ function buildWorkspaceMemberAbility() {
   can(WorkspaceCaslAction.Read, WorkspaceCaslSubject.Group);
   can(WorkspaceCaslAction.Manage, WorkspaceCaslSubject.Attachment);
   can(WorkspaceCaslAction.Create, WorkspaceCaslSubject.API);
+  can(WorkspaceCaslAction.Create, WorkspaceCaslSubject.Space);
 
   return build();
 }
