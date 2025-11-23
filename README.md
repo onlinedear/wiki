@@ -54,6 +54,8 @@ docker-compose up -d
 
 ### 一键部署到云平台
 
+> 📖 **查看完整的[一键部署方案对比](./docs/一键部署方案.md)**，选择最适合你的部署方式
+
 **Vercel 部署**
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/onlinedear/wiki&env=APP_URL,APP_SECRET,DATABASE_URL,REDIS_URL,STORAGE_DRIVER&project-name=notedoc&repository-name=notedoc)
@@ -61,9 +63,9 @@ docker-compose up -d
 点击按钮快速部署到 Vercel。查看 [Vercel 部署指南](./docs/Vercel部署指南.md) 了解详细配置。
 
 **其他平台**
-- **Railway**：支持 Docker，自动配置数据库 - [部署教程](./docs/NoteDoc完整部署指南.md)
-- **Render**：支持 Docker，提供托管数据库 - [部署教程](./docs/NoteDoc完整部署指南.md)
-- **DigitalOcean**：App Platform 一键部署 - [部署教程](./docs/NoteDoc完整部署指南.md)
+- **Railway**：完全免费，自动配置数据库 - [一键部署](./docs/一键部署方案.md#方案-3-railway快速测试)
+- **Render**：免费套餐，托管数据库 - [一键部署](./docs/一键部署方案.md#方案-4-render托管服务)
+- **DigitalOcean**：App Platform 一键部署 - [一键部署](./docs/一键部署方案.md#方案-5-digitalocean-app-platform)
 
 ### 宝塔面板部署
 
