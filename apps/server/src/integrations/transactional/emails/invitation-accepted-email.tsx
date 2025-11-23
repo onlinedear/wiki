@@ -15,10 +15,10 @@ export const InvitationAcceptedEmail = ({
   return (
     <MailBody>
       <Section style={content}>
-        <Text style={paragraph}>Hi there,</Text>
+        <Text style={paragraph}>您好，</Text>
         <Text style={paragraph}>
-          {invitedUserName} ({invitedUserEmail}) has accepted your invitation,
-          and is now a member of the workspace.
+          {invitedUserName} ({invitedUserEmail}) 已接受您的邀请，
+          现在已成为工作空间的成员。
         </Text>
       </Section>
     </MailBody>

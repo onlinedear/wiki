@@ -14,6 +14,7 @@ import {
   IconWorld,
   IconMessageCircle,
   IconPlugConnected,
+  IconMail,
 } from "@tabler/icons-react";
 import { Link, useLocation } from "react-router-dom";
 import classes from "./settings.module.css";
@@ -32,6 +33,7 @@ import {
   prefetchSpaces,
   prefetchSsoProviders,
   prefetchWorkspaceMembers,
+  prefetchMailSettings,
 } from "@/components/settings/settings-queries.tsx";
 import AppVersion from "@/components/settings/app-version.tsx";
 import { mobileSidebarAtom } from "@/components/layouts/global/hooks/atoms/sidebar-atom.ts";
@@ -118,6 +120,13 @@ const groupedData: DataGroup[] = [
   {
     heading: "System",
     items: [
+      {
+        label: "Mail service",
+        icon: IconMail,
+        path: "/settings/mail",
+        isAdmin: true,
+        isSelfhosted: true,
+      },
       {
         label: "License & Edition",
         icon: IconKey,
@@ -228,6 +237,9 @@ export default function SettingsSidebar() {
               break;
             case "API management":
               prefetchHandler = prefetchApiKeyManagement;
+              break;
+            case "Mail service":
+              prefetchHandler = prefetchMailSettings;
               break;
             default:
               break;

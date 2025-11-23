@@ -175,4 +175,31 @@ export class WorkspaceRepo {
       .returning(this.baseFields)
       .executeTakeFirst();
   }
+
+  async updateMailSettings(
+    workspaceId: string,
+    mailSettings: Record<string, any>,
+  ) {
+    return this.db
+      .updateTable('workspaces')
+      .set({
+        settings: sql`COALESCE(settings, '{}'::jsonb)
+                || jsonb_build_object('mail', ${sql.lit(JSON.stringify(mailSettings))}::jsonb)`,
+        updatedAt: new Date(),
+      })
+      .where('id', '=', workspaceId)
+      .returning(this.baseFields)
+      .executeTakeFirst();
+  }
+
+  async getMailSettings(workspaceId: string): Promise<Record<string, any>> {
+    const workspace = await this.db
+      .selectFrom('workspaces')
+      .select('settings')
+      .where('id', '=', workspaceId)
+      .executeTakeFirst();
+
+    const settings = workspace?.settings as any;
+    return settings?.mail || {};
+  }
 }

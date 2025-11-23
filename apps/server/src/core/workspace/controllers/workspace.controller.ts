@@ -34,6 +34,8 @@ import { FastifyReply } from 'fastify';
 import { EnvironmentService } from '../../../integrations/environment/environment.service';
 import { CheckHostnameDto } from '../dto/check-hostname.dto';
 import { RemoveWorkspaceUserDto } from '../dto/remove-workspace-user.dto';
+import { UpdateMailSettingsDto } from '../dto/update-mail-settings.dto';
+import { TestMailDto } from '../dto/test-mail.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('workspace')
@@ -312,5 +314,55 @@ export class WorkspaceController {
       );
 
     return { inviteLink };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('mail-settings')
+  async getMailSettings(
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    const ability = this.workspaceAbility.createForUser(user, workspace);
+    if (
+      ability.cannot(WorkspaceCaslAction.Manage, WorkspaceCaslSubject.Settings)
+    ) {
+      throw new ForbiddenException();
+    }
+
+    return this.workspaceService.getMailSettings(workspace.id);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('mail-settings/update')
+  async updateMailSettings(
+    @Body() dto: UpdateMailSettingsDto,
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    const ability = this.workspaceAbility.createForUser(user, workspace);
+    if (
+      ability.cannot(WorkspaceCaslAction.Manage, WorkspaceCaslSubject.Settings)
+    ) {
+      throw new ForbiddenException();
+    }
+
+    return this.workspaceService.updateMailSettings(workspace.id, dto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('mail-settings/test')
+  async testMailSettings(
+    @Body() dto: TestMailDto,
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    const ability = this.workspaceAbility.createForUser(user, workspace);
+    if (
+      ability.cannot(WorkspaceCaslAction.Manage, WorkspaceCaslSubject.Settings)
+    ) {
+      throw new ForbiddenException();
+    }
+
+    return this.workspaceService.testMailSettings(workspace.id, dto);
   }
 }

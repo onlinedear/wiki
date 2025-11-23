@@ -12,9 +12,10 @@ export class EmailProcessor extends WorkerHost implements OnModuleDestroy {
     super();
   }
 
-  async process(job: Job<MailMessage, void>): Promise<void> {
+  async process(job: Job<MailMessage & { workspaceId?: string }, void>): Promise<void> {
     try {
-      await this.mailService.sendEmail(job.data);
+      const { workspaceId, ...message } = job.data;
+      await this.mailService.sendEmail(message, workspaceId);
     } catch (err) {
       throw err;
     }

@@ -7,6 +7,8 @@ import {
 } from '@nestjs/common';
 import { CreateWorkspaceDto } from '../dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from '../dto/update-workspace.dto';
+import { UpdateMailSettingsDto } from '../dto/update-mail-settings.dto';
+import { TestMailDto } from '../dto/test-mail.dto';
 import { SpaceService } from '../../space/services/space.service';
 import { CreateSpaceDto } from '../../space/dto/create-space.dto';
 import { SpaceRole, UserRole } from '../../../common/helpers/types/permission';
@@ -33,6 +35,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { QueueJob, QueueName } from '../../../integrations/queue/constants';
 import { Queue } from 'bullmq';
 import { generateRandomSuffixNumbers } from '../../../common/helpers';
+import { MailService } from '../../../integrations/mail/mail.service';
 
 @Injectable()
 export class WorkspaceService {
@@ -47,6 +50,7 @@ export class WorkspaceService {
     private userRepo: UserRepo,
     private environmentService: EnvironmentService,
     private domainService: DomainService,
+    private mailService: MailService,
     @InjectKysely() private readonly db: KyselyDB,
     @InjectQueue(QueueName.ATTACHMENT_QUEUE) private attachmentQueue: Queue,
     @InjectQueue(QueueName.BILLING_QUEUE) private billingQueue: Queue,
@@ -488,6 +492,66 @@ export class WorkspaceService {
       await this.attachmentQueue.add(QueueJob.DELETE_USER_AVATARS, user);
     } catch (err) {
       // empty
+    }
+  }
+
+  async getMailSettings(workspaceId: string) {
+    return this.workspaceRepo.getMailSettings(workspaceId);
+  }
+
+  async updateMailSettings(
+    workspaceId: string,
+    dto: UpdateMailSettingsDto,
+  ) {
+    const mailSettings: Record<string, any> = {};
+
+    if (dto.smtpHost !== undefined) mailSettings.smtpHost = dto.smtpHost;
+    if (dto.smtpPort !== undefined) mailSettings.smtpPort = dto.smtpPort;
+    if (dto.smtpSecure !== undefined)
+      mailSettings.smtpSecure = dto.smtpSecure;
+    if (dto.smtpUsername !== undefined)
+      mailSettings.smtpUsername = dto.smtpUsername;
+    if (dto.smtpPassword !== undefined)
+      mailSettings.smtpPassword = dto.smtpPassword;
+    if (dto.mailFromAddress !== undefined)
+      mailSettings.mailFromAddress = dto.mailFromAddress;
+    if (dto.mailFromName !== undefined)
+      mailSettings.mailFromName = dto.mailFromName;
+    if (dto.smtpIgnoreTLS !== undefined)
+      mailSettings.smtpIgnoreTLS = dto.smtpIgnoreTLS;
+
+    await this.workspaceRepo.updateMailSettings(workspaceId, mailSettings);
+
+    return this.getMailSettings(workspaceId);
+  }
+
+  async testMailSettings(workspaceId: string, dto: TestMailDto) {
+    const mailSettings = await this.getMailSettings(workspaceId);
+
+    if (!mailSettings.smtpHost || !mailSettings.smtpPort) {
+      throw new BadRequestException('SMTP 配置不完整，请检查主机和端口设置');
+    }
+
+    if (!mailSettings.smtpUsername || !mailSettings.smtpPassword) {
+      throw new BadRequestException('SMTP 认证信息不完整，请填写用户名和密码（或授权码）');
+    }
+
+    try {
+      await this.mailService.sendTestEmail(dto.email, mailSettings);
+      return { success: true, message: '测试邮件发送成功' };
+    } catch (error: any) {
+      this.logger.error('Failed to send test email', error);
+      
+      let errorMessage = error.message;
+      if (error.code === 'EAUTH') {
+        errorMessage = 'SMTP 认证失败，请检查：\n1. 用户名和密码是否正确\n2. 是否需要使用授权码（而非邮箱密码）\n3. SMTP 服务器地址和端口是否正确';
+      } else if (error.code === 'ECONNECTION') {
+        errorMessage = 'SMTP 连接失败，请检查服务器地址和端口是否正确';
+      } else if (error.code === 'ETIMEDOUT') {
+        errorMessage = 'SMTP 连接超时，请检查网络连接和防火墙设置';
+      }
+      
+      throw new BadRequestException(errorMessage);
     }
   }
 }

@@ -159,28 +159,20 @@ export function useDeleteSpaceMutation() {
           exact: true,
         });
 
-        // Invalidate recent changes
-        queryClient.invalidateQueries({
-          queryKey: ["recent-changes"],
-        });
-
-        queryClient.invalidateQueries({
+        // Remove recent changes queries for this space
+        queryClient.removeQueries({
           queryKey: ["recent-changes", variables.id],
+          exact: true,
         });
       }
 
-      // Update spaces list cache
-      /* const spaces = queryClient.getQueryData(["spaces"]) as any;
-      if (spaces) {
-        spaces.items = spaces.items?.filter(
-          (space: ISpace) => space.id !== variables.id,
-        );
-        queryClient.setQueryData(["spaces"], spaces);
-      }*/
-
-      // Invalidate all spaces queries to refresh lists
-      queryClient.invalidateQueries({
-        predicate: (item) => ["spaces"].includes(item.queryKey[0] as string),
+      // Remove all spaces list queries to avoid stale data
+      // Use removeQueries instead of invalidateQueries to prevent refetch during navigation
+      queryClient.removeQueries({
+        predicate: (query) => {
+          const key = query.queryKey[0];
+          return key === "spaces";
+        },
       });
     },
     onError: (error) => {

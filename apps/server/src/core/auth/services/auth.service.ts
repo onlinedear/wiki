@@ -118,9 +118,9 @@ export class AuthService {
     const emailTemplate = ChangePasswordEmail({ username: user.name });
     await this.mailService.sendToQueue({
       to: user.email,
-      subject: 'Your password has been changed',
+      subject: '您的密码已修改',
       template: emailTemplate,
-    });
+    }, workspaceId);
   }
 
   async forgotPassword(
@@ -155,9 +155,9 @@ export class AuthService {
 
     await this.mailService.sendToQueue({
       to: user.email,
-      subject: 'Reset your password',
+      subject: '重置您的密码',
       template: emailTemplate,
-    });
+    }, workspace.id);
   }
 
   async passwordReset(
@@ -207,9 +207,9 @@ export class AuthService {
     const emailTemplate = ChangePasswordEmail({ username: user.name });
     await this.mailService.sendToQueue({
       to: user.email,
-      subject: 'Your password has been changed',
+      subject: '您的密码已修改',
       template: emailTemplate,
-    });
+    }, workspace.id);
 
     // Check if user has MFA enabled or workspace enforces MFA
     const userHasMfa = user?.['mfa']?.isEnabled || false;

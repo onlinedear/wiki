@@ -138,11 +138,11 @@ export function useResendInvitationMutation() {
   >({
     mutationFn: (data) => resendInvitation(data),
     onSuccess: (data, variables) => {
-      notifications.show({ message: "Invitation resent" });
+      notifications.show({ message: "邀请已重新发送" });
     },
     onError: (error) => {
       const errorMessage = error["response"]?.data?.message;
-      notifications.show({ message: errorMessage, color: "red" });
+      notifications.show({ message: errorMessage || "重新发送邀请失败", color: "red" });
     },
   });
 }
@@ -159,14 +159,14 @@ export function useRevokeInvitationMutation() {
   >({
     mutationFn: (data) => revokeInvitation(data),
     onSuccess: (data, variables) => {
-      notifications.show({ message: "Invitation revoked" });
+      notifications.show({ message: "邀请已撤销" });
       queryClient.invalidateQueries({
         queryKey: ["invitations"],
       });
     },
     onError: (error) => {
       const errorMessage = error["response"]?.data?.message;
-      notifications.show({ message: errorMessage, color: "red" });
+      notifications.show({ message: errorMessage || "撤销邀请失败", color: "red" });
     },
   });
 }

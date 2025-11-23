@@ -177,6 +177,7 @@ export class WorkspaceInvitationService {
           invitation.token,
           authUser.name,
           workspace.hostname,
+          workspace.id,
         );
       });
     }
@@ -290,9 +291,9 @@ export class WorkspaceInvitationService {
 
       await this.mailService.sendToQueue({
         to: invitedByUser.email,
-        subject: `${newUser.name} has accepted your NoteDoc invite`,
+        subject: `${newUser.name} 已接受您的 NoteDoc 邀请`,
         template: emailTemplate,
-      });
+      }, workspace.id);
     }
 
     if (this.environmentService.isCloud()) {
@@ -337,6 +338,7 @@ export class WorkspaceInvitationService {
       invitation.token,
       invitedByUser.name,
       workspace.hostname,
+      workspace.id,
     );
   }
 
@@ -378,6 +380,7 @@ export class WorkspaceInvitationService {
     inviteToken: string,
     invitedByName: string,
     hostname?: string,
+    workspaceId?: string,
   ): Promise<void> {
     const inviteLink = await this.buildInviteLink({
       invitationId,
@@ -391,8 +394,8 @@ export class WorkspaceInvitationService {
 
     await this.mailService.sendToQueue({
       to: inviteeEmail,
-      subject: `${invitedByName} invited you to NoteDoc`,
+      subject: `${invitedByName} 邀请您加入 NoteDoc`,
       template: emailTemplate,
-    });
+    }, workspaceId);
   }
 }

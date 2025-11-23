@@ -12,13 +12,13 @@ export const ForgotPasswordEmail = ({ username, resetLink }: Props) => {
   return (
     <MailBody>
       <Section style={content}>
-        <Text style={paragraph}>Hi {username},</Text>
+        <Text style={paragraph}>您好 {username}，</Text>
         <Text style={paragraph}>
-          We received a request from you to reset your password.
+          我们收到了您重置密码的请求。
         </Text>
-          <Link href={resetLink}> Click here to set a new password</Link>
+          <Link href={resetLink}> 点击此处设置新密码</Link>
         <Text style={paragraph}>
-          If you did not request a password reset, please ignore this email.
+          如果您没有请求重置密码，请忽略此邮件。
         </Text>
       </Section>
     </MailBody>

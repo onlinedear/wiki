@@ -3,7 +3,7 @@ import { Workspace } from '@notedoc/db/types/entity.types';
 
 export function validateSsoEnforcement(workspace: Workspace) {
   if (workspace.enforceSso) {
-    throw new BadRequestException('This workspace has enforced SSO login.');
+    throw new BadRequestException('此工作空间已强制使用 SSO 登录。');
   }
 }
 
@@ -15,7 +15,7 @@ export function validateAllowedEmail(userEmail: string, workspace: Workspace) {
     !workspace.emailDomains.includes(emailDomain)
   ) {
     throw new BadRequestException(
-      `The email domain "${emailDomain}" is not approved for this workspace.`,
+      `邮箱域名 "${emailDomain}" 未被此工作空间允许。`,
     );
   }
 }

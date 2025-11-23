@@ -41,6 +41,7 @@ import AccountApiKeys from "@/pages/settings/account/api-keys";
 import { DynamicHead } from "@/components/ui/dynamic-head";
 import CommentManagement from "@/pages/settings/comment/comment-management";
 import ThirdPartyIntegrations from "@/pages/settings/integrations/third-party-integrations";
+import MailSettings from "@/pages/settings/system/mail-settings";
 
 export default function App() {
   const { t } = useTranslation();
@@ -115,6 +116,7 @@ export default function App() {
             <Route path={"sharing"} element={<Shares />} />
             <Route path={"comments"} element={<CommentManagement />} />
             <Route path={"security"} element={<Security />} />
+            <Route path={"mail"} element={<MailSettings />} />
             {!isCloud() && <Route path={"license"} element={<License />} />}
             {isCloud() && <Route path={"billing"} element={<Billing />} />}
           </Route>

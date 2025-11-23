@@ -11,6 +11,7 @@ import { getLicenseInfo } from "@/ee/licence/services/license-service.ts";
 import { getSsoProviders } from "@/ee/security/services/security-service.ts";
 import { getShares } from "@/features/share/services/share-service.ts";
 import { getApiKeys, getUserApiKeys } from "@/ee/api-key";
+import { getMailSettings } from "@/features/workspace/services/mail-settings-service";
 
 export const prefetchWorkspaceMembers = () => {
   const params = { limit: 100, page: 1, query: "" } as QueryParams;
@@ -87,4 +88,11 @@ export const prefetchApiKeyManagement = () => {
       queryFn: () => getApiKeys(workspaceId, { page: 1 }),
     });
   }
+};
+
+export const prefetchMailSettings = () => {
+  queryClient.prefetchQuery({
+    queryKey: ["mail-settings"],
+    queryFn: () => getMailSettings(),
+  });
 };

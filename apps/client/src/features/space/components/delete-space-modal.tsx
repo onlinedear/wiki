@@ -36,8 +36,13 @@ export default function DeleteSpaceModal({ space }: DeleteSpaceModalProps) {
     }
 
     try {
+      // Close modal first to prevent any UI updates during deletion
+      close();
+      
       // pass slug too so we can clear the local cache
       await deleteSpaceMutation.mutateAsync({ id: space.id, slug: space.slug });
+      
+      // Navigate after successful deletion
       navigate(APP_ROUTE.HOME);
     } catch (error) {
       console.error("Failed to delete space", error);

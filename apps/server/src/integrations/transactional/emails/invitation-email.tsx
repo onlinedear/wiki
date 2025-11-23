@@ -11,10 +11,10 @@ export const InvitationEmail = ({ inviteLink }: Props) => {
   return (
     <MailBody>
       <Section style={content}>
-        <Text style={paragraph}>Hi there,</Text>
-        <Text style={paragraph}>You have been invited to NoteDoc.</Text>
+        <Text style={paragraph}>您好，</Text>
+        <Text style={paragraph}>您已被邀请加入 NoteDoc。</Text>
         <Text style={paragraph}>
-          Please click the button below to accept this invitation.
+          请点击下方按钮接受此邀请。
         </Text>
       </Section>
       <Section
@@ -27,7 +27,7 @@ export const InvitationEmail = ({ inviteLink }: Props) => {
         }}
       >
         <Button href={inviteLink} style={button}>
-          Accept Invite
+          接受邀请
         </Button>
       </Section>
     </MailBody>

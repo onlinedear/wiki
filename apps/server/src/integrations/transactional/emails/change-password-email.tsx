@@ -11,9 +11,9 @@ export const ChangePasswordEmail = ({ username }: Props) => {
   return (
     <MailBody>
       <Section style={content}>
-        <Text style={paragraph}>Hi {username},</Text>
+        <Text style={paragraph}>您好 {username}，</Text>
         <Text style={paragraph}>
-          This is a confirmation that your password has been changed.
+          这是一封确认邮件，您的密码已成功修改。
         </Text>
       </Section>
     </MailBody>
