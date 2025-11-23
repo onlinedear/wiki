@@ -1,10 +1,10 @@
-# Docmost Vercel 一键部署指南
+# NoteDoc Vercel 一键部署指南
 
-本指南将帮助你在 Vercel 平台上快速部署 Docmost。
+本指南将帮助你在 Vercel 平台上快速部署 NoteDoc。
 
 ## ⚠️ 重要说明
 
-Docmost 是一个全栈应用，包含前端、后端和实时协作服务器。Vercel 主要适合部署前端应用，**不推荐在 Vercel 上部署完整的 Docmost 应用**，原因如下：
+NoteDoc 是一个全栈应用，包含前端、后端和实时协作服务器。Vercel 主要适合部署前端应用，**不推荐在 Vercel 上部署完整的 NoteDoc 应用**，原因如下：
 
 1. **后端限制**：Vercel 的 Serverless Functions 有执行时间限制（10秒免费版，60秒专业版）
 2. **数据库要求**：需要外部 PostgreSQL 数据库（推荐使用 Vercel Postgres 或 Supabase）
@@ -27,7 +27,7 @@ curl -O https://raw.githubusercontent.com/onlinedear/wiki/main/docker-compose.ym
 docker-compose up -d
 ```
 
-查看 [完整部署指南](./Docmost完整部署指南.md) 了解详情。
+查看 [完整部署指南](./NoteDoc完整部署指南.md) 了解详情。
 
 ### 方案 2：云平台部署
 - **Railway**：支持 Docker，自动配置数据库和 Redis
@@ -90,7 +90,7 @@ docker-compose up -d
 
 ### 步骤 1：Fork 仓库
 
-1. 访问 [Docmost GitHub 仓库](https://github.com/onlinedear/wiki)
+1. 访问 [NoteDoc GitHub 仓库](https://github.com/onlinedear/wiki)
 2. 点击右上角的 "Fork" 按钮
 3. Fork 到你的 GitHub 账号
 
@@ -98,7 +98,7 @@ docker-compose up -d
 
 1. 访问 [Vercel Dashboard](https://vercel.com/dashboard)
 2. 点击 "Add New..." → "Project"
-3. 选择你 Fork 的 Docmost 仓库
+3. 选择你 Fork 的 NoteDoc 仓库
 4. 点击 "Import"
 
 ### 步骤 3：配置构建设置
@@ -153,7 +153,7 @@ AWS_S3_FORCE_PATH_STYLE=true
 # 邮件配置（可选）
 MAIL_DRIVER=smtp
 MAIL_FROM_ADDRESS=hello@example.com
-MAIL_FROM_NAME=Docmost
+MAIL_FROM_NAME=NoteDoc
 SMTP_HOST=smtp.example.com
 SMTP_PORT=587
 SMTP_USERNAME=your-username
@@ -227,7 +227,7 @@ pnpm migration:up
 
 ## ⚡ 一键部署按钮
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/onlinedear/wiki&env=APP_URL,APP_SECRET,DATABASE_URL,REDIS_URL,STORAGE_DRIVER,AWS_S3_ACCESS_KEY_ID,AWS_S3_SECRET_ACCESS_KEY,AWS_S3_REGION,AWS_S3_BUCKET,AWS_S3_ENDPOINT&project-name=docmost&repository-name=docmost)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/onlinedear/wiki&env=APP_URL,APP_SECRET,DATABASE_URL,REDIS_URL,STORAGE_DRIVER,AWS_S3_ACCESS_KEY_ID,AWS_S3_SECRET_ACCESS_KEY,AWS_S3_REGION,AWS_S3_BUCKET,AWS_S3_ENDPOINT&project-name=notedoc&repository-name=notedoc)
 
 点击上面的按钮，按照提示配置环境变量即可快速部署。
 
@@ -327,7 +327,7 @@ pnpm migration:up
 - [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres)
 - [Upstash Redis](https://docs.upstash.com/redis)
 - [Cloudflare R2](https://developers.cloudflare.com/r2/)
-- [Docmost 完整部署指南](./Docmost完整部署指南.md)
+- [NoteDoc 完整部署指南](./NoteDoc完整部署指南.md)
 
 ## 💡 最佳实践
 

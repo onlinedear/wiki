@@ -5,7 +5,7 @@ import { CoreModule } from './core/core.module';
 import { EnvironmentModule } from './integrations/environment/environment.module';
 import { CollaborationModule } from './collaboration/collaboration.module';
 import { WsModule } from './ws/ws.module';
-import { DatabaseModule } from '@docmost/db/database.module';
+import { DatabaseModule } from '@notedoc/db/database.module';
 import { StorageModule } from './integrations/storage/storage.module';
 import { MailModule } from './integrations/mail/mail.module';
 import { QueueModule } from './integrations/queue/queue.module';

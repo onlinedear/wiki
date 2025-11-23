@@ -3,7 +3,7 @@ import { ExportFormat } from './dto/export-dto';
 import { Node } from '@tiptap/pm/model';
 import { validate as isValidUUID } from 'uuid';
 import * as path from 'path';
-import { Page } from '@docmost/db/types/entity.types';
+import { Page } from '@notedoc/db/types/entity.types';
 import { isAttachmentNode } from '../../common/helpers/prosemirror/utils';
 
 export type PageExportTree = Record<string, Page[]>;

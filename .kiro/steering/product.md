@@ -1,6 +1,6 @@
 # Product Overview
 
-Docmost is an open-source collaborative wiki and documentation platform.
+NoteDoc is an open-source collaborative wiki and documentation platform.
 
 ## Core Features
 

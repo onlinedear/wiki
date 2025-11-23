@@ -6,9 +6,9 @@ import {
   InsertableWorkspace,
   UpdatableWorkspace,
   Workspace,
-} from '@docmost/db/types/entity.types';
+} from '@notedoc/db/types/entity.types';
 import { ExpressionBuilder, sql } from 'kysely';
-import { DB, Workspaces } from '@docmost/db/types/db';
+import { DB, Workspaces } from '@notedoc/db/types/db';
 
 @Injectable()
 export class WorkspaceRepo {

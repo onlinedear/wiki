@@ -17,7 +17,7 @@ export const DISALLOWED_HOSTNAMES = [
   'customer',
   'customers',
   'dashboard',
-  'docmost',
+  'notedoc',
   'support',
   'admin',
   'about',

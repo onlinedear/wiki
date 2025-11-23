@@ -56,7 +56,7 @@ npx pnpm client:dev
 
 ### 步骤 2: 访问 SSO 配置页面
 
-1. 登录 Docmost（管理员账户）
+1. 登录 NoteDoc（管理员账户）
 2. 访问：`http://localhost:3001/settings/security`
 3. 找到 "Single sign-on (SSO)" 部分
 4. 点击 "创建 SSO" 按钮

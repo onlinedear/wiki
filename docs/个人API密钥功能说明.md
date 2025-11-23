@@ -2,7 +2,7 @@
 
 ## 功能概述
 
-在 `http://localhost:5173/settings/account/api-keys` 页面实现了个人 API 密钥管理功能，允许用户创建和管理自己的 API 密钥，用于编程访问 Docmost API。
+在 `http://localhost:5173/settings/account/api-keys` 页面实现了个人 API 密钥管理功能，允许用户创建和管理自己的 API 密钥，用于编程访问 NoteDoc API。
 
 ## 功能特点
 

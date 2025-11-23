@@ -660,7 +660,7 @@
   "Basic Info": "基本信息",
   "Name and description": "名称和描述",
   "Name": "名称",
-  "Create a new API key to access the Docmost API programmatically": "创建新的 API 密钥以编程方式访问 Docmost API",
+  "Create a new API key to access the NoteDoc API programmatically": "创建新的 API 密钥以编程方式访问 NoteDoc API",
   "e.g., Production API Key": "例如：生产环境 API 密钥",
   "A descriptive name for this API key": "此 API 密钥的描述性名称",
   "What will this API key be used for?": "此 API 密钥将用于什么用途？",

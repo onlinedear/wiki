@@ -7,9 +7,9 @@ export default function ShareBranding() {
         variant="default"
         component="a"
         target="_blank"
-        href="https://docmost.com?ref=public-share"
+        href="https://notedoc.cn?ref=public-share"
       >
-        Powered by Docmost
+        Powered by NoteDoc
       </Button>
     </Affix>
   );

@@ -67,7 +67,7 @@
   "Basic Info": "基本信息",
   "Name and description": "名称和描述",
   "Name": "名称",
-  "Create a new API key to access the Docmost API programmatically": "创建新的 API 密钥以编程方式访问 Docmost API"
+  "Create a new API key to access the NoteDoc API programmatically": "创建新的 API 密钥以编程方式访问 NoteDoc API"
 }
 ```
 

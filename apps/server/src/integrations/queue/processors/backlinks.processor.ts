@@ -4,9 +4,9 @@ import { Job } from 'bullmq';
 import { QueueJob, QueueName } from '../constants';
 import { IPageBacklinkJob } from '../constants/queue.interface';
 import { InjectKysely } from 'nestjs-kysely';
-import { KyselyDB } from '@docmost/db/types/kysely.types';
-import { BacklinkRepo } from '@docmost/db/repos/backlink/backlink.repo';
-import { executeTx } from '@docmost/db/utils';
+import { KyselyDB } from '@notedoc/db/types/kysely.types';
+import { BacklinkRepo } from '@notedoc/db/repos/backlink/backlink.repo';
+import { executeTx } from '@notedoc/db/utils';
 
 @Processor(QueueName.GENERAL_QUEUE)
 export class BacklinksProcessor extends WorkerHost implements OnModuleDestroy {

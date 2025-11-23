@@ -1,6 +1,6 @@
 # API Key 使用示例
 
-本文档提供了使用 Docmost API Key 的各种示例代码。
+本文档提供了使用 NoteDoc API Key 的各种示例代码。
 
 ## 目录
 - [JavaScript/Node.js](#javascriptnodejs)
@@ -149,7 +149,7 @@ API_KEY = 'dk_your_api_key_here'
 WORKSPACE_ID = 'your-workspace-id'
 BASE_URL = 'http://localhost:3000/api'
 
-class DocmostAPIClient:
+class NoteDocAPIClient:
     def __init__(self, api_key, workspace_id, base_url=BASE_URL):
         self.api_key = api_key
         self.workspace_id = workspace_id
@@ -211,7 +211,7 @@ class DocmostAPIClient:
 
 # 使用示例
 if __name__ == '__main__':
-    client = DocmostAPIClient(API_KEY, WORKSPACE_ID)
+    client = NoteDocAPIClient(API_KEY, WORKSPACE_ID)
     
     # 获取所有 API Keys
     keys = client.get_api_keys()
@@ -236,7 +236,7 @@ if __name__ == '__main__':
 ```python
 import requests
 
-class DocmostSession:
+class NoteDocSession:
     def __init__(self, api_key, workspace_id):
         self.workspace_id = workspace_id
         self.session = requests.Session()
@@ -261,7 +261,7 @@ class DocmostSession:
         return self.session.post(url, json=data).json()
 
 # 使用
-with DocmostSession(API_KEY, WORKSPACE_ID) as client:
+with NoteDocSession(API_KEY, WORKSPACE_ID) as client:
     keys = client.get('api-keys')
     print(keys)
 ```
@@ -385,9 +385,9 @@ const fs = require('fs');
 const axios = require('axios');
 
 const client = axios.create({
-  baseURL: process.env.DOCMOST_API_URL,
+  baseURL: process.env.NOTEDOC_API_URL,
   headers: {
-    'Authorization': `Bearer ${process.env.DOCMOST_API_KEY}`
+    'Authorization': `Bearer ${process.env.NOTEDOC_API_KEY}`
   }
 });
 
@@ -422,7 +422,7 @@ backupAllPages();
 ```python
 # import_content.py
 import json
-from docmost_client import DocmostAPIClient
+from docmost_client import NoteDocAPIClient
 
 def import_pages_from_json(client, json_file):
     with open(json_file, 'r', encoding='utf-8') as f:
@@ -440,8 +440,8 @@ def import_pages_from_json(client, json_file):
             print(f"导入失败 {page['title']}: {e}")
 
 if __name__ == '__main__':
-    client = DocmostAPIClient(
-        api_key=os.getenv('DOCMOST_API_KEY'),
+    client = NoteDocAPIClient(
+        api_key=os.getenv('NOTEDOC_API_KEY'),
         workspace_id=os.getenv('WORKSPACE_ID')
     )
     
@@ -457,9 +457,9 @@ const nodemailer = require('nodemailer');
 
 async function checkApiKeyExpiration() {
   const client = axios.create({
-    baseURL: process.env.DOCMOST_API_URL,
+    baseURL: process.env.NOTEDOC_API_URL,
     headers: {
-      'Authorization': `Bearer ${process.env.DOCMOST_API_KEY}`
+      'Authorization': `Bearer ${process.env.NOTEDOC_API_KEY}`
     }
   });
   
@@ -508,14 +508,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: Deploy to Docmost
+      - name: Deploy to NoteDoc
         env:
-          DOCMOST_API_KEY: ${{ secrets.DOCMOST_API_KEY }}
+          NOTEDOC_API_KEY: ${{ secrets.NOTEDOC_API_KEY }}
           WORKSPACE_ID: ${{ secrets.WORKSPACE_ID }}
         run: |
           curl -X POST \
-            "https://api.docmost.com/workspaces/$WORKSPACE_ID/pages" \
-            -H "Authorization: Bearer $DOCMOST_API_KEY" \
+            "https://api.notedoc.cn/workspaces/$WORKSPACE_ID/pages" \
+            -H "Authorization: Bearer $NOTEDOC_API_KEY" \
             -H "Content-Type: application/json" \
             -d @docs/content.json
 ```

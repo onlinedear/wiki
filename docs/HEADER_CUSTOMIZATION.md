@@ -4,7 +4,7 @@
 
 ### 1. 左上角 - 显示工作空间名称 ✅
 
-**修改前**: 显示固定文本 "Docmost"  
+**修改前**: 显示固定文本 "NoteDoc"  
 **修改后**: 显示工作空间设置中的名称
 
 **位置**: 页面顶部左侧  
@@ -30,7 +30,7 @@ const workspace = currentUser?.workspace;
   component={Link}
   to="/home"
 >
-  {workspace?.name || "Docmost"}
+  {workspace?.name || "NoteDoc"}
 </Text>
 ```
 
@@ -78,10 +78,10 @@ const workspace = currentUser?.workspace;
 ## 效果说明
 
 ### 左上角（工作空间名称）
-- 显示在 Docmost logo 位置
+- 显示在 NoteDoc logo 位置
 - 点击可返回首页
 - 名称来自：设置 → 工作空间 → 常规 → 名称
-- 如果未设置，显示默认值 "Docmost"
+- 如果未设置，显示默认值 "NoteDoc"
 
 ### 右上角（用户信息）
 - 显示当前登录用户的头像

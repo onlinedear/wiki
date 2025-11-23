@@ -9,7 +9,7 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { TokenService } from './token.service';
 import { SignupService } from './signup.service';
 import { CreateAdminUserDto } from '../dto/create-admin-user.dto';
-import { UserRepo } from '@docmost/db/repos/user/user.repo';
+import { UserRepo } from '@notedoc/db/repos/user/user.repo';
 import {
   comparePasswordHash,
   hashPassword,
@@ -17,16 +17,16 @@ import {
 } from '../../../common/helpers';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { MailService } from '../../../integrations/mail/mail.service';
-import ChangePasswordEmail from '@docmost/transactional/emails/change-password-email';
+import ChangePasswordEmail from '@notedoc/transactional/emails/change-password-email';
 import { ForgotPasswordDto } from '../dto/forgot-password.dto';
-import ForgotPasswordEmail from '@docmost/transactional/emails/forgot-password-email';
-import { UserTokenRepo } from '@docmost/db/repos/user-token/user-token.repo';
+import ForgotPasswordEmail from '@notedoc/transactional/emails/forgot-password-email';
+import { UserTokenRepo } from '@notedoc/db/repos/user-token/user-token.repo';
 import { PasswordResetDto } from '../dto/password-reset.dto';
-import { User, UserToken, Workspace } from '@docmost/db/types/entity.types';
+import { User, UserToken, Workspace } from '@notedoc/db/types/entity.types';
 import { UserTokenType } from '../auth.constants';
-import { KyselyDB } from '@docmost/db/types/kysely.types';
+import { KyselyDB } from '@notedoc/db/types/kysely.types';
 import { InjectKysely } from 'nestjs-kysely';
-import { executeTx } from '@docmost/db/utils';
+import { executeTx } from '@notedoc/db/utils';
 import { VerifyUserTokenDto } from '../dto/verify-user-token.dto';
 import { DomainService } from '../../../integrations/environment/domain.service';
 

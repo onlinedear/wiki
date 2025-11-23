@@ -2,9 +2,9 @@ import {
   Backlink,
   InsertableBacklink,
   UpdatableBacklink,
-} from '@docmost/db/types/entity.types';
-import { KyselyDB, KyselyTransaction } from '@docmost/db/types/kysely.types';
-import { dbOrTx } from '@docmost/db/utils';
+} from '@notedoc/db/types/entity.types';
+import { KyselyDB, KyselyTransaction } from '@notedoc/db/types/kysely.types';
+import { dbOrTx } from '@notedoc/db/utils';
 import { Injectable } from '@nestjs/common';
 import { InjectKysely } from 'nestjs-kysely';
 

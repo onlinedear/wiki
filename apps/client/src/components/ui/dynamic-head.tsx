@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import { currentUserAtom } from '@/features/user/atoms/current-user-atom';
 
 // Global variable to store the base app name
-let globalAppName = 'Docmost';
+let globalAppName = 'NoteDoc';
 
 // Function to get the current app name (used by other components)
 export function getCurrentAppName(): string {
@@ -15,7 +15,7 @@ export function DynamicHead() {
   const workspace = currentUser?.workspace;
   const titleObserverRef = useRef<MutationObserver | null>(null);
 
-  const workspaceName = workspace?.name || 'Docmost';
+  const workspaceName = workspace?.name || 'NoteDoc';
   const workspaceLogo = workspace?.logo;
 
   // Update global app name
@@ -27,7 +27,7 @@ export function DynamicHead() {
     // Function to update title
     const updateTitle = () => {
       const currentTitle = document.title;
-      // If title contains " - Docmost" or " - [workspace name]", replace the app name part
+      // If title contains " - NoteDoc" or " - [workspace name]", replace the app name part
       const titleParts = currentTitle.split(' - ');
       if (titleParts.length > 1) {
         // Keep the page-specific part, replace the app name

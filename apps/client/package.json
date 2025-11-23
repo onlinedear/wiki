@@ -12,7 +12,7 @@
   "dependencies": {
     "@casl/ability": "^6.7.2",
     "@casl/react": "^4.0.0",
-    "@docmost/editor-ext": "workspace:*",
+    "@notedoc/editor-ext": "workspace:*",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
     "@excalidraw/excalidraw": "0.18.0-864353b",

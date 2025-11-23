@@ -1,18 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectKysely } from 'nestjs-kysely';
-import { KyselyDB, KyselyTransaction } from '@docmost/db/types/kysely.types';
-import { dbOrTx } from '@docmost/db/utils';
+import { KyselyDB, KyselyTransaction } from '@notedoc/db/types/kysely.types';
+import { dbOrTx } from '@notedoc/db/utils';
 import { sql } from 'kysely';
 import {
   InsertableSpaceMember,
   SpaceMember,
   UpdatableSpaceMember,
-} from '@docmost/db/types/entity.types';
+} from '@notedoc/db/types/entity.types';
 import { PaginationOptions } from '../../pagination/pagination-options';
 import { MemberInfo, UserSpaceRole } from './types';
-import { executeWithPagination } from '@docmost/db/pagination/pagination';
-import { GroupRepo } from '@docmost/db/repos/group/group.repo';
-import { SpaceRepo } from '@docmost/db/repos/space/space.repo';
+import { executeWithPagination } from '@notedoc/db/pagination/pagination';
+import { GroupRepo } from '@notedoc/db/repos/group/group.repo';
+import { SpaceRepo } from '@notedoc/db/repos/space/space.repo';
 
 @Injectable()
 export class SpaceMemberRepo {

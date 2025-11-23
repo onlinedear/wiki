@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as path from 'path';
 import { jsonToText } from '../../../collaboration/collaboration.util';
 import { InjectKysely } from 'nestjs-kysely';
-import { KyselyDB } from '@docmost/db/types/kysely.types';
+import { KyselyDB } from '@notedoc/db/types/kysely.types';
 import {
   extractZip,
   FileImportSource,
@@ -17,8 +17,8 @@ import { promises as fs } from 'fs';
 import { generateSlugId } from '../../../common/helpers';
 import { v7 } from 'uuid';
 import { generateJitteredKeyBetween } from 'fractional-indexing-jittered';
-import { FileTask, InsertablePage } from '@docmost/db/types/entity.types';
-import { markdownToHtml } from '@docmost/editor-ext';
+import { FileTask, InsertablePage } from '@notedoc/db/types/entity.types';
+import { markdownToHtml } from '@notedoc/editor-ext';
 import { getProsemirrorContent } from '../../../common/helpers/prosemirror/utils';
 import { formatImportHtml } from '../utils/import-formatter';
 import {
@@ -26,8 +26,8 @@ import {
   collectMarkdownAndHtmlFiles,
   stripNotionID,
 } from '../utils/import.utils';
-import { executeTx } from '@docmost/db/utils';
-import { BacklinkRepo } from '@docmost/db/repos/backlink/backlink.repo';
+import { executeTx } from '@notedoc/db/utils';
+import { BacklinkRepo } from '@notedoc/db/repos/backlink/backlink.repo';
 import { ImportAttachmentService } from './import-attachment.service';
 import { ModuleRef } from '@nestjs/core';
 import { PageService } from '../../../core/page/services/page.service';
@@ -72,13 +72,13 @@ export class FileImportTaskService {
     }
 
     const { path: tmpZipPath, cleanup: cleanupTmpFile } = await tmp.file({
-      prefix: 'docmost-import',
+      prefix: 'notedoc-import',
       postfix: '.zip',
       discardDescriptor: true,
     });
 
     const { path: tmpExtractDir, cleanup: cleanupTmpDir } = await tmp.dir({
-      prefix: 'docmost-extract-',
+      prefix: 'notedoc-extract-',
       unsafeCleanup: true,
     });
 

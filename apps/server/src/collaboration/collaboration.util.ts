@@ -33,7 +33,7 @@ import {
   Embed,
   Mention,
   Subpages,
-} from '@docmost/editor-ext';
+} from '@notedoc/editor-ext';
 import { generateText, getSchema, JSONContent } from '@tiptap/core';
 import { generateHTML, generateJSON } from '../common/helpers/prosemirror/html';
 // @tiptap/html library works best for generating prosemirror json state but not HTML

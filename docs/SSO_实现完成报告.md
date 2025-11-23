@@ -2,7 +2,7 @@
 
 ## 概述
 
-已成功为 Docmost 实现完整的 SSO (Single Sign-On) 功能，支持 SAML 2.0、OAuth 2.0 (Google) 和 OIDC 协议。
+已成功为 NoteDoc 实现完整的 SSO (Single Sign-On) 功能，支持 SAML 2.0、OAuth 2.0 (Google) 和 OIDC 协议。
 
 ## 实现内容
 
@@ -220,7 +220,7 @@ GET    /api/sso/oidc/:providerId/callback - OIDC 回调
   "name": "Keycloak",
   "type": "oidc",
   "oidcIssuer": "https://keycloak.example.com/realms/master",
-  "oidcClientId": "docmost",
+  "oidcClientId": "notedoc",
   "oidcClientSecret": "your-client-secret",
   "isEnabled": true,
   "allowSignup": true
@@ -250,7 +250,7 @@ GET    /api/sso/oidc/:providerId/callback - OIDC 回调
    ```
 
 2. **配置 SSO 提供商**
-   - 登录 Docmost 管理员账户
+   - 登录 NoteDoc 管理员账户
    - 进入 Settings → Security & SSO
    - 创建并配置 SSO 提供商
 
@@ -324,6 +324,6 @@ apps/client/src/ee/security/
 
 ## 总结
 
-SSO 功能已完全实现并集成到 Docmost 中。所有核心组件（策略、服务、控制器、Repository）都已创建并通过语法检查。前端 UI 已存在，后端 API 已更新为 RESTful 风格。数据库架构已就绪。
+SSO 功能已完全实现并集成到 NoteDoc 中。所有核心组件（策略、服务、控制器、Repository）都已创建并通过语法检查。前端 UI 已存在，后端 API 已更新为 RESTful 风格。数据库架构已就绪。
 
 现在可以运行迁移并开始配置 SSO 提供商进行测试。

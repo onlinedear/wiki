@@ -35,7 +35,7 @@ export const embedProviders: IEmbedProvider[] = [
     regex:
       /^https:\/\/[\w\.-]+\.?figma.com\/(file|proto|board|design|slides|deck)\/([0-9a-zA-Z]{22,128})/,
     getEmbedUrl: (match, url: string) => {
-      return `https://www.figma.com/embed?url=${url}&embed_host=docmost`;
+      return `https://www.figma.com/embed?url=${url}&embed_host=notedoc`;
     },
   },
   {
@@ -54,7 +54,7 @@ export const embedProviders: IEmbedProvider[] = [
       if (url.includes("/live-embed/")) {
         return url;
       }
-      return `https://miro.com/app/live-embed/${match[2]}?embedMode=view_only_without_ui&autoplay=true&embedSource=docmost`;
+      return `https://miro.com/app/live-embed/${match[2]}?embedMode=view_only_without_ui&autoplay=true&embedSource=notedoc`;
     },
   },
   {

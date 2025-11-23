@@ -6,11 +6,11 @@ import {
   Comment,
   InsertableComment,
   UpdatableComment,
-} from '@docmost/db/types/entity.types';
-import { PaginationOptions } from '@docmost/db/pagination/pagination-options';
-import { executeWithPagination } from '@docmost/db/pagination/pagination';
+} from '@notedoc/db/types/entity.types';
+import { PaginationOptions } from '@notedoc/db/pagination/pagination-options';
+import { executeWithPagination } from '@notedoc/db/pagination/pagination';
 import { ExpressionBuilder } from 'kysely';
-import { DB } from '@docmost/db/types/db';
+import { DB } from '@notedoc/db/types/db';
 import { jsonObjectFrom } from 'kysely/helpers/postgres';
 
 @Injectable()

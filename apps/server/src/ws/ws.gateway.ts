@@ -9,7 +9,7 @@ import { Server, Socket } from 'socket.io';
 import { TokenService } from '../core/auth/services/token.service';
 import { JwtPayload, JwtType } from '../core/auth/dto/jwt-payload';
 import { OnModuleDestroy } from '@nestjs/common';
-import { SpaceMemberRepo } from '@docmost/db/repos/space/space-member.repo';
+import { SpaceMemberRepo } from '@notedoc/db/repos/space/space-member.repo';
 import * as cookie from 'cookie';
 
 @WebSocketGateway({

@@ -22,15 +22,15 @@ import { PageIdDto, CommentIdDto } from './dto/comments.input';
 import { AuthUser } from '../../common/decorators/auth-user.decorator';
 import { AuthWorkspace } from '../../common/decorators/auth-workspace.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PaginationOptions } from '@docmost/db/pagination/pagination-options';
-import { User, Workspace } from '@docmost/db/types/entity.types';
+import { PaginationOptions } from '@notedoc/db/pagination/pagination-options';
+import { User, Workspace } from '@notedoc/db/types/entity.types';
 import SpaceAbilityFactory from '../casl/abilities/space-ability.factory';
-import { PageRepo } from '@docmost/db/repos/page/page.repo';
+import { PageRepo } from '@notedoc/db/repos/page/page.repo';
 import {
   SpaceCaslAction,
   SpaceCaslSubject,
 } from '../casl/interfaces/space-ability.type';
-import { CommentRepo } from '@docmost/db/repos/comment/comment.repo';
+import { CommentRepo } from '@notedoc/db/repos/comment/comment.repo';
 
 @UseGuards(JwtAuthGuard)
 @Controller('comments')

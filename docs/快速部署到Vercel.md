@@ -4,7 +4,7 @@
 
 点击下面的按钮，3 分钟内完成部署：
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/onlinedear/wiki&env=APP_URL,APP_SECRET,DATABASE_URL,REDIS_URL,STORAGE_DRIVER&project-name=docmost&repository-name=docmost)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/onlinedear/wiki&env=APP_URL,APP_SECRET,DATABASE_URL,REDIS_URL,STORAGE_DRIVER&project-name=notedoc&repository-name=notedoc)
 
 ## 📋 部署前准备（5分钟）
 
@@ -133,7 +133,7 @@ openssl rand -hex 32
 ## 📚 更多信息
 
 - [完整 Vercel 部署指南](./Vercel部署指南.md)
-- [Docker 部署指南](./Docmost完整部署指南.md)
+- [Docker 部署指南](./NoteDoc完整部署指南.md)
 - [GitHub 讨论区](https://github.com/onlinedear/wiki/discussions)
 
 ---

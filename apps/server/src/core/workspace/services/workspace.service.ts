@@ -11,17 +11,17 @@ import { SpaceService } from '../../space/services/space.service';
 import { CreateSpaceDto } from '../../space/dto/create-space.dto';
 import { SpaceRole, UserRole } from '../../../common/helpers/types/permission';
 import { SpaceMemberService } from '../../space/services/space-member.service';
-import { WorkspaceRepo } from '@docmost/db/repos/workspace/workspace.repo';
-import { KyselyDB, KyselyTransaction } from '@docmost/db/types/kysely.types';
-import { executeTx } from '@docmost/db/utils';
+import { WorkspaceRepo } from '@notedoc/db/repos/workspace/workspace.repo';
+import { KyselyDB, KyselyTransaction } from '@notedoc/db/types/kysely.types';
+import { executeTx } from '@notedoc/db/utils';
 import { InjectKysely } from 'nestjs-kysely';
-import { User } from '@docmost/db/types/entity.types';
-import { GroupUserRepo } from '@docmost/db/repos/group/group-user.repo';
-import { GroupRepo } from '@docmost/db/repos/group/group.repo';
-import { PaginationOptions } from '@docmost/db/pagination/pagination-options';
-import { PaginationResult } from '@docmost/db/pagination/pagination';
+import { User } from '@notedoc/db/types/entity.types';
+import { GroupUserRepo } from '@notedoc/db/repos/group/group-user.repo';
+import { GroupRepo } from '@notedoc/db/repos/group/group.repo';
+import { PaginationOptions } from '@notedoc/db/pagination/pagination-options';
+import { PaginationResult } from '@notedoc/db/pagination/pagination';
 import { UpdateWorkspaceUserRoleDto } from '../dto/update-workspace-user-role.dto';
-import { UserRepo } from '@docmost/db/repos/user/user.repo';
+import { UserRepo } from '@notedoc/db/repos/user/user.repo';
 import { EnvironmentService } from '../../../integrations/environment/environment.service';
 import { DomainService } from '../../../integrations/environment/domain.service';
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
@@ -463,7 +463,7 @@ export class WorkspaceService {
       await this.userRepo.updateUser(
         {
           name: 'Deleted user',
-          email: v4() + '@deleted.docmost.com',
+          email: v4() + '@deleted.notedoc.cn',
           avatarUrl: null,
           settings: null,
           deletedAt: new Date(),

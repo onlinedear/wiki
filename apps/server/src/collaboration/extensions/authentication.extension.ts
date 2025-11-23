@@ -6,10 +6,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { TokenService } from '../../core/auth/services/token.service';
-import { UserRepo } from '@docmost/db/repos/user/user.repo';
-import { PageRepo } from '@docmost/db/repos/page/page.repo';
-import { SpaceMemberRepo } from '@docmost/db/repos/space/space-member.repo';
-import { findHighestUserSpaceRole } from '@docmost/db/repos/space/utils';
+import { UserRepo } from '@notedoc/db/repos/user/user.repo';
+import { PageRepo } from '@notedoc/db/repos/page/page.repo';
+import { SpaceMemberRepo } from '@notedoc/db/repos/space/space-member.repo';
+import { findHighestUserSpaceRole } from '@notedoc/db/repos/space/utils';
 import { SpaceRole } from '../../common/helpers/types/permission';
 import { getPageId } from '../collaboration.util';
 import { JwtCollabPayload, JwtType } from '../../core/auth/dto/jwt-payload';

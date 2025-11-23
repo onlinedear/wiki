@@ -11,9 +11,9 @@
 3. 创建新 Token（需要读取权限）
 4. 复制生成的 Token
 
-#### 第二步：配置 Docmost
+#### 第二步：配置 NoteDoc
 
-1. 登录 Docmost
+1. 登录 NoteDoc
 2. 进入 **账户设置** → **我的资料**
 3. 找到 **Confluence Integration** 部分
 4. 填写：
@@ -31,7 +31,7 @@
 5. 选择是否包含子文档
 6. 点击 **从 Confluence 导入**
 
-✅ 完成！文档将自动导入到 Docmost
+✅ 完成！文档将自动导入到 NoteDoc
 
 ---
 
@@ -44,7 +44,7 @@
 3. 选择导出选项（包含子页面、附件等）
 4. 下载 ZIP 文件
 
-#### 第二步：导入到 Docmost
+#### 第二步：导入到 NoteDoc
 
 1. 打开目标文档库
 2. 点击 **导入文档**
@@ -150,7 +150,7 @@ https://your-domain.atlassian.net/wiki/pages/123456/Page+Title
 
 - [完整功能说明](./Confluence在线导入功能说明.md)
 - [Confluence Personal Access Tokens 官方文档](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html)
-- [Docmost 文档](../README.md)
+- [NoteDoc 文档](../README.md)
 
 ---
 
@@ -164,4 +164,4 @@ https://your-domain.atlassian.net/wiki/pages/123456/Page+Title
 4. 📊 组织文档结构
 5. 🔍 使用全文搜索查找内容
 
-开始使用 Docmost 管理您的文档吧！
+开始使用 NoteDoc 管理您的文档吧！

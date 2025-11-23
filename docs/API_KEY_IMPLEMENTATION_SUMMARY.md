@@ -2,7 +2,7 @@
 
 ## 📋 实现概览
 
-本次实现完成了 Docmost 的 API Key 管理功能，包括完整的前端界面和后端 API。
+本次实现完成了 NoteDoc 的 API Key 管理功能，包括完整的前端界面和后端 API。
 
 ## ✅ 已完成的功能
 
@@ -159,7 +159,7 @@ DELETE /workspaces/:workspaceId/api-keys/:id    - 删除
 ## 📁 文件结构
 
 ```
-docmost/
+notedoc/
 ├── apps/
 │   ├── client/
 │   │   └── src/
@@ -404,7 +404,7 @@ curl -H "X-API-Key: dk_your_token_here" \
 
 ## 📄 许可
 
-遵循 Docmost 项目的许可协议。
+遵循 NoteDoc 项目的许可协议。
 
 ---
 

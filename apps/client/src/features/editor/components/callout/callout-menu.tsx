@@ -18,7 +18,7 @@ import {
   IconInfoCircleFilled,
   IconMoodSmile,
 } from "@tabler/icons-react";
-import { CalloutType } from "@docmost/editor-ext";
+import { CalloutType } from "@notedoc/editor-ext";
 import { useTranslation } from "react-i18next";
 import EmojiPicker from "@/components/ui/emoji-picker.tsx";
 

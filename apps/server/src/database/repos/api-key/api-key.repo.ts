@@ -7,7 +7,7 @@ import {
   ApiKey,
   InsertableApiKey,
   UpdatableApiKey,
-} from '@docmost/db/types/entity.types';
+} from '@notedoc/db/types/entity.types';
 
 @Injectable()
 export class ApiKeyRepo {

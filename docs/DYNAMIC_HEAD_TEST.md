@@ -67,7 +67,7 @@ console.log('Favicons:', Array.from(document.querySelectorAll('link[rel*="icon"]
 
 ### 常见问题
 
-**Q: 标题还是显示 "Docmost"**
+**Q: 标题还是显示 "NoteDoc"**
 - 确保完全清除了浏览器缓存
 - 检查是否重启了开发服务器
 - 使用无痕模式测试

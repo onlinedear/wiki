@@ -2,7 +2,7 @@
 
 ## 功能概述
 
-现在 Docmost 支持两种方式从 Confluence 导入文档：
+现在 NoteDoc 支持两种方式从 Confluence 导入文档：
 
 1. **ZIP 文件导入**：上传 Confluence 导出的 ZIP 文件
 2. **在线导入**（新功能）：通过 Personal Access Token 直接从 Confluence 在线实例导入文档
@@ -15,16 +15,16 @@
 2. 点击右上角的头像 → **Settings**（设置）
 3. 在左侧菜单中选择 **Personal Access Tokens**（个人访问令牌）
 4. 点击 **Create token**（创建令牌）
-5. 输入令牌名称（例如：Docmost Import）
+5. 输入令牌名称（例如：NoteDoc Import）
 6. 设置过期时间（建议选择较长的时间或不过期）
 7. 点击 **Create**（创建）
 8. **重要**：立即复制生成的令牌，您将无法再次查看它
 
 参考文档：https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html
 
-### 2. 在 Docmost 中配置 Confluence
+### 2. 在 NoteDoc 中配置 Confluence
 
-1. 登录 Docmost
+1. 登录 NoteDoc
 2. 进入 **账户设置** → **我的资料**
 3. 滚动到 **Confluence Integration**（Confluence 集成）部分
 4. 填写以下信息：
@@ -37,7 +37,7 @@
 
 ### 在线导入文档
 
-1. 在 Docmost 中打开要导入文档的文档库
+1. 在 NoteDoc 中打开要导入文档的文档库
 2. 点击 **导入文档** 按钮
 3. 选择 **Confluence** → **从在线导入**
 4. 在弹出的对话框中：
@@ -55,7 +55,7 @@
 如果您更喜欢使用传统的 ZIP 导出方式：
 
 1. 在 Confluence 中导出文档为 HTML 格式
-2. 在 Docmost 中点击 **导入文档**
+2. 在 NoteDoc 中点击 **导入文档**
 3. 选择 **Confluence** → **上传 ZIP 导出**
 4. 选择导出的 ZIP 文件
 

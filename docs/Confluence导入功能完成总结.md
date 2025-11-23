@@ -189,7 +189,7 @@ scripts/
 ### 附件处理
 
 - 自动下载 Confluence 附件
-- 上传到 Docmost 存储
+- 上传到 NoteDoc 存储
 - 更新文档中的附件引用
 - 支持图片、文件、Draw.io 图表等
 

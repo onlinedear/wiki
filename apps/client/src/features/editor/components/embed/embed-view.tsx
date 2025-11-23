@@ -22,7 +22,7 @@ import {
   getEmbedProviderById,
   getEmbedUrlAndProvider,
   sanitizeUrl,
-} from "@docmost/editor-ext";
+} from "@notedoc/editor-ext";
 import { ResizableWrapper } from "../common/resizable-wrapper";
 import classes from "./embed-view.module.css";
 

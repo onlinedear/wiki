@@ -1,6 +1,6 @@
 {
-  "name": "@docmost/editor-ext",
-  "homepage": "https://docmost.com",
+  "name": "@notedoc/editor-ext",
+  "homepage": "https://notedoc.cn",
   "private": true,
   "scripts": {
     "build": "tsc --build",

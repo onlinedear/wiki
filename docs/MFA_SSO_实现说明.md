@@ -239,7 +239,7 @@ auth_accounts
 
 1. 在 IdP（如 Okta）中创建 SAML 应用
 2. 配置 ACS URL: `https://your-domain.com/api/sso/saml/{providerId}/callback`
-3. 在 Docmost 中创建 SAML 提供商
+3. 在 NoteDoc 中创建 SAML 提供商
 4. 填写 IdP Login URL 和 Certificate
 5. 启用并测试
 
@@ -247,7 +247,7 @@ auth_accounts
 
 1. 在 OIDC 提供商（如 Auth0）中创建应用
 2. 配置 Redirect URI: `https://your-domain.com/api/sso/oidc/{providerId}/callback`
-3. 在 Docmost 中创建 OIDC 提供商
+3. 在 NoteDoc 中创建 OIDC 提供商
 4. 填写 Issuer URL, Client ID, Client Secret
 5. 启用并测试
 
@@ -256,7 +256,7 @@ auth_accounts
 1. 访问 Google Cloud Console
 2. 创建 OAuth 2.0 客户端 ID
 3. 配置重定向 URI: `https://your-domain.com/api/sso/google/{providerId}/callback`
-4. 在 Docmost 中创建 Google 提供商
+4. 在 NoteDoc 中创建 Google 提供商
 5. 填写 Client ID 和 Client Secret
 6. 启用并测试
 

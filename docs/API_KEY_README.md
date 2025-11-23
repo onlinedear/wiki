@@ -1,10 +1,10 @@
-# Docmost API Key 管理功能
+# NoteDoc API Key 管理功能
 
 > 完整的 API Key 管理系统，支持创建、管理和使用 API 密钥进行程序化访问。
 
 ## 🎯 功能概览
 
-这是一个为 Docmost 开发的完整 API Key 管理功能，包括：
+这是一个为 NoteDoc 开发的完整 API Key 管理功能，包括：
 
 - 🔑 **API Key 生成和管理** - 创建、查看、编辑、删除 API Keys
 - 🛡️ **安全认证** - SHA-256 哈希存储，支持多种认证方式
@@ -327,11 +327,11 @@ npm test api-key.service.spec.ts
 
 ## 📄 许可
 
-遵循 Docmost 项目的许可协议。
+遵循 NoteDoc 项目的许可协议。
 
 ## 🙏 致谢
 
-- Docmost 团队提供的优秀基础架构
+- NoteDoc 团队提供的优秀基础架构
 - Mantine UI 组件库
 - NestJS 框架
 - 所有开源贡献者

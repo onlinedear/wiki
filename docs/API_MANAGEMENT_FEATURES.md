@@ -196,13 +196,13 @@ apps/server/src/
 **1. Authorization Header**
 ```bash
 curl -H "Authorization: Bearer dk_abc123..." \
-  https://api.docmost.com/api/v1/pages
+  https://api.notedoc.com/api/v1/pages
 ```
 
 **2. X-API-Key Header**
 ```bash
 curl -H "X-API-Key: dk_abc123..." \
-  https://api.docmost.com/api/v1/pages
+  https://api.notedoc.com/api/v1/pages
 ```
 
 ### 下一步建议

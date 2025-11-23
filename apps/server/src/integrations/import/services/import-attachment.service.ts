@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as path from 'path';
 import { InjectKysely } from 'nestjs-kysely';
-import { KyselyDB } from '@docmost/db/types/kysely.types';
+import { KyselyDB } from '@notedoc/db/types/kysely.types';
 import { cleanUrlString } from '../utils/file.utils';
 import { StorageService } from '../../storage/storage.service';
 import { createReadStream } from 'node:fs';
@@ -9,7 +9,7 @@ import { promises as fs } from 'fs';
 import { Readable } from 'stream';
 import { getMimeType, sanitizeFileName } from '../../../common/helpers';
 import { v7 } from 'uuid';
-import { FileTask } from '@docmost/db/types/entity.types';
+import { FileTask } from '@notedoc/db/types/entity.types';
 import { getAttachmentFolderPath } from '../../../core/attachment/attachment.utils';
 import { AttachmentType } from '../../../core/attachment/attachment.constants';
 import { unwrapFromParagraph } from '../utils/import-formatter';

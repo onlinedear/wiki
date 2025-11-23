@@ -7,15 +7,15 @@ import {
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { SearchCommentDto } from './dto/search-comment.dto';
-import { CommentRepo } from '@docmost/db/repos/comment/comment.repo';
-import { CommentReactionRepo } from '@docmost/db/repos/comment/comment-reaction.repo';
-import { CommentMentionRepo } from '@docmost/db/repos/comment/comment-mention.repo';
-import { CommentNotificationRepo } from '@docmost/db/repos/comment/comment-notification.repo';
-import { Comment, Page, User } from '@docmost/db/types/entity.types';
-import { PaginationOptions } from '@docmost/db/pagination/pagination-options';
-import { PaginationResult } from '@docmost/db/pagination/pagination';
-import { PageRepo } from '@docmost/db/repos/page/page.repo';
-import { SpaceMemberRepo } from '@docmost/db/repos/space/space-member.repo';
+import { CommentRepo } from '@notedoc/db/repos/comment/comment.repo';
+import { CommentReactionRepo } from '@notedoc/db/repos/comment/comment-reaction.repo';
+import { CommentMentionRepo } from '@notedoc/db/repos/comment/comment-mention.repo';
+import { CommentNotificationRepo } from '@notedoc/db/repos/comment/comment-notification.repo';
+import { Comment, Page, User } from '@notedoc/db/types/entity.types';
+import { PaginationOptions } from '@notedoc/db/pagination/pagination-options';
+import { PaginationResult } from '@notedoc/db/pagination/pagination';
+import { PageRepo } from '@notedoc/db/repos/page/page.repo';
+import { SpaceMemberRepo } from '@notedoc/db/repos/space/space-member.repo';
 
 @Injectable()
 export class CommentService {

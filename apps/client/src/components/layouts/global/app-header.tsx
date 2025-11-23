@@ -83,7 +83,7 @@ export function AppHeader() {
             component={Link}
             to="/home"
           >
-            {workspace?.name || "Docmost"}
+            {workspace?.name || "NoteDoc"}
           </Text>
 
           <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">

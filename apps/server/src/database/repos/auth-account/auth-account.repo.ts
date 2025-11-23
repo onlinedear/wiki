@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKysely } from 'nestjs-kysely';
-import { KyselyDB, KyselyTransaction } from '@docmost/db/types/kysely.types';
-import { dbOrTx } from '@docmost/db/utils';
-import { AuthAccounts } from '@docmost/db/types/db';
+import { KyselyDB, KyselyTransaction } from '@notedoc/db/types/kysely.types';
+import { dbOrTx } from '@notedoc/db/utils';
+import { AuthAccounts } from '@notedoc/db/types/db';
 import { Insertable, Selectable } from 'kysely';
 
 export type AuthAccount = Selectable<AuthAccounts>;

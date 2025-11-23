@@ -1,4 +1,4 @@
-import { UserRepo } from '@docmost/db/repos/user/user.repo';
+import { UserRepo } from '@notedoc/db/repos/user/user.repo';
 import {
   BadRequestException,
   Injectable,
@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { comparePasswordHash } from 'src/common/helpers/utils';
-import { Workspace } from '@docmost/db/types/entity.types';
+import { Workspace } from '@notedoc/db/types/entity.types';
 import { validateSsoEnforcement } from '../auth/auth.util';
 
 @Injectable()

@@ -23,9 +23,9 @@ Confluence 导入功能已经完全实现并可以使用！
 4. 复制 Token
 ```
 
-#### 步骤 2：配置 Docmost
+#### 步骤 2：配置 NoteDoc
 ```
-1. 登录 Docmost → 账户设置 → 我的资料
+1. 登录 NoteDoc → 账户设置 → 我的资料
 2. 找到 "Confluence Integration" 部分
 3. 填写 Confluence URL 和 Token
 4. 测试连接 → 保存配置
@@ -52,7 +52,7 @@ Confluence 导入功能已经完全实现并可以使用！
 3. 下载 ZIP 文件
 ```
 
-#### 步骤 2：导入到 Docmost
+#### 步骤 2：导入到 NoteDoc
 ```
 1. 打开目标文档库 → 点击"导入文档"
 2. 选择 Confluence → 上传 ZIP 导出
@@ -340,7 +340,7 @@ await importConfluenceOnline({
 3. ✅ 文档已完善
 4. ✅ 翻译已完成
 
-**立即开始导入您的 Confluence 文档到 Docmost！**
+**立即开始导入您的 Confluence 文档到 NoteDoc！**
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## 前提条件
 
-- Docmost 已安装并运行
+- NoteDoc 已安装并运行
 - 管理员账户访问权限
 - 外部身份提供商（IdP）账户（Azure AD、Google、Okta 等）
 
@@ -19,7 +19,7 @@ npx pnpm --filter server migration:up
 
 ### 选项 A: SAML 2.0 (推荐用于企业)
 
-1. **登录 Docmost**
+1. **登录 NoteDoc**
    - 使用管理员账户登录
    - 进入 Settings → Security & SSO
 
@@ -27,7 +27,7 @@ npx pnpm --filter server migration:up
    - 点击 "Add Provider" → 选择 "SAML"
    - 填写显示名称（如 "Azure AD"）
 
-3. **获取 Docmost 信息**
+3. **获取 NoteDoc 信息**
    - Entity ID: `https://your-domain.com/api/sso/saml/{providerId}/login`
    - ACS URL (Callback): `https://your-domain.com/api/sso/saml/{providerId}/callback`
 
@@ -41,7 +41,7 @@ npx pnpm --filter server migration:up
      - Reply URL (ACS): 使用上面的 ACS URL
      - 下载证书（Base64）
 
-5. **在 Docmost 中完成配置**
+5. **在 NoteDoc 中完成配置**
    - IDP Login URL: 从 Azure AD 复制 "Login URL"
    - IDP Certificate: 粘贴下载的证书内容
    - 启用 "Allow signup"（如果允许新用户注册）
@@ -59,7 +59,7 @@ npx pnpm --filter server migration:up
      - 授权重定向 URI: `https://your-domain.com/api/sso/google/{providerId}/callback`
    - 保存 Client ID 和 Client Secret
 
-2. **在 Docmost 中配置**
+2. **在 NoteDoc 中配置**
    - Settings → Security & SSO
    - Add Provider → Google
    - 填写：
@@ -77,7 +77,7 @@ npx pnpm --filter server migration:up
    - Client ID
    - Client Secret
 
-2. **在 Docmost 中配置**
+2. **在 NoteDoc 中配置**
    - Settings → Security & SSO
    - Add Provider → OIDC
    - 填写：
@@ -101,7 +101,7 @@ npx pnpm --filter server migration:up
    - 在新的隐私浏览窗口中访问登录 URL
    - 应该重定向到外部 IdP
    - 使用 IdP 凭据登录
-   - 成功后应重定向回 Docmost 并自动登录
+   - 成功后应重定向回 NoteDoc 并自动登录
 
 3. **验证用户创建**
    - 检查 Settings → Users
@@ -172,7 +172,7 @@ npx pnpm --filter server migration:up
 
 - 查看详细文档: `apps/server/src/ee/sso/README.md`
 - 查看实现报告: `docs/SSO_实现完成报告.md`
-- 检查日志: 查看 Docmost 服务器日志获取详细错误信息
+- 检查日志: 查看 NoteDoc 服务器日志获取详细错误信息
 
 ## 下一步
 

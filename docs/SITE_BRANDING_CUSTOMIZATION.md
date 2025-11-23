@@ -33,7 +33,7 @@ export function DynamicHead() {
   const currentUser = useAtomValue(currentUserAtom);
   const workspace = currentUser?.workspace;
 
-  const workspaceName = workspace?.name || 'Docmost';
+  const workspaceName = workspace?.name || 'NoteDoc';
   const workspaceLogo = workspace?.logo;
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export default function App() {
 
 ### 1. 页面标题 (Title)
 - **位置**: 浏览器标签页标题
-- **默认值**: "Docmost"
+- **默认值**: "NoteDoc"
 - **动态值**: 工作空间名称
 - **更新方式**: React Helmet
 
@@ -102,7 +102,7 @@ export default function App() {
 
 ### 3. Apple 移动端标题
 - **位置**: iOS 添加到主屏幕时的名称
-- **默认值**: "Docmost"
+- **默认值**: "NoteDoc"
 - **动态值**: 工作空间名称
 - **更新方式**: React Helmet
 
@@ -111,7 +111,7 @@ export default function App() {
 ## 工作原理
 
 ### 初始加载
-1. 页面加载时显示默认的 "Docmost" 标题和图标
+1. 页面加载时显示默认的 "NoteDoc" 标题和图标
 2. 用户登录后，获取工作空间信息
 3. DynamicHead 组件检测到工作空间信息
 4. 自动更新标题和图标
@@ -129,7 +129,7 @@ export default function App() {
 ### 1. 测试默认状态
 - 清除浏览器缓存
 - 访问登录页面
-- 确认标签页显示 "Docmost"
+- 确认标签页显示 "NoteDoc"
 
 ### 2. 测试登录后
 - 登录账号
@@ -165,7 +165,7 @@ export default function App() {
 5. 添加到 document.head
 
 ### 回退机制
-- 如果工作空间没有设置名称，显示 "Docmost"
+- 如果工作空间没有设置名称，显示 "NoteDoc"
 - 如果工作空间没有设置图标，保留默认 favicon
 
 ---

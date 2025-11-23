@@ -1,6 +1,6 @@
-# Docmost 完整部署指南
+# NoteDoc 完整部署指南
 
-> 本指南将详细介绍如何在各种环境中部署 Docmost，包括 Docker、云服务器、Kubernetes 等多种方式，帮助您快速搭建生产级的文档协作平台。
+> 本指南将详细介绍如何在各种环境中部署 NoteDoc，包括 Docker、云服务器、Kubernetes 等多种方式，帮助您快速搭建生产级的文档协作平台。
 
 ## 📋 目录
 
@@ -71,7 +71,7 @@
 ### 端口要求
 
 确保以下端口可用：
-- `3000` - Docmost 应用端口
+- `3000` - NoteDoc 应用端口
 - `5432` - PostgreSQL 数据库端口（如果外部访问）
 - `6379` - Redis 端口（如果外部访问）
 - `80` - HTTP（用于 Let's Encrypt 验证）
@@ -87,10 +87,10 @@
 
 ```bash
 # 1. 创建项目目录
-mkdir docmost && cd docmost
+mkdir notedoc && cd notedoc
 
 # 2. 下载 docker-compose.yml
-curl -O https://raw.githubusercontent.com/docmost/docmost/main/docker-compose.yml
+curl -O https://raw.githubusercontent.com/notedoc/notedoc/main/docker-compose.yml
 
 # 3. 生成安全密钥
 openssl rand -hex 32
@@ -106,7 +106,7 @@ nano docker-compose.yml
 docker-compose up -d
 
 # 6. 查看日志
-docker-compose logs -f docmost
+docker-compose logs -f notedoc
 
 # 7. 访问应用
 # 打开浏览器访问 http://localhost:3000
@@ -131,9 +131,9 @@ docker-compose logs -f docmost
 version: '3.8'
 
 services:
-  docmost:
-    image: docmost/docmost:latest
-    container_name: docmost
+  notedoc:
+    image: notedoc/notedoc:latest
+    container_name: notedoc
     depends_on:
       - db
       - redis
@@ -143,7 +143,7 @@ services:
       APP_SECRET: '你的32位以上随机字符串'
       
       # 数据库配置
-      DATABASE_URL: 'postgresql://docmost:强密码@db:5432/docmost?schema=public'
+      DATABASE_URL: 'postgresql://notedoc:强密码@db:5432/notedoc?schema=public'
       
       # Redis 配置
       REDIS_URL: 'redis://redis:6379'
@@ -151,7 +151,7 @@ services:
       # 邮件配置（可选）
       MAIL_DRIVER: 'smtp'
       MAIL_FROM_ADDRESS: 'noreply@example.com'
-      MAIL_FROM_NAME: 'Docmost'
+      MAIL_FROM_NAME: 'NoteDoc'
       SMTP_HOST: 'smtp.gmail.com'
       SMTP_PORT: '587'
       SMTP_USERNAME: 'your-email@gmail.com'
@@ -169,9 +169,9 @@ services:
       - "3000:3000"
     restart: unless-stopped
     volumes:
-      - docmost_data:/app/data/storage
+      - notedoc_data:/app/data/storage
     networks:
-      - docmost_network
+      - notedoc_network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 30s
@@ -181,31 +181,31 @@ services:
 
   db:
     image: postgres:16-alpine
-    container_name: docmost_db
+    container_name: notedoc_db
     environment:
-      POSTGRES_DB: docmost
-      POSTGRES_USER: docmost
+      POSTGRES_DB: notedoc
+      POSTGRES_USER: notedoc
       POSTGRES_PASSWORD: 强密码
       POSTGRES_INITDB_ARGS: '-E UTF8 --locale=C'
     restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - docmost_network
+      - notedoc_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U docmost"]
+      test: ["CMD-SHELL", "pg_isready -U notedoc"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7.2-alpine
-    container_name: docmost_redis
+    container_name: notedoc_redis
     restart: unless-stopped
     volumes:
       - redis_data:/data
     networks:
-      - docmost_network
+      - notedoc_network
     command: redis-server --appendonly yes
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -214,7 +214,7 @@ services:
       retries: 5
 
 volumes:
-  docmost_data:
+  notedoc_data:
     driver: local
   postgres_data:
     driver: local
@@ -222,7 +222,7 @@ volumes:
     driver: local
 
 networks:
-  docmost_network:
+  notedoc_network:
     driver: bridge
 ```
 
@@ -251,8 +251,8 @@ docker-compose ps
 # 查看日志
 docker-compose logs -f
 
-# 只查看 docmost 日志
-docker-compose logs -f docmost
+# 只查看 notedoc 日志
+docker-compose logs -f notedoc
 ```
 
 #### 步骤 4: 验证部署
@@ -263,9 +263,9 @@ docker-compose ps
 
 # 应该看到类似输出：
 # NAME              STATUS                    PORTS
-# docmost           Up (healthy)              0.0.0.0:3000->3000/tcp
-# docmost_db        Up (healthy)              5432/tcp
-# docmost_redis     Up (healthy)              6379/tcp
+# notedoc           Up (healthy)              0.0.0.0:3000->3000/tcp
+# notedoc_db        Up (healthy)              5432/tcp
+# notedoc_redis     Up (healthy)              6379/tcp
 
 # 测试应用响应
 curl http://localhost:3000/health
@@ -296,7 +296,7 @@ docker-compose down -v
 docker-compose logs -f [service_name]
 
 # 进入容器
-docker-compose exec docmost sh
+docker-compose exec notedoc sh
 
 # 查看资源使用
 docker stats
@@ -306,7 +306,7 @@ docker-compose pull
 docker-compose up -d
 
 # 备份数据卷
-docker run --rm -v docmost_postgres_data:/data -v $(pwd):/backup alpine tar czf /backup/postgres-backup.tar.gz /data
+docker run --rm -v notedoc_postgres_data:/data -v $(pwd):/backup alpine tar czf /backup/postgres-backup.tar.gz /data
 ```
 
 ### 使用环境变量文件
@@ -317,7 +317,7 @@ docker run --rm -v docmost_postgres_data:/data -v $(pwd):/backup alpine tar czf 
 # .env
 APP_URL=https://docs.example.com
 APP_SECRET=你的32位以上随机字符串
-DATABASE_URL=postgresql://docmost:强密码@db:5432/docmost?schema=public
+DATABASE_URL=postgresql://notedoc:强密码@db:5432/notedoc?schema=public
 REDIS_URL=redis://redis:6379
 
 # 邮件配置
@@ -333,8 +333,8 @@ SMTP_PASSWORD=your-app-password
 
 ```yaml
 services:
-  docmost:
-    image: docmost/docmost:latest
+  notedoc:
+    image: notedoc/notedoc:latest
     env_file:
       - .env
     # ... 其他配置
@@ -412,9 +412,9 @@ sudo systemctl start redis
 sudo -u postgres psql
 
 # 在 PostgreSQL 中执行：
-CREATE DATABASE docmost;
-CREATE USER docmost WITH ENCRYPTED PASSWORD '强密码';
-GRANT ALL PRIVILEGES ON DATABASE docmost TO docmost;
+CREATE DATABASE notedoc;
+CREATE USER notedoc WITH ENCRYPTED PASSWORD '强密码';
+GRANT ALL PRIVILEGES ON DATABASE notedoc TO notedoc;
 
 # 退出
 \q
@@ -427,8 +427,8 @@ GRANT ALL PRIVILEGES ON DATABASE docmost TO docmost;
 sudo nano /etc/postgresql/16/main/pg_hba.conf
 
 # 添加或修改以下行：
-# local   all             docmost                                 md5
-# host    all             docmost         127.0.0.1/32            md5
+# local   all             notedoc                                 md5
+# host    all             notedoc         127.0.0.1/32            md5
 
 # 重启 PostgreSQL
 sudo systemctl restart postgresql
@@ -438,17 +438,17 @@ sudo systemctl restart postgresql
 
 ```bash
 # 创建应用目录
-sudo mkdir -p /opt/docmost
-sudo chown $USER:$USER /opt/docmost
-cd /opt/docmost
+sudo mkdir -p /opt/notedoc
+sudo chown $USER:$USER /opt/notedoc
+cd /opt/notedoc
 
 # 克隆仓库
-git clone https://github.com/docmost/docmost.git .
+git clone https://github.com/notedoc/notedoc.git .
 
 # 或下载特定版本
-# wget https://github.com/docmost/docmost/archive/refs/tags/v0.23.2.tar.gz
+# wget https://github.com/notedoc/notedoc/archive/refs/tags/v0.23.2.tar.gz
 # tar -xzf v0.23.2.tar.gz
-# cd docmost-0.23.2
+# cd notedoc-0.23.2
 
 # 安装依赖
 pnpm install --frozen-lockfile
@@ -475,7 +475,7 @@ APP_SECRET=你的32位以上随机字符串
 JWT_TOKEN_EXPIRES_IN=30d
 
 # 数据库配置
-DATABASE_URL="postgresql://docmost:强密码@localhost:5432/docmost?schema=public"
+DATABASE_URL="postgresql://notedoc:强密码@localhost:5432/notedoc?schema=public"
 
 # Redis 配置
 REDIS_URL=redis://127.0.0.1:6379
@@ -487,7 +487,7 @@ FILE_UPLOAD_SIZE_LIMIT=50mb
 # 邮件配置
 MAIL_DRIVER=smtp
 MAIL_FROM_ADDRESS=noreply@example.com
-MAIL_FROM_NAME=Docmost
+MAIL_FROM_NAME=NoteDoc
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=your-email@gmail.com
@@ -526,10 +526,10 @@ cat > ecosystem.config.js << 'EOF'
 module.exports = {
   apps: [
     {
-      name: 'docmost',
+      name: 'notedoc',
       script: 'pnpm',
       args: 'start',
-      cwd: '/opt/docmost',
+      cwd: '/opt/notedoc',
       instances: 1,
       autorestart: true,
       watch: false,
@@ -537,8 +537,8 @@ module.exports = {
       env: {
         NODE_ENV: 'production'
       },
-      error_file: '/var/log/docmost/error.log',
-      out_file: '/var/log/docmost/out.log',
+      error_file: '/var/log/notedoc/error.log',
+      out_file: '/var/log/notedoc/out.log',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z'
     }
   ]
@@ -546,8 +546,8 @@ module.exports = {
 EOF
 
 # 创建日志目录
-sudo mkdir -p /var/log/docmost
-sudo chown $USER:$USER /var/log/docmost
+sudo mkdir -p /var/log/notedoc
+sudo chown $USER:$USER /var/log/notedoc
 
 # 启动应用
 pm2 start ecosystem.config.js
@@ -558,7 +558,7 @@ pm2 save
 
 # 查看状态
 pm2 status
-pm2 logs docmost
+pm2 logs notedoc
 ```
 
 
@@ -568,37 +568,37 @@ pm2 logs docmost
 
 ```bash
 # 创建服务文件
-sudo nano /etc/systemd/system/docmost.service
+sudo nano /etc/systemd/system/notedoc.service
 ```
 
 添加以下内容：
 
 ```ini
 [Unit]
-Description=Docmost Documentation Platform
+Description=NoteDoc Documentation Platform
 After=network.target postgresql.service redis.service
 Wants=postgresql.service redis.service
 
 [Service]
 Type=simple
-User=docmost
-Group=docmost
-WorkingDirectory=/opt/docmost
+User=notedoc
+Group=notedoc
+WorkingDirectory=/opt/notedoc
 Environment="NODE_ENV=production"
-EnvironmentFile=/opt/docmost/.env
+EnvironmentFile=/opt/notedoc/.env
 ExecStart=/usr/bin/pnpm start
 Restart=always
 RestartSec=10
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=docmost
+SyslogIdentifier=notedoc
 
 # 安全设置
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/opt/docmost/data
+ReadWritePaths=/opt/notedoc/data
 
 [Install]
 WantedBy=multi-user.target
@@ -607,24 +607,24 @@ WantedBy=multi-user.target
 启动服务：
 
 ```bash
-# 创建 docmost 用户
-sudo useradd -r -s /bin/false docmost
-sudo chown -R docmost:docmost /opt/docmost
+# 创建 notedoc 用户
+sudo useradd -r -s /bin/false notedoc
+sudo chown -R notedoc:notedoc /opt/notedoc
 
 # 重载 systemd
 sudo systemctl daemon-reload
 
 # 启动服务
-sudo systemctl start docmost
+sudo systemctl start notedoc
 
 # 设置开机自启
-sudo systemctl enable docmost
+sudo systemctl enable notedoc
 
 # 查看状态
-sudo systemctl status docmost
+sudo systemctl status notedoc
 
 # 查看日志
-sudo journalctl -u docmost -f
+sudo journalctl -u notedoc -f
 ```
 
 ---
@@ -640,11 +640,11 @@ sudo journalctl -u docmost -f
 ```bash
 # 使用 AWS CLI 创建
 aws rds create-db-instance \
-  --db-instance-identifier docmost-db \
+  --db-instance-identifier notedoc-db \
   --db-instance-class db.t3.medium \
   --engine postgres \
   --engine-version 16.1 \
-  --master-username docmost \
+  --master-username notedoc \
   --master-user-password 强密码 \
   --allocated-storage 20 \
   --storage-type gp3 \
@@ -659,7 +659,7 @@ aws rds create-db-instance \
 
 ```bash
 aws elasticache create-cache-cluster \
-  --cache-cluster-id docmost-redis \
+  --cache-cluster-id notedoc-redis \
   --cache-node-type cache.t3.micro \
   --engine redis \
   --engine-version 7.0 \
@@ -679,7 +679,7 @@ aws ec2 run-instances \
   --security-group-ids sg-xxxxx \
   --subnet-id subnet-xxxxx \
   --user-data file://user-data.sh \
-  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=Docmost}]'
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=NoteDoc}]'
 ```
 
 **user-data.sh** 内容：
@@ -701,15 +701,15 @@ curl -L "https://github.com/docker/compose/releases/latest/download/docker-compo
 chmod +x /usr/local/bin/docker-compose
 
 # 创建应用目录
-mkdir -p /opt/docmost
-cd /opt/docmost
+mkdir -p /opt/notedoc
+cd /opt/notedoc
 
 # 创建 docker-compose.yml
 cat > docker-compose.yml << 'EOF'
 version: '3.8'
 services:
-  docmost:
-    image: docmost/docmost:latest
+  notedoc:
+    image: notedoc/notedoc:latest
     environment:
       APP_URL: 'https://docs.example.com'
       APP_SECRET: '${APP_SECRET}'
@@ -717,7 +717,7 @@ services:
       REDIS_URL: '${REDIS_URL}'
       STORAGE_DRIVER: 's3'
       AWS_S3_REGION: 'us-east-1'
-      AWS_S3_BUCKET: 'docmost-storage'
+      AWS_S3_BUCKET: 'notedoc-storage'
     ports:
       - "3000:3000"
     restart: unless-stopped
@@ -726,7 +726,7 @@ EOF
 # 创建 .env 文件
 cat > .env << 'EOF'
 APP_SECRET=你的密钥
-DATABASE_URL=postgresql://docmost:密码@rds-endpoint:5432/docmost
+DATABASE_URL=postgresql://notedoc:密码@rds-endpoint:5432/notedoc
 REDIS_URL=redis://elasticache-endpoint:6379
 EOF
 
@@ -734,7 +734,7 @@ EOF
 docker-compose up -d
 
 # 配置日志轮转
-cat > /etc/logrotate.d/docmost << 'EOF'
+cat > /etc/logrotate.d/notedoc << 'EOF'
 /var/lib/docker/containers/*/*.log {
   rotate 7
   daily
@@ -750,7 +750,7 @@ EOF
 
 ```bash
 # 创建 S3 存储桶
-aws s3 mb s3://docmost-storage --region us-east-1
+aws s3 mb s3://notedoc-storage --region us-east-1
 
 # 配置 CORS
 cat > cors.json << 'EOF'
@@ -767,7 +767,7 @@ cat > cors.json << 'EOF'
 EOF
 
 aws s3api put-bucket-cors \
-  --bucket docmost-storage \
+  --bucket notedoc-storage \
   --cors-configuration file://cors.json
 
 # 创建 IAM 策略
@@ -784,8 +784,8 @@ cat > s3-policy.json << 'EOF'
         "s3:ListBucket"
       ],
       "Resource": [
-        "arn:aws:s3:::docmost-storage",
-        "arn:aws:s3:::docmost-storage/*"
+        "arn:aws:s3:::notedoc-storage",
+        "arn:aws:s3:::notedoc-storage/*"
       ]
     }
   ]
@@ -793,7 +793,7 @@ cat > s3-policy.json << 'EOF'
 EOF
 
 aws iam create-policy \
-  --policy-name DocmostS3Access \
+  --policy-name NoteDocS3Access \
   --policy-document file://s3-policy.json
 ```
 
@@ -804,25 +804,25 @@ aws iam create-policy \
 **步骤 1: 创建 Cloud SQL 实例**
 
 ```bash
-gcloud sql instances create docmost-db \
+gcloud sql instances create notedoc-db \
   --database-version=POSTGRES_16 \
   --tier=db-f1-micro \
   --region=us-central1 \
   --root-password=强密码
 
 # 创建数据库
-gcloud sql databases create docmost --instance=docmost-db
+gcloud sql databases create notedoc --instance=notedoc-db
 
 # 创建用户
-gcloud sql users create docmost \
-  --instance=docmost-db \
+gcloud sql users create notedoc \
+  --instance=notedoc-db \
   --password=强密码
 ```
 
 **步骤 2: 创建 Memorystore Redis**
 
 ```bash
-gcloud redis instances create docmost-redis \
+gcloud redis instances create notedoc-redis \
   --size=1 \
   --region=us-central1 \
   --redis-version=redis_7_0
@@ -836,25 +836,25 @@ gcloud services enable cloudbuild.googleapis.com
 gcloud services enable run.googleapis.com
 
 # 构建镜像
-gcloud builds submit --tag gcr.io/PROJECT_ID/docmost
+gcloud builds submit --tag gcr.io/PROJECT_ID/notedoc
 
 # 或使用 Artifact Registry
-gcloud builds submit --tag us-central1-docker.pkg.dev/PROJECT_ID/docmost/app
+gcloud builds submit --tag us-central1-docker.pkg.dev/PROJECT_ID/notedoc/app
 ```
 
 **步骤 4: 部署到 Cloud Run**
 
 ```bash
-gcloud run deploy docmost \
-  --image gcr.io/PROJECT_ID/docmost \
+gcloud run deploy notedoc \
+  --image gcr.io/PROJECT_ID/notedoc \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated \
   --set-env-vars "APP_URL=https://docs.example.com" \
   --set-env-vars "APP_SECRET=你的密钥" \
-  --set-env-vars "DATABASE_URL=postgresql://docmost:密码@/docmost?host=/cloudsql/PROJECT_ID:us-central1:docmost-db" \
+  --set-env-vars "DATABASE_URL=postgresql://notedoc:密码@/notedoc?host=/cloudsql/PROJECT_ID:us-central1:notedoc-db" \
   --set-env-vars "REDIS_URL=redis://REDIS_IP:6379" \
-  --add-cloudsql-instances PROJECT_ID:us-central1:docmost-db \
+  --add-cloudsql-instances PROJECT_ID:us-central1:notedoc-db \
   --memory 2Gi \
   --cpu 2 \
   --min-instances 1 \
@@ -870,7 +870,7 @@ gcloud run deploy docmost \
 
 ```bash
 az group create \
-  --name docmost-rg \
+  --name notedoc-rg \
   --location eastus
 ```
 
@@ -878,10 +878,10 @@ az group create \
 
 ```bash
 az postgres flexible-server create \
-  --resource-group docmost-rg \
-  --name docmost-db \
+  --resource-group notedoc-rg \
+  --name notedoc-db \
   --location eastus \
-  --admin-user docmost \
+  --admin-user notedoc \
   --admin-password 强密码 \
   --sku-name Standard_B1ms \
   --tier Burstable \
@@ -890,17 +890,17 @@ az postgres flexible-server create \
 
 # 创建数据库
 az postgres flexible-server db create \
-  --resource-group docmost-rg \
-  --server-name docmost-db \
-  --database-name docmost
+  --resource-group notedoc-rg \
+  --server-name notedoc-db \
+  --database-name notedoc
 ```
 
 **步骤 3: 创建 Redis Cache**
 
 ```bash
 az redis create \
-  --resource-group docmost-rg \
-  --name docmost-redis \
+  --resource-group notedoc-rg \
+  --name notedoc-redis \
   --location eastus \
   --sku Basic \
   --vm-size c0
@@ -911,27 +911,27 @@ az redis create \
 ```bash
 # 创建 App Service Plan
 az appservice plan create \
-  --name docmost-plan \
-  --resource-group docmost-rg \
+  --name notedoc-plan \
+  --resource-group notedoc-rg \
   --is-linux \
   --sku B2
 
 # 创建 Web App
 az webapp create \
-  --resource-group docmost-rg \
-  --plan docmost-plan \
-  --name docmost-app \
-  --deployment-container-image-name docmost/docmost:latest
+  --resource-group notedoc-rg \
+  --plan notedoc-plan \
+  --name notedoc-app \
+  --deployment-container-image-name notedoc/notedoc:latest
 
 # 配置环境变量
 az webapp config appsettings set \
-  --resource-group docmost-rg \
-  --name docmost-app \
+  --resource-group notedoc-rg \
+  --name notedoc-app \
   --settings \
-    APP_URL="https://docmost-app.azurewebsites.net" \
+    APP_URL="https://notedoc-app.azurewebsites.net" \
     APP_SECRET="你的密钥" \
-    DATABASE_URL="postgresql://docmost:密码@docmost-db.postgres.database.azure.com:5432/docmost" \
-    REDIS_URL="redis://docmost-redis.redis.cache.windows.net:6379"
+    DATABASE_URL="postgresql://notedoc:密码@notedoc-db.postgres.database.azure.com:5432/notedoc" \
+    REDIS_URL="redis://notedoc-redis.redis.cache.windows.net:6379"
 ```
 
 ---
@@ -943,21 +943,21 @@ az webapp config appsettings set \
 **步骤 1: 创建命名空间**
 
 ```bash
-kubectl create namespace docmost
+kubectl create namespace notedoc
 ```
 
 **步骤 2: 创建 Secrets**
 
 ```bash
 # 创建数据库密码
-kubectl create secret generic docmost-db-secret \
+kubectl create secret generic notedoc-db-secret \
   --from-literal=password=强密码 \
-  -n docmost
+  -n notedoc
 
 # 创建应用密钥
-kubectl create secret generic docmost-app-secret \
+kubectl create secret generic notedoc-app-secret \
   --from-literal=app-secret=$(openssl rand -hex 32) \
-  -n docmost
+  -n notedoc
 ```
 
 **步骤 3: 创建 ConfigMap**
@@ -967,12 +967,12 @@ kubectl create secret generic docmost-app-secret \
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: docmost-config
-  namespace: docmost
+  name: notedoc-config
+  namespace: notedoc
 data:
   APP_URL: "https://docs.example.com"
-  DATABASE_URL: "postgresql://docmost:PASSWORD@docmost-postgresql:5432/docmost"
-  REDIS_URL: "redis://docmost-redis:6379"
+  DATABASE_URL: "postgresql://notedoc:PASSWORD@notedoc-postgresql:5432/notedoc"
+  REDIS_URL: "redis://notedoc-redis:6379"
   STORAGE_DRIVER: "local"
   MAIL_DRIVER: "smtp"
   MAIL_FROM_ADDRESS: "noreply@example.com"
@@ -990,7 +990,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
-  namespace: docmost
+  namespace: notedoc
 spec:
   accessModes:
     - ReadWriteOnce
@@ -1001,8 +1001,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: docmost-postgresql
-  namespace: docmost
+  name: notedoc-postgresql
+  namespace: notedoc
 spec:
   replicas: 1
   selector:
@@ -1020,13 +1020,13 @@ spec:
         - containerPort: 5432
         env:
         - name: POSTGRES_DB
-          value: docmost
+          value: notedoc
         - name: POSTGRES_USER
-          value: docmost
+          value: notedoc
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: docmost-db-secret
+              name: notedoc-db-secret
               key: password
         volumeMounts:
         - name: postgres-storage
@@ -1046,8 +1046,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: docmost-postgresql
-  namespace: docmost
+  name: notedoc-postgresql
+  namespace: notedoc
 spec:
   selector:
     app: postgresql
@@ -1067,8 +1067,8 @@ kubectl apply -f postgresql.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: docmost-redis
-  namespace: docmost
+  name: notedoc-redis
+  namespace: notedoc
 spec:
   replicas: 1
   selector:
@@ -1095,8 +1095,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: docmost-redis
-  namespace: docmost
+  name: notedoc-redis
+  namespace: notedoc
 spec:
   selector:
     app: redis
@@ -1109,15 +1109,15 @@ spec:
 kubectl apply -f redis.yaml
 ```
 
-**步骤 6: 部署 Docmost**
+**步骤 6: 部署 NoteDoc**
 
 ```yaml
-# docmost.yaml
+# notedoc.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: docmost-storage-pvc
-  namespace: docmost
+  name: notedoc-storage-pvc
+  namespace: notedoc
 spec:
   accessModes:
     - ReadWriteOnce
@@ -1128,38 +1128,38 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: docmost
-  namespace: docmost
+  name: notedoc
+  namespace: notedoc
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: docmost
+      app: notedoc
   template:
     metadata:
       labels:
-        app: docmost
+        app: notedoc
     spec:
       containers:
-      - name: docmost
-        image: docmost/docmost:latest
+      - name: notedoc
+        image: notedoc/notedoc:latest
         ports:
         - containerPort: 3000
         envFrom:
         - configMapRef:
-            name: docmost-config
+            name: notedoc-config
         env:
         - name: APP_SECRET
           valueFrom:
             secretKeyRef:
-              name: docmost-app-secret
+              name: notedoc-app-secret
               key: app-secret
         - name: DATABASE_URL
-          value: "postgresql://docmost:$(DB_PASSWORD)@docmost-postgresql:5432/docmost"
+          value: "postgresql://notedoc:$(DB_PASSWORD)@notedoc-postgresql:5432/notedoc"
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: docmost-db-secret
+              name: notedoc-db-secret
               key: password
         volumeMounts:
         - name: storage
@@ -1186,16 +1186,16 @@ spec:
       volumes:
       - name: storage
         persistentVolumeClaim:
-          claimName: docmost-storage-pvc
+          claimName: notedoc-storage-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: docmost
-  namespace: docmost
+  name: notedoc
+  namespace: notedoc
 spec:
   selector:
-    app: docmost
+    app: notedoc
   ports:
   - port: 80
     targetPort: 3000
@@ -1203,7 +1203,7 @@ spec:
 ```
 
 ```bash
-kubectl apply -f docmost.yaml
+kubectl apply -f notedoc.yaml
 ```
 
 **步骤 7: 配置 Ingress**
@@ -1213,8 +1213,8 @@ kubectl apply -f docmost.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: docmost-ingress
-  namespace: docmost
+  name: notedoc-ingress
+  namespace: notedoc
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
@@ -1223,7 +1223,7 @@ spec:
   tls:
   - hosts:
     - docs.example.com
-    secretName: docmost-tls
+    secretName: notedoc-tls
   rules:
   - host: docs.example.com
     http:
@@ -1232,7 +1232,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: docmost
+            name: notedoc
             port:
               number: 80
 ```
@@ -1245,19 +1245,19 @@ kubectl apply -f ingress.yaml
 
 ```bash
 # 查看所有资源
-kubectl get all -n docmost
+kubectl get all -n notedoc
 
 # 查看 Pod 状态
-kubectl get pods -n docmost
+kubectl get pods -n notedoc
 
 # 查看日志
-kubectl logs -f deployment/docmost -n docmost
+kubectl logs -f deployment/notedoc -n notedoc
 
 # 查看服务
-kubectl get svc -n docmost
+kubectl get svc -n notedoc
 
 # 获取外部 IP
-kubectl get ingress -n docmost
+kubectl get ingress -n notedoc
 ```
 
 
@@ -1270,7 +1270,7 @@ kubectl get ingress -n docmost
 #### 基础配置
 
 ```nginx
-# /etc/nginx/sites-available/docmost
+# /etc/nginx/sites-available/notedoc
 server {
     listen 80;
     server_name docs.example.com;
@@ -1352,7 +1352,7 @@ server {
 sudo nginx -t
 
 # 创建软链接
-sudo ln -s /etc/nginx/sites-available/docmost /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/notedoc /etc/nginx/sites-enabled/
 
 # 重载 Nginx
 sudo systemctl reload nginx
@@ -1361,8 +1361,8 @@ sudo systemctl reload nginx
 #### 负载均衡配置
 
 ```nginx
-# /etc/nginx/conf.d/docmost-upstream.conf
-upstream docmost_backend {
+# /etc/nginx/conf.d/notedoc-upstream.conf
+upstream notedoc_backend {
     least_conn;
     
     server 127.0.0.1:3000 max_fails=3 fail_timeout=30s;
@@ -1379,7 +1379,7 @@ server {
     # ... SSL 配置 ...
     
     location / {
-        proxy_pass http://docmost_backend;
+        proxy_pass http://notedoc_backend;
         proxy_http_version 1.1;
         proxy_set_header Connection "";
         
@@ -1416,7 +1416,7 @@ docs.example.com {
     
     # 日志
     log {
-        output file /var/log/caddy/docmost.log
+        output file /var/log/caddy/notedoc.log
         format json
     }
 }
@@ -1463,16 +1463,16 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"
     networks:
-      - docmost_network
+      - notedoc_network
 
-  docmost:
-    image: docmost/docmost:latest
+  notedoc:
+    image: notedoc/notedoc:latest
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.docmost.rule=Host(`docs.example.com`)"
-      - "traefik.http.routers.docmost.entrypoints=websecure"
-      - "traefik.http.routers.docmost.tls.certresolver=myresolver"
-      - "traefik.http.services.docmost.loadbalancer.server.port=3000"
+      - "traefik.http.routers.notedoc.rule=Host(`docs.example.com`)"
+      - "traefik.http.routers.notedoc.entrypoints=websecure"
+      - "traefik.http.routers.notedoc.tls.certresolver=myresolver"
+      - "traefik.http.services.notedoc.loadbalancer.server.port=3000"
     # ... 其他配置 ...
 ```
 
@@ -1523,13 +1523,13 @@ sudo certbot certonly --standalone \
 ```bash
 # 生成自签名证书
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout /etc/ssl/private/docmost-selfsigned.key \
-  -out /etc/ssl/certs/docmost-selfsigned.crt \
+  -keyout /etc/ssl/private/notedoc-selfsigned.key \
+  -out /etc/ssl/certs/notedoc-selfsigned.crt \
   -subj "/C=US/ST=State/L=City/O=Organization/CN=docs.example.com"
 
 # 在 Nginx 中使用
-ssl_certificate /etc/ssl/certs/docmost-selfsigned.crt;
-ssl_certificate_key /etc/ssl/private/docmost-selfsigned.key;
+ssl_certificate /etc/ssl/certs/notedoc-selfsigned.crt;
+ssl_certificate_key /etc/ssl/private/notedoc-selfsigned.key;
 ```
 
 
@@ -1595,21 +1595,21 @@ sudo systemctl restart postgresql
 
 BACKUP_DIR="/backup/postgres"
 DATE=$(date +%Y%m%d_%H%M%S)
-DB_NAME="docmost"
-DB_USER="docmost"
+DB_NAME="notedoc"
+DB_USER="notedoc"
 RETENTION_DAYS=7
 
 # 创建备份目录
 mkdir -p $BACKUP_DIR
 
 # 执行备份
-pg_dump -U $DB_USER -h localhost $DB_NAME | gzip > $BACKUP_DIR/docmost_$DATE.sql.gz
+pg_dump -U $DB_USER -h localhost $DB_NAME | gzip > $BACKUP_DIR/notedoc_$DATE.sql.gz
 
 # 删除旧备份
-find $BACKUP_DIR -name "docmost_*.sql.gz" -mtime +$RETENTION_DAYS -delete
+find $BACKUP_DIR -name "notedoc_*.sql.gz" -mtime +$RETENTION_DAYS -delete
 
 # 记录日志
-echo "$(date): Backup completed - docmost_$DATE.sql.gz" >> $BACKUP_DIR/backup.log
+echo "$(date): Backup completed - notedoc_$DATE.sql.gz" >> $BACKUP_DIR/backup.log
 ```
 
 设置定时任务：
@@ -1703,11 +1703,11 @@ sudo systemctl restart redis
 ```bash
 # sentinel.conf
 port 26379
-sentinel monitor docmost-redis 127.0.0.1 6379 2
-sentinel auth-pass docmost-redis 强密码
-sentinel down-after-milliseconds docmost-redis 5000
-sentinel parallel-syncs docmost-redis 1
-sentinel failover-timeout docmost-redis 10000
+sentinel monitor notedoc-redis 127.0.0.1 6379 2
+sentinel auth-pass notedoc-redis 强密码
+sentinel down-after-milliseconds notedoc-redis 5000
+sentinel parallel-syncs notedoc-redis 1
+sentinel failover-timeout notedoc-redis 10000
 ```
 
 启动 Sentinel：
@@ -1747,7 +1747,7 @@ STORAGE_DRIVER=s3
 AWS_S3_ACCESS_KEY_ID=你的访问密钥
 AWS_S3_SECRET_ACCESS_KEY=你的密钥
 AWS_S3_REGION=us-east-1
-AWS_S3_BUCKET=docmost-storage
+AWS_S3_BUCKET=notedoc-storage
 ```
 
 #### MinIO
@@ -1763,12 +1763,12 @@ docker run -d \
   -v /mnt/minio/data:/data \
   minio/minio server /data --console-address ":9001"
 
-# Docmost 配置
+# NoteDoc 配置
 STORAGE_DRIVER=s3
 AWS_S3_ACCESS_KEY_ID=admin
 AWS_S3_SECRET_ACCESS_KEY=强密码
 AWS_S3_REGION=us-east-1
-AWS_S3_BUCKET=docmost
+AWS_S3_BUCKET=notedoc
 AWS_S3_ENDPOINT=http://minio:9000
 AWS_S3_FORCE_PATH_STYLE=true
 ```
@@ -1780,7 +1780,7 @@ STORAGE_DRIVER=s3
 AWS_S3_ACCESS_KEY_ID=你的AccessKeyId
 AWS_S3_SECRET_ACCESS_KEY=你的AccessKeySecret
 AWS_S3_REGION=oss-cn-hangzhou
-AWS_S3_BUCKET=docmost-storage
+AWS_S3_BUCKET=notedoc-storage
 AWS_S3_ENDPOINT=https://oss-cn-hangzhou.aliyuncs.com
 ```
 
@@ -1791,7 +1791,7 @@ STORAGE_DRIVER=s3
 AWS_S3_ACCESS_KEY_ID=你的SecretId
 AWS_S3_SECRET_ACCESS_KEY=你的SecretKey
 AWS_S3_REGION=ap-guangzhou
-AWS_S3_BUCKET=docmost-1234567890
+AWS_S3_BUCKET=notedoc-1234567890
 AWS_S3_ENDPOINT=https://cos.ap-guangzhou.myqcloud.com
 ```
 
@@ -1807,7 +1807,7 @@ AWS_S3_ENDPOINT=https://cos.ap-guangzhou.myqcloud.com
 # .env
 MAIL_DRIVER=smtp
 MAIL_FROM_ADDRESS=your-email@gmail.com
-MAIL_FROM_NAME=Docmost
+MAIL_FROM_NAME=NoteDoc
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=your-email@gmail.com
@@ -1825,7 +1825,7 @@ SMTP_SECURE=false
 ```bash
 MAIL_DRIVER=smtp
 MAIL_FROM_ADDRESS=your-email@outlook.com
-MAIL_FROM_NAME=Docmost
+MAIL_FROM_NAME=NoteDoc
 SMTP_HOST=smtp-mail.outlook.com
 SMTP_PORT=587
 SMTP_USERNAME=your-email@outlook.com
@@ -1838,7 +1838,7 @@ SMTP_SECURE=false
 ```bash
 MAIL_DRIVER=smtp
 MAIL_FROM_ADDRESS=noreply@example.com
-MAIL_FROM_NAME=Docmost
+MAIL_FROM_NAME=NoteDoc
 SMTP_HOST=mail.example.com
 SMTP_PORT=587
 SMTP_USERNAME=noreply@example.com
@@ -1852,7 +1852,7 @@ SMTP_IGNORETLS=false
 ```bash
 MAIL_DRIVER=postmark
 MAIL_FROM_ADDRESS=noreply@example.com
-MAIL_FROM_NAME=Docmost
+MAIL_FROM_NAME=NoteDoc
 POSTMARK_TOKEN=你的Postmark令牌
 ```
 
@@ -1863,7 +1863,7 @@ POSTMARK_TOKEN=你的Postmark令牌
 ```bash
 MAIL_DRIVER=smtp
 MAIL_FROM_ADDRESS=noreply@example.com
-MAIL_FROM_NAME=Docmost
+MAIL_FROM_NAME=NoteDoc
 SMTP_HOST=smtp.sendgrid.net
 SMTP_PORT=587
 SMTP_USERNAME=apikey
@@ -1875,10 +1875,10 @@ SMTP_SECURE=false
 
 ```bash
 # 进入容器
-docker-compose exec docmost sh
+docker-compose exec notedoc sh
 
 # 或在服务器上
-cd /opt/docmost
+cd /opt/notedoc
 
 # 测试邮件发送（需要实现测试脚本）
 # 注册新用户会触发欢迎邮件
@@ -1909,7 +1909,7 @@ DEBUG_MODE=false
 // ecosystem.config.js
 module.exports = {
   apps: [{
-    name: 'docmost',
+    name: 'notedoc',
     script: 'pnpm',
     args: 'start',
     instances: 'max',  // 使用所有 CPU 核心
@@ -1950,7 +1950,7 @@ ANALYZE workspaces;
 
 ```bash
 # .env
-DATABASE_URL="postgresql://docmost:密码@localhost:5432/docmost?schema=public&connection_limit=20&pool_timeout=10"
+DATABASE_URL="postgresql://notedoc:密码@localhost:5432/notedoc?schema=public&connection_limit=20&pool_timeout=10"
 ```
 
 #### 查询性能监控
@@ -2109,20 +2109,20 @@ proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=my_cache:10m max_size=10g
 
 ```bash
 #!/bin/bash
-# /opt/scripts/backup-docmost.sh
+# /opt/scripts/backup-notedoc.sh
 
 set -e
 
 # 配置
-BACKUP_DIR="/backup/docmost"
+BACKUP_DIR="/backup/notedoc"
 DATE=$(date +%Y%m%d_%H%M%S)
 RETENTION_DAYS=7
 
 # 数据库配置
 DB_HOST="localhost"
 DB_PORT="5432"
-DB_NAME="docmost"
-DB_USER="docmost"
+DB_NAME="notedoc"
+DB_USER="notedoc"
 DB_PASSWORD="密码"
 
 # 创建备份目录
@@ -2133,39 +2133,39 @@ echo "$(date): Starting backup..."
 # 1. 备份数据库
 echo "Backing up database..."
 PGPASSWORD=$DB_PASSWORD pg_dump -h $DB_HOST -p $DB_PORT -U $DB_USER $DB_NAME | \
-    gzip > $BACKUP_DIR/database/docmost_db_$DATE.sql.gz
+    gzip > $BACKUP_DIR/database/notedoc_db_$DATE.sql.gz
 
 # 2. 备份文件存储
 echo "Backing up storage..."
 if [ -d "/app/data/storage" ]; then
-    tar czf $BACKUP_DIR/storage/docmost_storage_$DATE.tar.gz -C /app/data storage/
-elif [ -d "/opt/docmost/data/storage" ]; then
-    tar czf $BACKUP_DIR/storage/docmost_storage_$DATE.tar.gz -C /opt/docmost/data storage/
+    tar czf $BACKUP_DIR/storage/notedoc_storage_$DATE.tar.gz -C /app/data storage/
+elif [ -d "/opt/notedoc/data/storage" ]; then
+    tar czf $BACKUP_DIR/storage/notedoc_storage_$DATE.tar.gz -C /opt/notedoc/data storage/
 fi
 
 # 3. 备份配置文件
 echo "Backing up configuration..."
 mkdir -p $BACKUP_DIR/config
-cp /opt/docmost/.env $BACKUP_DIR/config/.env_$DATE 2>/dev/null || true
-cp /opt/docmost/docker-compose.yml $BACKUP_DIR/config/docker-compose_$DATE.yml 2>/dev/null || true
+cp /opt/notedoc/.env $BACKUP_DIR/config/.env_$DATE 2>/dev/null || true
+cp /opt/notedoc/docker-compose.yml $BACKUP_DIR/config/docker-compose_$DATE.yml 2>/dev/null || true
 
 # 4. 创建备份清单
 cat > $BACKUP_DIR/backup_$DATE.txt << EOF
 Backup Date: $(date)
-Database: docmost_db_$DATE.sql.gz
-Storage: docmost_storage_$DATE.tar.gz
+Database: notedoc_db_$DATE.sql.gz
+Storage: notedoc_storage_$DATE.tar.gz
 Config: .env_$DATE, docker-compose_$DATE.yml
 EOF
 
 # 5. 删除旧备份
 echo "Cleaning old backups..."
-find $BACKUP_DIR/database -name "docmost_db_*.sql.gz" -mtime +$RETENTION_DAYS -delete
-find $BACKUP_DIR/storage -name "docmost_storage_*.tar.gz" -mtime +$RETENTION_DAYS -delete
+find $BACKUP_DIR/database -name "notedoc_db_*.sql.gz" -mtime +$RETENTION_DAYS -delete
+find $BACKUP_DIR/storage -name "notedoc_storage_*.tar.gz" -mtime +$RETENTION_DAYS -delete
 find $BACKUP_DIR/config -name "*_*" -mtime +$RETENTION_DAYS -delete
 find $BACKUP_DIR -name "backup_*.txt" -mtime +$RETENTION_DAYS -delete
 
 # 6. 上传到远程存储（可选）
-# aws s3 sync $BACKUP_DIR s3://my-backup-bucket/docmost/
+# aws s3 sync $BACKUP_DIR s3://my-backup-bucket/notedoc/
 
 echo "$(date): Backup completed successfully!"
 echo "Backup location: $BACKUP_DIR"
@@ -2175,13 +2175,13 @@ echo "Backup location: $BACKUP_DIR"
 
 ```bash
 # 添加执行权限
-chmod +x /opt/scripts/backup-docmost.sh
+chmod +x /opt/scripts/backup-notedoc.sh
 
 # 添加到 crontab
 crontab -e
 
 # 每天凌晨 2 点执行备份
-0 2 * * * /opt/scripts/backup-docmost.sh >> /var/log/docmost-backup.log 2>&1
+0 2 * * * /opt/scripts/backup-notedoc.sh >> /var/log/notedoc-backup.log 2>&1
 ```
 
 ### 恢复数据
@@ -2200,16 +2200,16 @@ if [ -z "$BACKUP_FILE" ]; then
 fi
 
 # 停止应用
-docker-compose stop docmost
+docker-compose stop notedoc
 
 # 恢复数据库
-gunzip < $BACKUP_FILE | docker-compose exec -T db psql -U docmost -d docmost
+gunzip < $BACKUP_FILE | docker-compose exec -T db psql -U notedoc -d notedoc
 
 # 或手动恢复
-# gunzip < $BACKUP_FILE | psql -U docmost -d docmost
+# gunzip < $BACKUP_FILE | psql -U notedoc -d notedoc
 
 # 启动应用
-docker-compose start docmost
+docker-compose start notedoc
 
 echo "Database restored successfully!"
 ```
@@ -2228,7 +2228,7 @@ if [ -z "$BACKUP_FILE" ]; then
 fi
 
 # 停止应用
-docker-compose stop docmost
+docker-compose stop notedoc
 
 # 备份当前数据
 mv /app/data/storage /app/data/storage.old
@@ -2240,7 +2240,7 @@ tar xzf $BACKUP_FILE -C /app/data/
 chown -R node:node /app/data/storage
 
 # 启动应用
-docker-compose start docmost
+docker-compose start notedoc
 
 echo "Storage restored successfully!"
 ```
@@ -2258,8 +2258,8 @@ apt update
 apt install -y docker.io docker-compose postgresql-client
 
 # 2. 恢复配置文件
-mkdir -p /opt/docmost
-cd /opt/docmost
+mkdir -p /opt/notedoc
+cd /opt/notedoc
 # 从备份恢复 docker-compose.yml 和 .env
 
 # 3. 启动数据库和 Redis
@@ -2267,14 +2267,14 @@ docker-compose up -d db redis
 sleep 10
 
 # 4. 恢复数据库
-gunzip < /backup/docmost_db_latest.sql.gz | \
-    docker-compose exec -T db psql -U docmost -d docmost
+gunzip < /backup/notedoc_db_latest.sql.gz | \
+    docker-compose exec -T db psql -U notedoc -d notedoc
 
 # 5. 恢复文件存储
-tar xzf /backup/docmost_storage_latest.tar.gz -C /
+tar xzf /backup/notedoc_storage_latest.tar.gz -C /
 
 # 6. 启动应用
-docker-compose up -d docmost
+docker-compose up -d notedoc
 
 # 7. 验证
 sleep 5
@@ -2310,7 +2310,7 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - docmost_network
+      - notedoc_network
     restart: unless-stopped
 
   grafana:
@@ -2324,7 +2324,7 @@ services:
     ports:
       - "3001:3000"
     networks:
-      - docmost_network
+      - notedoc_network
     restart: unless-stopped
 
   node-exporter:
@@ -2337,17 +2337,17 @@ services:
     volumes:
       - '/:/host:ro,rslave'
     networks:
-      - docmost_network
+      - notedoc_network
 
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter:latest
     container_name: postgres-exporter
     environment:
-      DATA_SOURCE_NAME: "postgresql://docmost:密码@db:5432/docmost?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://notedoc:密码@db:5432/notedoc?sslmode=disable"
     ports:
       - "9187:9187"
     networks:
-      - docmost_network
+      - notedoc_network
     restart: unless-stopped
 
 volumes:
@@ -2375,9 +2375,9 @@ scrape_configs:
     static_configs:
       - targets: ['postgres-exporter:9187']
 
-  - job_name: 'docmost'
+  - job_name: 'notedoc'
     static_configs:
-      - targets: ['docmost:3000']
+      - targets: ['notedoc:3000']
     metrics_path: '/metrics'
 ```
 
@@ -2390,14 +2390,14 @@ scrape_configs:
 # 配置
 APP_URL="http://localhost:3000"
 ALERT_EMAIL="admin@example.com"
-LOG_FILE="/var/log/docmost-health.log"
+LOG_FILE="/var/log/notedoc-health.log"
 
 # 检查应用
 check_app() {
     response=$(curl -s -o /dev/null -w "%{http_code}" $APP_URL/health)
     if [ "$response" != "200" ]; then
         echo "$(date): Application health check failed (HTTP $response)" >> $LOG_FILE
-        send_alert "Docmost application is down!"
+        send_alert "NoteDoc application is down!"
         return 1
     fi
     return 0
@@ -2405,9 +2405,9 @@ check_app() {
 
 # 检查数据库
 check_database() {
-    if ! docker-compose exec -T db pg_isready -U docmost > /dev/null 2>&1; then
+    if ! docker-compose exec -T db pg_isready -U notedoc > /dev/null 2>&1; then
         echo "$(date): Database health check failed" >> $LOG_FILE
-        send_alert "Docmost database is down!"
+        send_alert "NoteDoc database is down!"
         return 1
     fi
     return 0
@@ -2417,7 +2417,7 @@ check_database() {
 check_redis() {
     if ! docker-compose exec -T redis redis-cli ping > /dev/null 2>&1; then
         echo "$(date): Redis health check failed" >> $LOG_FILE
-        send_alert "Docmost Redis is down!"
+        send_alert "NoteDoc Redis is down!"
         return 1
     fi
     return 0
@@ -2437,7 +2437,7 @@ check_disk() {
 # 发送告警
 send_alert() {
     message="$1"
-    echo "$message" | mail -s "Docmost Alert" $ALERT_EMAIL
+    echo "$message" | mail -s "NoteDoc Alert" $ALERT_EMAIL
 }
 
 # 执行检查
@@ -2476,7 +2476,7 @@ services:
     ports:
       - "9200:9200"
     networks:
-      - docmost_network
+      - notedoc_network
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.11.0
@@ -2486,7 +2486,7 @@ services:
     ports:
       - "5000:5000"
     networks:
-      - docmost_network
+      - notedoc_network
     depends_on:
       - elasticsearch
 
@@ -2498,7 +2498,7 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     networks:
-      - docmost_network
+      - notedoc_network
     depends_on:
       - elasticsearch
 
@@ -2517,7 +2517,7 @@ input {
 }
 
 filter {
-  if [type] == "docmost" {
+  if [type] == "notedoc" {
     json {
       source => "message"
     }
@@ -2527,7 +2527,7 @@ filter {
 output {
   elasticsearch {
     hosts => ["elasticsearch:9200"]
-    index => "docmost-%{+YYYY.MM.dd}"
+    index => "notedoc-%{+YYYY.MM.dd}"
   }
 }
 ```
@@ -2535,17 +2535,17 @@ output {
 #### 日志轮转
 
 ```bash
-# /etc/logrotate.d/docmost
-/var/log/docmost/*.log {
+# /etc/logrotate.d/notedoc
+/var/log/notedoc/*.log {
     daily
     rotate 14
     compress
     delaycompress
     notifempty
-    create 0640 docmost docmost
+    create 0640 notedoc notedoc
     sharedscripts
     postrotate
-        docker-compose -f /opt/docmost/docker-compose.yml restart docmost > /dev/null 2>&1 || true
+        docker-compose -f /opt/notedoc/docker-compose.yml restart notedoc > /dev/null 2>&1 || true
     endscript
 }
 ```
@@ -2554,20 +2554,20 @@ output {
 
 ```bash
 # Docker 日志
-docker-compose logs -f docmost
-docker-compose logs -f --tail=100 docmost
+docker-compose logs -f notedoc
+docker-compose logs -f --tail=100 notedoc
 
 # 系统日志
-journalctl -u docmost -f
-journalctl -u docmost --since "1 hour ago"
+journalctl -u notedoc -f
+journalctl -u notedoc --since "1 hour ago"
 
 # 应用日志
-tail -f /var/log/docmost/app.log
-tail -f /var/log/docmost/error.log
+tail -f /var/log/notedoc/app.log
+tail -f /var/log/notedoc/error.log
 
 # 搜索错误
-grep -i error /var/log/docmost/*.log
-grep -i "database" /var/log/docmost/*.log | tail -20
+grep -i error /var/log/notedoc/*.log
+grep -i "database" /var/log/notedoc/*.log | tail -20
 ```
 
 ---
@@ -2584,13 +2584,13 @@ grep -i "database" /var/log/docmost/*.log | tail -20
 
 ```bash
 # 查看容器日志
-docker-compose logs docmost
+docker-compose logs notedoc
 
 # 检查配置
 docker-compose config
 
 # 验证环境变量
-docker-compose exec docmost env | grep -E "APP_|DATABASE_|REDIS_"
+docker-compose exec notedoc env | grep -E "APP_|DATABASE_|REDIS_"
 
 # 检查端口占用
 netstat -tulpn | grep 3000
@@ -2606,7 +2606,7 @@ netstat -tulpn | grep 3000
 
 ```bash
 # 检查数据库连接
-docker-compose exec db psql -U docmost -d docmost -c "SELECT 1;"
+docker-compose exec db psql -U notedoc -d notedoc -c "SELECT 1;"
 
 # 检查 Redis 连接
 docker-compose exec redis redis-cli ping
@@ -2626,11 +2626,11 @@ openssl rand -hex 32
 
 ```bash
 # 检查密码
-docker-compose exec db psql -U docmost -d docmost
+docker-compose exec db psql -U notedoc -d notedoc
 
 # 重置密码
 docker-compose exec db psql -U postgres
-ALTER USER docmost WITH PASSWORD '新密码';
+ALTER USER notedoc WITH PASSWORD '新密码';
 
 # 更新 .env 文件中的 DATABASE_URL
 ```
@@ -2643,7 +2643,7 @@ ALTER USER docmost WITH PASSWORD '新密码';
 
 ```bash
 # 增加 Nginx 上传限制
-# /etc/nginx/sites-available/docmost
+# /etc/nginx/sites-available/notedoc
 client_max_body_size 100M;
 
 # 重载 Nginx
@@ -2664,7 +2664,7 @@ FILE_UPLOAD_SIZE_LIMIT=100mb
 # 增加 Docker 内存限制
 # docker-compose.yml
 services:
-  docmost:
+  notedoc:
     deploy:
       resources:
         limits:
@@ -2694,7 +2694,7 @@ sudo swapon /swapfile
 docker stats
 
 # 检查数据库性能
-docker-compose exec db psql -U docmost -d docmost
+docker-compose exec db psql -U notedoc -d notedoc
 SELECT * FROM pg_stat_activity WHERE state = 'active';
 
 # 检查慢查询
@@ -2763,13 +2763,13 @@ location / {
 
 ```bash
 # 检查邮件配置
-docker-compose exec docmost env | grep MAIL
+docker-compose exec notedoc env | grep MAIL
 
 # 测试 SMTP 连接
 telnet smtp.gmail.com 587
 
 # 查看日志
-docker-compose logs docmost | grep -i mail
+docker-compose logs notedoc | grep -i mail
 ```
 
 **常见问题**：
@@ -2787,10 +2787,10 @@ DEBUG_MODE=true
 LOG_LEVEL=debug
 
 # 重启应用
-docker-compose restart docmost
+docker-compose restart notedoc
 
 # 查看详细日志
-docker-compose logs -f docmost
+docker-compose logs -f notedoc
 ```
 
 ### 数据库调试
@@ -2799,7 +2799,7 @@ docker-compose logs -f docmost
 -- 查看活动连接
 SELECT pid, usename, application_name, client_addr, state, query
 FROM pg_stat_activity
-WHERE datname = 'docmost';
+WHERE datname = 'notedoc';
 
 -- 终止长时间运行的查询
 SELECT pg_terminate_backend(pid)
@@ -2816,7 +2816,7 @@ WHERE schemaname = 'public'
 ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 
 -- 重建索引
-REINDEX DATABASE docmost;
+REINDEX DATABASE notedoc;
 
 -- 清理和分析
 VACUUM ANALYZE;
@@ -2832,20 +2832,20 @@ VACUUM ANALYZE;
 
 ```bash
 # 完整备份
-/opt/scripts/backup-docmost.sh
+/opt/scripts/backup-notedoc.sh
 
 # 验证备份
-ls -lh /backup/docmost/
+ls -lh /backup/notedoc/
 ```
 
 **2. 查看更新日志**
 
 ```bash
 # 查看最新版本
-curl -s https://api.github.com/repos/docmost/docmost/releases/latest | grep tag_name
+curl -s https://api.github.com/repos/notedoc/notedoc/releases/latest | grep tag_name
 
 # 阅读 CHANGELOG
-curl -s https://raw.githubusercontent.com/docmost/docmost/main/CHANGELOG.md
+curl -s https://raw.githubusercontent.com/notedoc/notedoc/main/CHANGELOG.md
 ```
 
 **3. 测试环境验证**
@@ -2858,7 +2858,7 @@ curl -s https://raw.githubusercontent.com/docmost/docmost/main/CHANGELOG.md
 
 ```bash
 # 1. 进入项目目录
-cd /opt/docmost
+cd /opt/notedoc
 
 # 2. 备份当前配置
 cp docker-compose.yml docker-compose.yml.backup
@@ -2874,7 +2874,7 @@ docker-compose pull
 docker-compose up -d
 
 # 6. 查看日志
-docker-compose logs -f docmost
+docker-compose logs -f notedoc
 
 # 7. 验证升级
 curl http://localhost:3000/health
@@ -2885,8 +2885,8 @@ curl http://localhost:3000/health
 ```bash
 # 修改 docker-compose.yml
 services:
-  docmost:
-    image: docmost/docmost:v0.23.2  # 指定版本
+  notedoc:
+    image: notedoc/notedoc:v0.23.2  # 指定版本
 
 # 拉取并启动
 docker-compose pull
@@ -2906,23 +2906,23 @@ cp docker-compose.yml.backup docker-compose.yml
 docker-compose up -d
 
 # 如需恢复数据
-gunzip < /backup/docmost/database/docmost_db_latest.sql.gz | \
-    docker-compose exec -T db psql -U docmost -d docmost
+gunzip < /backup/notedoc/database/notedoc_db_latest.sql.gz | \
+    docker-compose exec -T db psql -U notedoc -d notedoc
 ```
 
 ### 手动部署升级
 
 ```bash
 # 1. 备份
-/opt/scripts/backup-docmost.sh
+/opt/scripts/backup-notedoc.sh
 
 # 2. 停止应用
-pm2 stop docmost
+pm2 stop notedoc
 # 或
-sudo systemctl stop docmost
+sudo systemctl stop notedoc
 
 # 3. 拉取最新代码
-cd /opt/docmost
+cd /opt/notedoc
 git fetch --all
 git checkout v0.23.2  # 或 main
 
@@ -2938,13 +2938,13 @@ pnpm migration:up
 cd ../..
 
 # 7. 启动应用
-pm2 start docmost
+pm2 start notedoc
 # 或
-sudo systemctl start docmost
+sudo systemctl start notedoc
 
 # 8. 验证
 curl http://localhost:3000/health
-pm2 logs docmost
+pm2 logs notedoc
 ```
 
 ### 数据库迁移
@@ -2953,12 +2953,12 @@ pm2 logs docmost
 
 ```bash
 # Docker 环境
-docker-compose exec docmost sh
+docker-compose exec notedoc sh
 cd apps/server
 pnpm migration:up
 
 # 手动部署
-cd /opt/docmost/apps/server
+cd /opt/notedoc/apps/server
 pnpm migration:up
 ```
 
@@ -2966,7 +2966,7 @@ pnpm migration:up
 
 ```bash
 # 查看已执行的迁移
-docker-compose exec db psql -U docmost -d docmost -c "SELECT * FROM migrations ORDER BY executed_at DESC;"
+docker-compose exec db psql -U notedoc -d notedoc -c "SELECT * FROM migrations ORDER BY executed_at DESC;"
 ```
 
 #### 回滚迁移
@@ -2999,7 +2999,7 @@ until curl -f http://localhost:3001/health; do
 done
 
 # 3. 切换 Nginx 配置
-sudo cp nginx-green.conf /etc/nginx/sites-available/docmost
+sudo cp nginx-green.conf /etc/nginx/sites-available/notedoc
 sudo nginx -t && sudo systemctl reload nginx
 
 # 4. 停止旧版本（蓝色环境）
@@ -3064,7 +3064,7 @@ DB_PASSWORD=$(openssl rand -base64 32)
 
 # 2. 限制数据库访问
 # pg_hba.conf
-host    docmost    docmost    127.0.0.1/32    md5
+host    notedoc    notedoc    127.0.0.1/32    md5
 
 # 3. 启用 Redis 密码
 # redis.conf
@@ -3083,7 +3083,7 @@ CORS_ORIGIN=https://docs.example.com
 ```yaml
 # docker-compose.yml
 services:
-  docmost:
+  notedoc:
     # 使用非 root 用户
     user: "1000:1000"
     
@@ -3187,15 +3187,15 @@ echo -e "\n=== End of Report ==="
 
 ### 获取帮助
 
-- 📖 官方文档: https://docmost.com/docs
-- 💬 社区论坛: https://github.com/docmost/docmost/discussions
-- 🐛 问题反馈: https://github.com/docmost/docmost/issues
-- 📧 邮件支持: support@docmost.com
+- 📖 官方文档: https://notedoc.com/docs
+- 💬 社区论坛: https://github.com/notedoc/notedoc/discussions
+- 🐛 问题反馈: https://github.com/notedoc/notedoc/issues
+- 📧 邮件支持: support@notedoc.com
 
 ---
 
 **文档版本**: 1.0.0  
 **最后更新**: 2025-11-20  
-**维护者**: Docmost 团队
+**维护者**: NoteDoc 团队
 
 祝您部署顺利！🚀

@@ -3,17 +3,17 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PaginationOptions } from '@docmost/db/pagination/pagination-options';
-import { KyselyDB, KyselyTransaction } from '@docmost/db/types/kysely.types';
-import { SpaceMemberRepo } from '@docmost/db/repos/space/space-member.repo';
+import { PaginationOptions } from '@notedoc/db/pagination/pagination-options';
+import { KyselyDB, KyselyTransaction } from '@notedoc/db/types/kysely.types';
+import { SpaceMemberRepo } from '@notedoc/db/repos/space/space-member.repo';
 import { AddSpaceMembersDto } from '../dto/add-space-members.dto';
 import { InjectKysely } from 'nestjs-kysely';
-import { Space, SpaceMember, User } from '@docmost/db/types/entity.types';
-import { SpaceRepo } from '@docmost/db/repos/space/space.repo';
+import { Space, SpaceMember, User } from '@notedoc/db/types/entity.types';
+import { SpaceRepo } from '@notedoc/db/repos/space/space.repo';
 import { RemoveSpaceMemberDto } from '../dto/remove-space-member.dto';
 import { UpdateSpaceMemberRoleDto } from '../dto/update-space-member-role.dto';
 import { SpaceRole } from '../../../common/helpers/types/permission';
-import { PaginationResult } from '@docmost/db/pagination/pagination';
+import { PaginationResult } from '@notedoc/db/pagination/pagination';
 
 @Injectable()
 export class SpaceMemberService {

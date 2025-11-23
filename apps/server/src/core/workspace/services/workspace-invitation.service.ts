@@ -5,25 +5,25 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { AcceptInviteDto, InviteUserDto } from '../dto/invitation.dto';
-import { UserRepo } from '@docmost/db/repos/user/user.repo';
+import { UserRepo } from '@notedoc/db/repos/user/user.repo';
 import { InjectKysely } from 'nestjs-kysely';
-import { KyselyDB } from '@docmost/db/types/kysely.types';
+import { KyselyDB } from '@notedoc/db/types/kysely.types';
 import { sql } from 'kysely';
-import { executeTx } from '@docmost/db/utils';
+import { executeTx } from '@notedoc/db/utils';
 import {
   Group,
   User,
   Workspace,
   WorkspaceInvitation,
-} from '@docmost/db/types/entity.types';
+} from '@notedoc/db/types/entity.types';
 import { MailService } from '../../../integrations/mail/mail.service';
-import InvitationEmail from '@docmost/transactional/emails/invitation-email';
-import { GroupUserRepo } from '@docmost/db/repos/group/group-user.repo';
-import InvitationAcceptedEmail from '@docmost/transactional/emails/invitation-accepted-email';
+import InvitationEmail from '@notedoc/transactional/emails/invitation-email';
+import { GroupUserRepo } from '@notedoc/db/repos/group/group-user.repo';
+import InvitationAcceptedEmail from '@notedoc/transactional/emails/invitation-accepted-email';
 import { TokenService } from '../../auth/services/token.service';
 import { nanoIdGen } from '../../../common/helpers';
-import { PaginationOptions } from '@docmost/db/pagination/pagination-options';
-import { executeWithPagination } from '@docmost/db/pagination/pagination';
+import { PaginationOptions } from '@notedoc/db/pagination/pagination-options';
+import { executeWithPagination } from '@notedoc/db/pagination/pagination';
 import { DomainService } from 'src/integrations/environment/domain.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { QueueJob, QueueName } from '../../../integrations/queue/constants';
@@ -290,7 +290,7 @@ export class WorkspaceInvitationService {
 
       await this.mailService.sendToQueue({
         to: invitedByUser.email,
-        subject: `${newUser.name} has accepted your Docmost invite`,
+        subject: `${newUser.name} has accepted your NoteDoc invite`,
         template: emailTemplate,
       });
     }
@@ -391,7 +391,7 @@ export class WorkspaceInvitationService {
 
     await this.mailService.sendToQueue({
       to: inviteeEmail,
-      subject: `${invitedByName} invited you to Docmost`,
+      subject: `${invitedByName} invited you to NoteDoc`,
       template: emailTemplate,
     });
   }

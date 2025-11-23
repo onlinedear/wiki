@@ -1,7 +1,7 @@
-import { getEmbedUrlAndProvider } from '@docmost/editor-ext';
+import { getEmbedUrlAndProvider } from '@notedoc/editor-ext';
 import * as path from 'path';
 import { v7 } from 'uuid';
-import { InsertableBacklink } from '@docmost/db/types/entity.types';
+import { InsertableBacklink } from '@notedoc/db/types/entity.types';
 import { Cheerio, CheerioAPI, load } from 'cheerio';
 
 // Check if text contains Unicode characters (for emojis/icons)

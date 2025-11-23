@@ -40,7 +40,7 @@ import {
   Mention,
   Subpages,
   TableDndExtension,
-} from "@docmost/editor-ext";
+} from "@notedoc/editor-ext";
 import {
   randomElement,
   userColors,

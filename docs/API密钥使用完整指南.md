@@ -1,6 +1,6 @@
 # API 密钥使用完整指南
 
-> 本指南将详细介绍如何在 Docmost 中创建、管理和使用 API 密钥，帮助您实现程序化访问和自动化集成。
+> 本指南将详细介绍如何在 NoteDoc 中创建、管理和使用 API 密钥，帮助您实现程序化访问和自动化集成。
 
 ## 📋 目录
 
@@ -19,13 +19,13 @@
 
 ## 什么是 API 密钥
 
-API 密钥（API Key）是一种用于程序化访问 Docmost 的认证凭证。它允许您：
+API 密钥（API Key）是一种用于程序化访问 NoteDoc 的认证凭证。它允许您：
 
 - 🤖 **自动化操作** - 通过脚本自动创建、更新文档
-- 🔗 **系统集成** - 将 Docmost 与其他系统集成
-- 📊 **数据同步** - 自动同步数据到 Docmost
+- 🔗 **系统集成** - 将 NoteDoc 与其他系统集成
+- 📊 **数据同步** - 自动同步数据到 NoteDoc
 - 🔄 **CI/CD 集成** - 在持续集成流程中更新文档
-- 📱 **第三方应用** - 开发基于 Docmost 的应用
+- 📱 **第三方应用** - 开发基于 NoteDoc 的应用
 
 ### API 密钥的特点
 
@@ -41,7 +41,7 @@ API 密钥（API Key）是一种用于程序化访问 Docmost 的认证凭证。
 
 ### 第一步：访问 API 密钥管理页面
 
-1. 登录 Docmost
+1. 登录 NoteDoc
 2. 点击右上角的用户头像
 3. 选择 **"设置"** → **"工作空间"**
 4. 在左侧菜单中点击 **"API 密钥"**
@@ -159,7 +159,7 @@ dk_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6
 
 ### 认证方式
 
-Docmost 支持两种 API 密钥认证方式：
+NoteDoc 支持两种 API 密钥认证方式：
 
 #### 方式 1：Authorization Header（推荐）
 
@@ -189,7 +189,7 @@ curl -H "X-API-Key: dk_你的密钥" \
 ```
 
 **如何获取工作空间 ID**：
-1. 登录 Docmost
+1. 登录 NoteDoc
 2. 查看浏览器地址栏
 3. URL 中包含的 UUID 即为工作空间 ID
 
@@ -794,7 +794,7 @@ module.exports = config;
 // api-client.js
 const config = require('./config');
 
-class DocmostClient {
+class NoteDocClient {
   constructor() {
     this.baseUrl = config.baseUrl;
     this.apiKey = config.apiKey;
@@ -855,7 +855,7 @@ class DocmostClient {
   }
 }
 
-module.exports = DocmostClient;
+module.exports = NoteDocClient;
 ```
 
 
@@ -863,10 +863,10 @@ module.exports = DocmostClient;
 
 ```javascript
 // main.js
-const DocmostClient = require('./api-client');
+const NoteDocClient = require('./api-client');
 
 async function main() {
-  const client = new DocmostClient();
+  const client = new NoteDocClient();
 
   try {
     // 获取所有 API 密钥
@@ -973,13 +973,13 @@ BASE_URL = os.getenv('DOCMOST_API_URL', 'http://localhost:3000/api')
 ```
 
 ```python
-# docmost_client.py
+# notedoc_client.py
 import requests
 from typing import Dict, List, Optional
 from datetime import datetime, timedelta
 import config
 
-class DocmostClient:
+class NoteDocClient:
     def __init__(self):
         self.base_url = config.BASE_URL
         self.api_key = config.API_KEY
@@ -1052,12 +1052,12 @@ class DocmostClient:
 
 ```python
 # main.py
-from docmost_client import DocmostClient
+from notedoc_client import NoteDocClient
 from datetime import datetime, timedelta
 
 def main():
     # 使用上下文管理器
-    with DocmostClient() as client:
+    with NoteDocClient() as client:
         # 获取所有密钥
         keys = client.get_api_keys()
         print(f"找到 {len(keys)} 个 API 密钥")
@@ -1089,7 +1089,7 @@ if __name__ == '__main__':
 
 ```python
 # advanced_examples.py
-from docmost_client import DocmostClient
+from notedoc_client import NoteDocClient
 from datetime import datetime, timedelta
 import time
 
@@ -1097,7 +1097,7 @@ class ApiKeyManager:
     """API 密钥管理器"""
     
     def __init__(self):
-        self.client = DocmostClient()
+        self.client = NoteDocClient()
     
     def check_expiring_keys(self, days: int = 7):
         """检查即将过期的密钥"""
@@ -1226,7 +1226,7 @@ import (
     "net/http"
 )
 
-type DocmostClient struct {
+type NoteDocClient struct {
     config     *Config
     httpClient *http.Client
 }
@@ -1242,14 +1242,14 @@ type ApiKey struct {
     CreatedAt   string   `json:"createdAt"`
 }
 
-func NewDocmostClient(config *Config) *DocmostClient {
-    return &DocmostClient{
+func NewNoteDocClient(config *Config) *NoteDocClient {
+    return &NoteDocClient{
         config:     config,
         httpClient: &http.Client{},
     }
 }
 
-func (c *DocmostClient) request(method, endpoint string, body interface{}) ([]byte, error) {
+func (c *NoteDocClient) request(method, endpoint string, body interface{}) ([]byte, error) {
     url := fmt.Sprintf("%s/workspaces/%s%s", c.config.BaseURL, c.config.WorkspaceID, endpoint)
     
     var reqBody io.Reader
@@ -1287,7 +1287,7 @@ func (c *DocmostClient) request(method, endpoint string, body interface{}) ([]by
     return respBody, nil
 }
 
-func (c *DocmostClient) GetApiKeys() ([]ApiKey, error) {
+func (c *NoteDocClient) GetApiKeys() ([]ApiKey, error) {
     data, err := c.request("GET", "/api-keys", nil)
     if err != nil {
         return nil, err
@@ -1301,7 +1301,7 @@ func (c *DocmostClient) GetApiKeys() ([]ApiKey, error) {
     return keys, nil
 }
 
-func (c *DocmostClient) CreateApiKey(name, description string, scopes []string, expiresAt string) (*ApiKey, error) {
+func (c *NoteDocClient) CreateApiKey(name, description string, scopes []string, expiresAt string) (*ApiKey, error) {
     body := map[string]interface{}{
         "name":        name,
         "description": description,
@@ -1337,7 +1337,7 @@ import (
 
 func main() {
     config := LoadConfig()
-    client := NewDocmostClient(config)
+    client := NewNoteDocClient(config)
     
     // 获取所有密钥
     keys, err := client.GetApiKeys()
@@ -1378,8 +1378,8 @@ class Config {
     }
 }
 
-// DocmostClient.php
-class DocmostClient {
+// NoteDocClient.php
+class NoteDocClient {
     private $apiKey;
     private $workspaceId;
     private $baseUrl;
@@ -1441,7 +1441,7 @@ class DocmostClient {
 }
 
 // 使用示例
-$client = new DocmostClient();
+$client = new NoteDocClient();
 
 // 获取所有密钥
 $keys = $client->getApiKeys();
@@ -1480,12 +1480,12 @@ class Config
   end
 end
 
-# docmost_client.rb
+# notedoc_client.rb
 require 'net/http'
 require 'json'
 require 'uri'
 
-class DocmostClient
+class NoteDocClient
   def initialize
     @api_key = Config.api_key
     @workspace_id = Config.workspace_id
@@ -1540,7 +1540,7 @@ class DocmostClient
 end
 
 # 使用示例
-client = DocmostClient.new
+client = NoteDocClient.new
 
 # 获取所有密钥
 keys = client.get_api_keys
@@ -1642,7 +1642,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: Deploy to Docmost
+      - name: Deploy to NoteDoc
         env:
           DOCMOST_API_KEY: ${{ secrets.DOCMOST_API_KEY }}
           WORKSPACE_ID: ${{ secrets.WORKSPACE_ID }}
@@ -1801,7 +1801,7 @@ Authorization: Bearer dk_abc123...
 **原因**：密钥已被禁用
 
 **解决方案**：
-1. 登录 Docmost 管理界面
+1. 登录 NoteDoc 管理界面
 2. 找到该密钥
 3. 将状态改为 "active"
 4. 或创建新密钥
@@ -2021,12 +2021,12 @@ cat .env | grep DOCMOST
 
 ```javascript
 // backup.js
-const DocmostClient = require('./docmost-client');
+const NoteDocClient = require('./notedoc-client');
 const AWS = require('aws-sdk');
 const fs = require('fs');
 
 const s3 = new AWS.S3();
-const client = new DocmostClient();
+const client = new NoteDocClient();
 
 async function backupDocuments() {
   console.log('🔄 开始备份文档...');
@@ -2050,7 +2050,7 @@ async function backupDocuments() {
     
     // 上传到 S3
     await s3.putObject({
-      Bucket: 'docmost-backups',
+      Bucket: 'notedoc-backups',
       Key: `backups/${filename}`,
       Body: fs.readFileSync(filename),
       ContentType: 'application/json'
@@ -2077,18 +2077,18 @@ console.log('📅 备份任务已启动');
 
 ### 场景 2: 内容同步
 
-**需求**：将 Markdown 文件自动同步到 Docmost
+**需求**：将 Markdown 文件自动同步到 NoteDoc
 
 **实现**：
 
 ```javascript
 // sync.js
-const DocmostClient = require('./docmost-client');
+const NoteDocClient = require('./notedoc-client');
 const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
 
-const client = new DocmostClient();
+const client = new NoteDocClient();
 
 async function syncMarkdownFiles(directory) {
   console.log(`🔄 同步目录: ${directory}`);
@@ -2153,10 +2153,10 @@ console.log('👀 开始监听文件变化...');
 ```javascript
 // search-service.js
 const express = require('express');
-const DocmostClient = require('./docmost-client');
+const NoteDocClient = require('./notedoc-client');
 
 const app = express();
-const client = new DocmostClient();
+const client = new NoteDocClient();
 
 // 缓存文档内容
 let documentsCache = [];
@@ -2243,7 +2243,7 @@ app.listen(PORT, () => {
 
 ```python
 # report.py
-from docmost_client import DocmostClient
+from notedoc_client import NoteDocClient
 from datetime import datetime, timedelta
 import smtplib
 from email.mime.text import MIMEText
@@ -2251,7 +2251,7 @@ from email.mime.multipart import MIMEMultipart
 
 class DocumentReporter:
     def __init__(self):
-        self.client = DocmostClient()
+        self.client = NoteDocClient()
     
     def generate_report(self, days=7):
         """生成过去 N 天的统计报表"""
@@ -2274,7 +2274,7 @@ class DocumentReporter:
         
         # 生成报表
         report = f"""
-        📊 Docmost 文档统计报表
+        📊 NoteDoc 文档统计报表
         ========================
         
         报表时间: {now.strftime('%Y-%m-%d %H:%M:%S')}
@@ -2314,9 +2314,9 @@ class DocumentReporter:
     def send_email(self, report, recipients):
         """发送邮件报表"""
         msg = MIMEMultipart()
-        msg['From'] = 'noreply@docmost.com'
+        msg['From'] = 'noreply@notedoc.com'
         msg['To'] = ', '.join(recipients)
-        msg['Subject'] = f'Docmost 文档统计报表 - {datetime.now().strftime("%Y-%m-%d")}'
+        msg['Subject'] = f'NoteDoc 文档统计报表 - {datetime.now().strftime("%Y-%m-%d")}'
         
         msg.attach(MIMEText(report, 'plain', 'utf-8'))
         
@@ -2346,11 +2346,11 @@ if __name__ == '__main__':
 
 ```javascript
 // deploy-docs.js
-const DocmostClient = require('./docmost-client');
+const NoteDocClient = require('./notedoc-client');
 const fs = require('fs');
 const path = require('path');
 
-const client = new DocmostClient();
+const client = new NoteDocClient();
 
 async function deployDocumentation() {
   console.log('🚀 开始部署文档...');
@@ -2487,6 +2487,6 @@ deployDocumentation();
 
 **文档版本**: 1.0.0  
 **最后更新**: 2025-11-20  
-**维护者**: Docmost 团队
+**维护者**: NoteDoc 团队
 
 祝您使用愉快！🎉

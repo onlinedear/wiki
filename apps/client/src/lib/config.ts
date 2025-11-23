@@ -14,7 +14,7 @@ export function getAppName(): string {
     const { getCurrentAppName } = require('@/components/ui/dynamic-head');
     return getCurrentAppName();
   } catch {
-    return "Docmost";
+    return "NoteDoc";
   }
 }
 

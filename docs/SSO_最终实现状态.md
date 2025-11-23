@@ -119,7 +119,7 @@
 
 **使用方式**:
 1. 在 Google Cloud Console 创建 OAuth 2.0 凭据
-2. 在 Docmost 中创建 Google 类型的 SSO 提供商
+2. 在 NoteDoc 中创建 Google 类型的 SSO 提供商
 3. 配置 Client ID 和 Client Secret
 4. 用户可以通过 Google 登录
 
@@ -219,7 +219,7 @@ curl http://localhost:3001/api/health
 1. 访问 [Google Cloud Console](https://console.cloud.google.com/)
 2. 创建 OAuth 2.0 客户端 ID
 3. 添加重定向 URI: `http://localhost:3001/api/sso/google/{providerId}/callback`
-4. 在 Docmost 中创建 Google 类型的 SSO 提供商
+4. 在 NoteDoc 中创建 Google 类型的 SSO 提供商
 5. 填写 Client ID 和 Client Secret
 
 ## 📊 统计数据

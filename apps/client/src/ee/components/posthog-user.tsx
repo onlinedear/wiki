@@ -20,7 +20,7 @@ export function PosthogUser() {
         workspaceHostname: workspace.hostname,
         lastActiveAt: new Date().toISOString(),
         createdAt: user.createdAt,
-        source: "docmost-app",
+        source: "notedoc-app",
       });
       posthog?.group("workspace", workspace.id, {
         name: workspace.name,
@@ -32,7 +32,7 @@ export function PosthogUser() {
         memberCount: workspace.memberCount,
         lastActiveAt: new Date().toISOString(),
         createdAt: workspace.createdAt,
-        source: "docmost-app",
+        source: "notedoc-app",
       });
     }
   }, [posthog, currentUser]);

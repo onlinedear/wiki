@@ -150,7 +150,7 @@ bash scripts/verify-personal-api-keys.sh
 
 ### 访问功能
 
-1. 登录到 Docmost
+1. 登录到 NoteDoc
 2. 点击右上角头像 → 设置
 3. 在左侧菜单中选择：账户 > API 密钥
 4. 或直接访问：`http://localhost:5173/settings/account/api-keys`
@@ -266,7 +266,7 @@ fetch('http://localhost:5173/api/pages', {
 - ✅ 提供了良好的用户体验
 - ✅ 包含完整的文档和验证脚本
 
-用户现在可以在账户设置中方便地管理自己的 API 密钥，用于编程访问 Docmost API。
+用户现在可以在账户设置中方便地管理自己的 API 密钥，用于编程访问 NoteDoc API。
 
 ---
 

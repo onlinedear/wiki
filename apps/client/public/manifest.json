@@ -1,6 +1,6 @@
 {
-  "name": "Docmost",
-  "short_name": "Docmost",
+  "name": "NoteDoc",
+  "short_name": "NoteDoc",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#222",

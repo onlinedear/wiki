@@ -6,20 +6,20 @@ import {
 } from '@nestjs/common';
 import { CreatePageDto } from '../dto/create-page.dto';
 import { UpdatePageDto } from '../dto/update-page.dto';
-import { PageRepo } from '@docmost/db/repos/page/page.repo';
-import { InsertablePage, Page, User } from '@docmost/db/types/entity.types';
-import { PaginationOptions } from '@docmost/db/pagination/pagination-options';
+import { PageRepo } from '@notedoc/db/repos/page/page.repo';
+import { InsertablePage, Page, User } from '@notedoc/db/types/entity.types';
+import { PaginationOptions } from '@notedoc/db/pagination/pagination-options';
 import {
   executeWithPagination,
   PaginationResult,
-} from '@docmost/db/pagination/pagination';
+} from '@notedoc/db/pagination/pagination';
 import { InjectKysely } from 'nestjs-kysely';
-import { KyselyDB } from '@docmost/db/types/kysely.types';
+import { KyselyDB } from '@notedoc/db/types/kysely.types';
 import { generateJitteredKeyBetween } from 'fractional-indexing-jittered';
 import { MovePageDto } from '../dto/move-page.dto';
 import { generateSlugId } from '../../../common/helpers';
-import { executeTx } from '@docmost/db/utils';
-import { AttachmentRepo } from '@docmost/db/repos/attachment/attachment.repo';
+import { executeTx } from '@notedoc/db/utils';
+import { AttachmentRepo } from '@notedoc/db/repos/attachment/attachment.repo';
 import { v7 as uuid7 } from 'uuid';
 import {
   createYdocFromJson,

@@ -3,7 +3,7 @@
 ## Monorepo Layout
 
 ```
-docmost/
+notedoc/
 ├── apps/
 │   ├── client/          # React frontend
 │   └── server/          # NestJS backend
@@ -124,9 +124,9 @@ src/
   - `guards/*.guard.ts` - Authorization guards
 - **Repository pattern**: Database access through repos in `database/repos/`
 - **Path aliases**:
-  - `@docmost/db/*` → `src/database/*`
-  - `@docmost/ee/*` → `src/ee/*`
-  - `@docmost/transactional/*` → `src/integrations/transactional/*`
+  - `@notedoc/db/*` → `src/database/*`
+  - `@notedoc/ee/*` → `src/ee/*`
+  - `@notedoc/transactional/*` → `src/integrations/transactional/*`
 
 ### Database
 

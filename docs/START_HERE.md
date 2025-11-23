@@ -1,6 +1,6 @@
 # 🚀 API Key 功能 - 从这里开始
 
-> 欢迎使用 Docmost API Key 管理功能！
+> 欢迎使用 NoteDoc API Key 管理功能！
 
 ## 📖 快速导航
 

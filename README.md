@@ -1,10 +1,10 @@
 <div align="center">
-    <h1><b>Docmost</b></h1>
+    <h1><b>NoteDoc</b></h1>
     <p>
         开源协作式 Wiki 和文档管理平台
         <br />
         <a href="https://github.com/onlinedear/wiki"><strong>GitHub</strong></a> | 
-        <a href="https://docmost.com/docs"><strong>文档</strong></a> |
+        <a href="https://notedoc.cn/docs"><strong>文档</strong></a> |
         <a href="https://github.com/onlinedear/wiki/discussions"><strong>讨论区</strong></a>
     </p>
     <p>
@@ -16,9 +16,9 @@
 
 <br />
 
-## 📖 关于 Docmost
+## 📖 关于 NoteDoc
 
-Docmost 是一个强大的开源协作式 Wiki 和文档管理平台，专为现代团队打造。它结合了实时协作、富文本编辑和灵活的组织结构，帮助团队创建、共享和维护知识库。
+NoteDoc 是一个强大的开源协作式 Wiki 和文档管理平台，专为现代团队打造。它结合了实时协作、富文本编辑和灵活的组织结构，帮助团队创建、共享和维护知识库。
 
 ### ✨ 核心亮点
 
@@ -46,7 +46,7 @@ openssl rand -hex 32
 # - 设置 APP_SECRET 为生成的密钥
 # - 设置强密码保护数据库
 
-# 启动 Docmost
+# 启动 NoteDoc
 docker-compose up -d
 
 # 访问 http://localhost:3000
@@ -56,24 +56,24 @@ docker-compose up -d
 
 **Vercel 部署**
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/onlinedear/wiki&env=APP_URL,APP_SECRET,DATABASE_URL,REDIS_URL,STORAGE_DRIVER&project-name=docmost&repository-name=docmost)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/onlinedear/wiki&env=APP_URL,APP_SECRET,DATABASE_URL,REDIS_URL,STORAGE_DRIVER&project-name=notedoc&repository-name=notedoc)
 
 点击按钮快速部署到 Vercel。查看 [Vercel 部署指南](./docs/Vercel部署指南.md) 了解详细配置。
 
 **其他平台**
-- **Railway**：支持 Docker，自动配置数据库 - [部署教程](./docs/Docmost完整部署指南.md)
-- **Render**：支持 Docker，提供托管数据库 - [部署教程](./docs/Docmost完整部署指南.md)
-- **DigitalOcean**：App Platform 一键部署 - [部署教程](./docs/Docmost完整部署指南.md)
+- **Railway**：支持 Docker，自动配置数据库 - [部署教程](./docs/NoteDoc完整部署指南.md)
+- **Render**：支持 Docker，提供托管数据库 - [部署教程](./docs/NoteDoc完整部署指南.md)
+- **DigitalOcean**：App Platform 一键部署 - [部署教程](./docs/NoteDoc完整部署指南.md)
 
 ### 宝塔面板部署
 
-如果你使用宝塔面板管理服务器，可以通过 Docker 快速部署 Docmost：
+如果你使用宝塔面板管理服务器，可以通过 Docker 快速部署 NoteDoc：
 
 ```bash
 # 1. 在宝塔面板安装 Docker 管理器
 # 2. 创建项目目录
-mkdir -p /www/wwwroot/docmost
-cd /www/wwwroot/docmost
+mkdir -p /www/wwwroot/notedoc
+cd /www/wwwroot/notedoc
 
 # 3. 下载 docker-compose.yml
 curl -O https://raw.githubusercontent.com/onlinedear/wiki/main/docker-compose.yml
@@ -97,7 +97,7 @@ docker-compose up -d
 
 ### 手动安装
 
-查看我们的[完整部署指南](./docs/Docmost完整部署指南.md)，了解详细说明：
+查看我们的[完整部署指南](./docs/NoteDoc完整部署指南.md)，了解详细说明：
 - Ubuntu/Debian/CentOS 手动部署
 - 云平台部署（AWS、GCP、Azure）
 - Kubernetes 部署
@@ -133,7 +133,7 @@ docker-compose up -d
 
 ## 🏗️ 技术架构
 
-Docmost 采用现代化的 Monorepo 架构，前后端分离：
+NoteDoc 采用现代化的 Monorepo 架构，前后端分离：
 
 ### 技术栈
 
@@ -161,7 +161,7 @@ Docmost 采用现代化的 Monorepo 架构，前后端分离：
 ### 项目结构
 
 ```
-docmost/
+notedoc/
 ├── apps/
 │   ├── client/          # React 前端应用
 │   └── server/          # NestJS 后端应用
@@ -180,7 +180,7 @@ docmost/
 
 ### 快速入门
 - [快速开始指南](./docs/START_HERE.md) - 快速上手
-- [完整部署指南](./docs/Docmost完整部署指南.md) - 详细的部署说明
+- [完整部署指南](./docs/NoteDoc完整部署指南.md) - 详细的部署说明
 - [Vercel 部署指南](./docs/Vercel部署指南.md) - Vercel 平台部署详解
 - [快速部署到 Vercel](./docs/快速部署到Vercel.md) - 3分钟一键部署
 - [宝塔面板部署指南](./docs/宝塔面板部署指南.md) - 宝塔面板 Docker 部署详解

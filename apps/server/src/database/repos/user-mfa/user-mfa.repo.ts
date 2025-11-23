@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { KyselyDB } from '@docmost/db/types/kysely.types';
+import { KyselyDB } from '@notedoc/db/types/kysely.types';
 import { InjectKysely } from 'nestjs-kysely';
 
 interface UpsertMfaData {
