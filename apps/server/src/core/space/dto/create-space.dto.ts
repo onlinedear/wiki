@@ -20,6 +20,8 @@ export class CreateSpaceDto {
 
   @MinLength(2)
   @MaxLength(50)
-  @IsAlphanumeric()
+  @IsAlphanumeric('en-US', {
+    message: 'slug must contain only letters and numbers',
+  })
   slug: string;
 }

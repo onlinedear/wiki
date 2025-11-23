@@ -17,7 +17,9 @@ export class CreateWorkspaceDto {
   @IsOptional()
   @MinLength(4)
   @MaxLength(30)
-  @IsAlphanumeric()
+  @IsAlphanumeric('en-US', {
+    message: 'hostname must contain only letters and numbers',
+  })
   @Transform(({ value }: TransformFnParams) => value?.trim().toLowerCase())
   hostname?: string;
 

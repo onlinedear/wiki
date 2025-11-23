@@ -167,6 +167,7 @@
   "Space name": "Space name",
   "Space settings": "Space settings",
   "Space slug": "Space slug",
+  "Space slug must be alphanumeric": "Space slug must be alphanumeric",
   "Spaces": "Spaces",
   "Spaces you belong to": "Spaces you belong to",
   "No space found": "No space found",

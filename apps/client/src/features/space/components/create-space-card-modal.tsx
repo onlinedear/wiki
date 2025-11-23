@@ -10,21 +10,23 @@ import { useTranslation } from "react-i18next";
 import AvatarUploader from "@/components/common/avatar-uploader.tsx";
 import { AvatarIconType } from "@/features/attachments/types/attachment.types.ts";
 
-const formSchema = z.object({
-  name: z.string().trim().min(2).max(50),
-  slug: z
-    .string()
-    .trim()
-    .min(2)
-    .max(50)
-    .regex(
-      /^[a-zA-Z0-9]+$/,
-      "Space slug must be alphanumeric. No special characters",
-    ),
-  description: z.string().max(500),
-});
+const createFormSchema = (t: (key: string) => string) =>
+  z.object({
+    name: z.string().trim().min(2).max(50),
+    slug: z
+      .string()
+      .trim()
+      .min(2)
+      .max(50)
+      .regex(/^[a-zA-Z0-9]+$/, t("Space slug must be alphanumeric")),
+    description: z.string().max(500),
+  });
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = {
+  name: string;
+  slug: string;
+  description: string;
+};
 
 interface CreateSpaceCardModalProps {
   opened: boolean;
@@ -39,7 +41,7 @@ export default function CreateSpaceCardModal({ opened, onClose }: CreateSpaceCar
   const [iconPreview, setIconPreview] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
-    validate: zodResolver(formSchema),
+    validate: zodResolver(createFormSchema(t)),
     validateInputOnChange: ["slug"],
     initialValues: {
       name: "",
