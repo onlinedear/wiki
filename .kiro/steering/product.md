@@ -1,3 +1,11 @@
+---
+creator: "${author}"
+created: "${createTime}"
+last_modified_by: "${author}"
+last_modified: "${updateTime}"
+version: "v1.0"
+visibility: "internal"
+---
 # Product Overview
 
 NoteDoc is an open-source collaborative wiki and documentation platform.
