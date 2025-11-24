@@ -807,5 +807,8 @@
   "Failed to update mail settings": "更新邮件设置失败",
   "Test email sent successfully": "测试邮件发送成功",
   "Failed to send test email": "发送测试邮件失败",
-  "System": "系统"
+  "System": "系统",
+  "Users": "用户",
+  "Content": "内容",
+  "许可证与版本": "许可证与版本"
 }

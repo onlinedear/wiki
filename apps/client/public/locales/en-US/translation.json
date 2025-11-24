@@ -566,5 +566,8 @@
   "Update API key": "Update API key",
   "Manage API keys for all users in the workspace": "Manage API keys for all users in the workspace",
   "Third-party integrations": "Third-party integrations",
-  "Manage connections to external systems and services": "Manage connections to external systems and services"
+  "Manage connections to external systems and services": "Manage connections to external systems and services",
+  "Users": "Users",
+  "Content": "Content",
+  "License & Edition": "License & Edition"
 }

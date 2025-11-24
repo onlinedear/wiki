@@ -79,13 +79,72 @@ const groupedData: DataGroup[] = [
     ],
   },
   {
-    heading: "Workspace",
+    heading: "Users",
     items: [
-      { label: "General", icon: IconSettings, path: "/settings/workspace" },
       {
         label: "Members",
         icon: IconUsers,
         path: "/settings/members",
+        isAdmin: true,
+      },
+      { 
+        label: "Groups", 
+        icon: IconUsersGroup, 
+        path: "/settings/groups",
+        isAdmin: true,
+      },
+    ],
+  },
+  {
+    heading: "Content",
+    items: [
+      { 
+        label: "Spaces", 
+        icon: IconSpaces, 
+        path: "/settings/spaces",
+        isAdmin: true,
+      },
+      { 
+        label: "Public sharing", 
+        icon: IconWorld, 
+        path: "/settings/sharing",
+        isAdmin: true,
+      },
+      {
+        label: "Comment management",
+        icon: IconMessageCircle,
+        path: "/settings/comments",
+        isAdmin: true,
+      },
+    ],
+  },
+  {
+    heading: "System",
+    items: [
+      { 
+        label: "General", 
+        icon: IconSettings, 
+        path: "/settings/workspace",
+        isAdmin: true,
+      },
+      {
+        label: "Security & SSO",
+        icon: IconLock,
+        path: "/settings/security",
+        isAdmin: true,
+      },
+      {
+        label: "API management",
+        icon: IconKey,
+        path: "/settings/api-keys",
+        isAdmin: true,
+      },
+      {
+        label: "Mail service",
+        icon: IconMail,
+        path: "/settings/mail",
+        isAdmin: true,
+        isSelfhosted: true,
       },
       {
         label: "Billing",
@@ -95,42 +154,10 @@ const groupedData: DataGroup[] = [
         isAdmin: true,
       },
       {
-        label: "Security & SSO",
-        icon: IconLock,
-        path: "/settings/security",
-        isAdmin: true,
-      },
-      { label: "Groups", icon: IconUsersGroup, path: "/settings/groups" },
-      { label: "Spaces", icon: IconSpaces, path: "/settings/spaces" },
-      { label: "Public sharing", icon: IconWorld, path: "/settings/sharing" },
-      {
-        label: "Comment management",
-        icon: IconMessageCircle,
-        path: "/settings/comments",
-        isAdmin: true,
-      },
-      {
-        label: "API management",
-        icon: IconKey,
-        path: "/settings/api-keys",
-        isAdmin: true,
-      },
-    ],
-  },
-  {
-    heading: "System",
-    items: [
-      {
-        label: "Mail service",
-        icon: IconMail,
-        path: "/settings/mail",
-        isAdmin: true,
-        isSelfhosted: true,
-      },
-      {
         label: "License & Edition",
         icon: IconKey,
         path: "/settings/license",
+        isAdmin: true,
       },
     ],
   },
@@ -188,12 +215,13 @@ export default function SettingsSidebar() {
   };
 
   const menuItems = groupedData.map((group) => {
+    // Hide System section for non-admin users or cloud users (except billing)
     if (group.heading === "System" && (!isAdmin || isCloud())) {
       return null;
     }
 
-    // Hide Workspace section for non-admin users
-    if (group.heading === "Workspace" && !isAdmin) {
+    // Hide Users and Content sections for non-admin users
+    if ((group.heading === "Users" || group.heading === "Content") && !isAdmin) {
       return null;
     }
 
