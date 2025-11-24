@@ -9,8 +9,10 @@ import InstallationDetails from "@/ee/licence/components/installation-details.ts
 import OssDetails from "@/ee/licence/components/oss-details.tsx";
 import { useAtom } from "jotai/index";
 import { workspaceAtom } from "@/features/user/atoms/current-user-atom.ts";
+import { useTranslation } from "react-i18next";
 
 export default function License() {
+  const { t } = useTranslation();
   const [workspace] = useAtom(workspaceAtom);
   const { isAdmin } = useUserRole();
 
@@ -21,9 +23,9 @@ export default function License() {
   return (
     <>
       <Helmet>
-        <title>License - {getAppName()}</title>
+        <title>{t("License")} - {getAppName()}</title>
       </Helmet>
-      <SettingsTitle title="License" />
+      <SettingsTitle title={t("License")} />
 
       <ActivateLicenseForm />
 

@@ -1,7 +1,10 @@
 import { Group, Table, ThemeIcon } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 
 export default function OssDetails() {
+  const { t } = useTranslation();
+  
   return (
     <Table.ScrollContainer minWidth={500} py="md">
       <Table
@@ -10,15 +13,12 @@ export default function OssDetails() {
         layout="fixed"
         withTableBorder
       >
-        <Table.Caption>
-          To unlock enterprise features like SSO, MFA, Resolve comments, contact sales@notedoc.com.
-        </Table.Caption>
         <Table.Tbody>
           <Table.Tr>
-            <Table.Th w={160}>Edition</Table.Th>
+            <Table.Th w={160}>{t("Edition")}</Table.Th>
             <Table.Td>
               <Group wrap="nowrap">
-                Open Source
+                {t("Open Source")}
                 <div>
                   <ThemeIcon
                     color="green"

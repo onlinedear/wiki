@@ -26,7 +26,7 @@ export default function RemoveLicense() {
 
   return (
     <Group>
-      <Button variant="light" color="red" onClick={openDeleteModal}>Remove license</Button>
+      <Button variant="light" color="red" onClick={openDeleteModal}>{t("Remove license")}</Button>
     </Group>
   );
 }
