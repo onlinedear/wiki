@@ -246,6 +246,14 @@ const CommandGroups: SlashMenuGroupedItemsType = {
           .run(),
     },
     {
+      title: "Gantt chart",
+      description: "Insert a gantt chart for project planning.",
+      searchTerms: ["gantt", "chart", "timeline", "project", "schedule"],
+      icon: IconCalendar,
+      command: ({ editor, range }: CommandProps) =>
+        editor.chain().focus().deleteRange(range).setGantt().run(),
+    },
+    {
       title: "Toggle block",
       description: "Insert collapsible block.",
       searchTerms: ["collapsible", "block", "toggle", "details", "expand"],

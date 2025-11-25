@@ -40,6 +40,7 @@ import {
   Mention,
   Subpages,
   TableDndExtension,
+  Gantt,
 } from "@notedoc/editor-ext";
 import {
   randomElement,
@@ -60,6 +61,7 @@ import DrawioView from "../components/drawio/drawio-view";
 import ExcalidrawView from "@/features/editor/components/excalidraw/excalidraw-view.tsx";
 import EmbedView from "@/features/editor/components/embed/embed-view.tsx";
 import SubpagesView from "@/features/editor/components/subpages/subpages-view.tsx";
+import { GanttView } from "@/features/editor/components/gantt/gantt-view.tsx";
 import plaintext from "highlight.js/lib/languages/plaintext";
 import powershell from "highlight.js/lib/languages/powershell";
 import abap from "highlightjs-sap-abap";
@@ -218,6 +220,9 @@ export const mainExtensions = [
   }),
   Subpages.configure({
     view: SubpagesView,
+  }),
+  Gantt.configure({
+    view: GanttView,
   }),
   MarkdownClipboard.configure({
     transformPastedText: true,

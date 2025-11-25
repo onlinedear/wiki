@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^7.1.0",
-    "@notedoc/editor-ext": "workspace:*",
     "@floating-ui/dom": "^1.7.3",
+    "@hello-pangea/dnd": "^18.0.1",
     "@hocuspocus/extension-redis": "^2.15.2",
     "@hocuspocus/provider": "^2.15.2",
     "@hocuspocus/server": "^2.15.2",
@@ -28,6 +28,7 @@
     "@joplin/turndown": "^4.0.74",
     "@joplin/turndown-plugin-gfm": "^1.0.56",
     "@node-saml/node-saml": "^5.1.0",
+    "@notedoc/editor-ext": "workspace:*",
     "@sindresorhus/slugify": "1.1.0",
     "@tiptap/core": "^2.10.3",
     "@tiptap/extension-code-block": "^2.10.3",

@@ -9,6 +9,9 @@ import clsx from "clsx";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { useTranslation } from "react-i18next";
 import EmojiCommand from "@/features/editor/extensions/emoji-command";
+import { useAtom } from "jotai";
+import { taskReferenceAtom } from "@/features/comment/atoms/comment-atom";
+import { Badge, CloseButton, Group } from "@mantine/core";
 
 interface CommentEditorProps {
   defaultContent?: any;
@@ -17,6 +20,7 @@ interface CommentEditorProps {
   editable: boolean;
   placeholder?: string;
   autofocus?: boolean;
+  showTaskReference?: boolean; // 是否显示任务引用徽章
 }
 
 const CommentEditor = forwardRef(
@@ -28,11 +32,13 @@ const CommentEditor = forwardRef(
       editable,
       placeholder,
       autofocus,
+      showTaskReference = false,
     }: CommentEditorProps,
     ref,
   ) => {
     const { t } = useTranslation();
     const { ref: focusRef, focused } = useFocusWithin();
+    const [taskReference, setTaskReference] = useAtom(taskReferenceAtom);
 
     const commentEditor = useEditor({
       extensions: [
@@ -107,11 +113,24 @@ const CommentEditor = forwardRef(
     useImperativeHandle(ref, () => ({
       clearContent: () => {
         commentEditor.commands.clearContent();
+        setTaskReference(null);
       },
     }));
 
     return (
       <div ref={focusRef} className={classes.commentEditor}>
+        {showTaskReference && taskReference && (
+          <Group gap="xs" mb="xs" p="xs" style={{ backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
+            <Badge variant="light" color="blue" size="lg">
+              引用任务: {taskReference.taskName}
+            </Badge>
+            <CloseButton 
+              size="sm" 
+              onClick={() => setTaskReference(null)}
+              aria-label="移除引用"
+            />
+          </Group>
+        )}
         <EditorContent
           editor={commentEditor}
           className={clsx(classes.ProseMirror, { [classes.focused]: focused })}

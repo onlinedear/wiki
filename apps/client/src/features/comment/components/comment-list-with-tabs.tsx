@@ -22,6 +22,8 @@ import {
   SpaceCaslAction,
   SpaceCaslSubject,
 } from "@/features/space/permissions/permissions.type.ts";
+import { useAtomValue } from "jotai";
+import { taskReferenceAtom } from "@/features/comment/atoms/comment-atom";
 
 function CommentListWithTabs() {
   const { t } = useTranslation();
@@ -40,6 +42,7 @@ function CommentListWithTabs() {
 
   const spaceRules = space?.membership?.permissions;
   const spaceAbility = useSpaceAbility(spaceRules);
+  const taskReference = useAtomValue(taskReferenceAtom);
 
   // State for new comment at the top
   const [newCommentContent, setNewCommentContent] = useState("");
@@ -102,9 +105,34 @@ function CommentListWithTabs() {
 
     try {
       setIsCreatingComment(true);
+      
+      // 如果有任务引用，在评论内容前添加引用信息
+      let finalContent: any = newCommentContent;
+      if (taskReference && finalContent) {
+        // 在评论内容开头添加任务引用
+        const referenceNode = {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              marks: [{ type: 'bold' }],
+              text: `[任务: ${taskReference.taskName}]`,
+            },
+          ],
+        };
+        
+        // 如果 newCommentContent 是对象，添加引用节点
+        if (typeof finalContent === 'object' && finalContent?.type === 'doc') {
+          finalContent = {
+            ...finalContent,
+            content: [referenceNode, ...(finalContent.content || [])],
+          };
+        }
+      }
+      
       const commentData = {
         pageId: page.id,
-        content: JSON.stringify(newCommentContent),
+        content: JSON.stringify(finalContent),
       };
 
       await createCommentMutation.mutateAsync(commentData);
@@ -120,7 +148,7 @@ function CommentListWithTabs() {
     } finally {
       setIsCreatingComment(false);
     }
-  }, [newCommentContent, page?.id, createCommentMutation, emit]);
+  }, [newCommentContent, page?.id, createCommentMutation, emit, taskReference]);
 
   const renderComments = useCallback(
     (comment: IComment) => (
@@ -188,6 +216,7 @@ function CommentListWithTabs() {
                 onSave={handleCreateNewComment}
                 placeholder={t("Write a comment")}
                 editable={true}
+                showTaskReference={true}
               />
               {newCommentFocused && (
                 <CommentActions
@@ -269,6 +298,7 @@ function CommentListWithTabs() {
               onSave={handleCreateNewComment}
               placeholder={t("Write a comment")}
               editable={true}
+              showTaskReference={true}
             />
             {newCommentFocused && (
               <CommentActions
