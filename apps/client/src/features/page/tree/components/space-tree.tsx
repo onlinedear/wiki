@@ -242,7 +242,7 @@ export default function SpaceTree({ spaceId, readOnly }: SpaceTreeProps) {
           disableMultiSelection={true}
           className={classes.tree}
           rowClassName={classes.row}
-          rowHeight={30}
+          rowHeight={35}
           overscanCount={10}
           dndRootElement={rootElement.current}
           onToggle={() => {
