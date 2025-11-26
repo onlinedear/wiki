@@ -106,7 +106,6 @@ export default function App() {
               element={<AccountPreferences />}
             />
             <Route path={"account/api-keys"} element={<AccountApiKeys />} />
-            <Route path={"account/integrations"} element={<ThirdPartyIntegrations />} />
             <Route path={"workspace"} element={<WorkspaceSettings />} />
             <Route path={"members"} element={<WorkspaceMembers />} />
             <Route path={"api-keys"} element={<WorkspaceApiKeys />} />
@@ -116,6 +115,7 @@ export default function App() {
             <Route path={"sharing"} element={<Shares />} />
             <Route path={"comments"} element={<CommentManagement />} />
             <Route path={"security"} element={<Security />} />
+            <Route path={"integrations"} element={<ThirdPartyIntegrations />} />
             <Route path={"mail"} element={<MailSettings />} />
             {!isCloud() && <Route path={"license"} element={<License />} />}
             {isCloud() && <Route path={"billing"} element={<Billing />} />}

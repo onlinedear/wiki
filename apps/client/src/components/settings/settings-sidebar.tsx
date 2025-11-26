@@ -71,11 +71,6 @@ const groupedData: DataGroup[] = [
         icon: IconKey,
         path: "/settings/account/api-keys",
       },
-      {
-        label: "Third-party integrations",
-        icon: IconPlugConnected,
-        path: "/settings/account/integrations",
-      },
     ],
   },
   {
@@ -137,6 +132,12 @@ const groupedData: DataGroup[] = [
         label: "API management",
         icon: IconKey,
         path: "/settings/api-keys",
+        isAdmin: true,
+      },
+      {
+        label: "Third-party integrations",
+        icon: IconPlugConnected,
+        path: "/settings/integrations",
         isAdmin: true,
       },
       {

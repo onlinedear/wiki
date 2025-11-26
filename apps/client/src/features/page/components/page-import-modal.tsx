@@ -19,6 +19,7 @@ import {
   IconCloud,
   IconUpload,
 } from "@tabler/icons-react";
+import { FeishuIcon } from "@/components/icons/feishu-icon.tsx";
 import {
   importPage,
   importZip,
@@ -38,6 +39,7 @@ import { getFileTaskById } from "@/features/file-task/services/file-task-service
 import { queryClient } from "@/main.tsx";
 import { useQueryEmit } from "@/features/websocket/use-query-emit.ts";
 import { ConfluenceOnlineImportModal } from "@/features/confluence/components/confluence-online-import-modal.tsx";
+import { FeishuOnlineImportModal } from "@/features/feishu/components/feishu-online-import-modal.tsx";
 
 interface PageImportModalProps {
   spaceId: string;
@@ -95,6 +97,7 @@ function ImportFormatSelection({ spaceId, onClose }: ImportFormatSelection) {
   const confluenceFileRef = useRef<() => void>(null);
   const zipFileRef = useRef<() => void>(null);
   const [confluenceOnlineModalOpened, setConfluenceOnlineModalOpened] = useState(false);
+  const [feishuOnlineModalOpened, setFeishuOnlineModalOpened] = useState(false);
 
   const handleZipUpload = async (selectedFile: File, source: string) => {
     if (!selectedFile) {
@@ -371,6 +374,15 @@ function ImportFormatSelection({ spaceId, onClose }: ImportFormatSelection) {
             </FileButton>
           </Menu.Dropdown>
         </Menu>
+
+        <Button
+          justify="start"
+          variant="default"
+          leftSection={<FeishuIcon size={18} />}
+          onClick={() => setFeishuOnlineModalOpened(true)}
+        >
+          {t('Feishu')}
+        </Button>
       </SimpleGrid>
 
       <Group justify="center" gap="xl" mih={150}>
@@ -410,6 +422,12 @@ function ImportFormatSelection({ spaceId, onClose }: ImportFormatSelection) {
         spaceId={spaceId}
         opened={confluenceOnlineModalOpened}
         onClose={() => setConfluenceOnlineModalOpened(false)}
+      />
+
+      <FeishuOnlineImportModal
+        spaceId={spaceId}
+        opened={feishuOnlineModalOpened}
+        onClose={() => setFeishuOnlineModalOpened(false)}
       />
     </>
   );

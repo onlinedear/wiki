@@ -1,6 +1,7 @@
 import { Stack, Title, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import ConfluenceConfig from './confluence-integration';
+import FeishuConfig from './feishu-integration';
 
 export default function ThirdPartyIntegrations() {
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ export default function ThirdPartyIntegrations() {
       </div>
 
       <ConfluenceConfig />
+      <FeishuConfig />
     </Stack>
   );
 }

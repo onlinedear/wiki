@@ -1,0 +1,38 @@
+.videoWrapper {
+  display: block;
+}
+
+.videoWrapper video {
+  max-width: 820px;
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.videoWrapper.alignLeft {
+  text-align: left;
+}
+
+.videoWrapper.alignLeft video {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.videoWrapper.alignRight {
+  text-align: right;
+}
+
+.videoWrapper.alignRight video {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.videoWrapper.alignCenter {
+  text-align: center;
+}
+
+.videoWrapper.alignCenter video {
+  margin-left: auto;
+  margin-right: auto;
+}

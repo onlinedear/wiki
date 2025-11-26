@@ -1,0 +1,27 @@
+.treeContainer {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-sm);
+  padding: 8px;
+}
+
+.treeNode {
+  padding: 4px 8px;
+  border-radius: var(--mantine-radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.treeNode:hover {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.chevronCollapsed {
+  transition: transform 0.2s ease;
+}
+
+.chevronExpanded {
+  transform: rotate(90deg);
+  transition: transform 0.2s ease;
+}
