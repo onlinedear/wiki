@@ -10,4 +10,10 @@ export interface TaskReference {
   taskName: string;
 }
 
-export const taskReferenceAtom = atom<TaskReference | null>(null);
+// Make it writable explicitly
+export const taskReferenceAtom = atom<TaskReference | null, [TaskReference | null], void>(
+  null,
+  (_get, set, newValue) => {
+    set(taskReferenceAtom, newValue);
+  }
+);

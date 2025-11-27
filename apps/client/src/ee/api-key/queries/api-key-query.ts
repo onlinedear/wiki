@@ -1,4 +1,4 @@
-import { QueryParams } from "@/lib/types.ts";
+import { QueryParams, IPagination } from "@/lib/types.ts";
 import {
   keepPreviousData,
   useMutation,
@@ -24,7 +24,7 @@ import { workspaceAtom } from "@/features/user/atoms/current-user-atom";
 
 export function useGetApiKeysQuery(
   params?: QueryParams,
-): UseQueryResult<IApiKey[], Error> {
+): UseQueryResult<IPagination<IApiKey>, Error> {
   const workspace = useAtomValue(workspaceAtom);
   
   return useQuery({

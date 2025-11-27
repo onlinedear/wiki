@@ -56,7 +56,7 @@ export default function WorkspaceApiKeys() {
     setDetailsDrawerOpened(true);
   };
 
-  const filteredApiKeys = data?.filter((apiKey) => {
+  const filteredApiKeys = data?.items?.filter((apiKey) => {
     // Search filter
     const matchesSearch =
       !searchQuery ||
@@ -119,7 +119,7 @@ export default function WorkspaceApiKeys() {
       </Alert>
 
       {/* Stats Cards */}
-      <ApiKeyStatsCards apiKeys={data || []} />
+      <ApiKeyStatsCards apiKeys={data?.items || []} />
 
       {/* Search and Filter Bar */}
       <Group justify="space-between" mb="md">
@@ -164,11 +164,11 @@ export default function WorkspaceApiKeys() {
 
       <Space h="md" />
 
-      {data && data.length > 0 && (
+      {data?.items && data.items.length > 0 && (
         <Paginate
           currentPage={page}
-          hasPrevPage={page > 1}
-          hasNextPage={data.length >= 100}
+          hasPrevPage={data.meta.hasPrevPage}
+          hasNextPage={data.meta.hasNextPage}
           onPageChange={setPage}
         />
       )}

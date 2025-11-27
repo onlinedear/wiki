@@ -32,8 +32,10 @@ export type IPaginationMeta = {
   page: number;
   hasNextPage: boolean;
   hasPrevPage: boolean;
+  total?: number;
 };
 export type IPagination<T> = {
   items: T[];
   meta: IPaginationMeta;
+  total?: number;
 };

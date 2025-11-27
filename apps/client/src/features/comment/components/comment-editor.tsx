@@ -10,7 +10,7 @@ import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { useTranslation } from "react-i18next";
 import EmojiCommand from "@/features/editor/extensions/emoji-command";
 import { useAtom } from "jotai";
-import { taskReferenceAtom } from "@/features/comment/atoms/comment-atom";
+import { taskReferenceAtom, type TaskReference } from "@/features/comment/atoms/comment-atom";
 import { Badge, CloseButton, Group } from "@mantine/core";
 
 interface CommentEditorProps {
@@ -38,7 +38,7 @@ const CommentEditor = forwardRef(
   ) => {
     const { t } = useTranslation();
     const { ref: focusRef, focused } = useFocusWithin();
-    const [taskReference, setTaskReference] = useAtom(taskReferenceAtom);
+    const [taskReference, setTaskReference] = useAtom<TaskReference | null>(taskReferenceAtom);
 
     const commentEditor = useEditor({
       extensions: [
@@ -104,16 +104,18 @@ const CommentEditor = forwardRef(
 
     useEffect(() => {
       setTimeout(() => {
-        if (autofocus) {
-          commentEditor?.commands.focus("end");
+        if (autofocus && commentEditor) {
+          commentEditor.commands.focus("end");
         }
       }, 10);
     }, [commentEditor, autofocus]);
 
     useImperativeHandle(ref, () => ({
       clearContent: () => {
-        commentEditor.commands.clearContent();
-        setTaskReference(null);
+        if (commentEditor) {
+          commentEditor.commands.clearContent();
+          setTaskReference(null);
+        }
       },
     }));
 

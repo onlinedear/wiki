@@ -88,7 +88,7 @@ export function DynamicHead() {
           favicon = document.createElement('link');
           favicon.rel = 'icon';
           favicon.type = 'image/png';
-          if (sizes) favicon.sizes = sizes;
+          if (sizes) favicon.setAttribute('sizes', sizes);
           favicon.href = newHref;
           document.head.appendChild(favicon);
         }

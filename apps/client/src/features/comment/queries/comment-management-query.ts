@@ -14,7 +14,7 @@ export interface WorkspaceCommentsParams {
 }
 
 export function useWorkspaceCommentsQuery(params: WorkspaceCommentsParams) {
-  return useQuery({
+  return useQuery<IPagination<any>>({
     queryKey: ["workspace-comments", params],
     queryFn: () => getWorkspaceComments(params),
   });
