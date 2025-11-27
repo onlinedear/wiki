@@ -1,5 +1,7 @@
 .ganttWrapper {
   margin: 1rem 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .ganttContent {
@@ -8,6 +10,7 @@
   border-radius: var(--mantine-radius-md);
   overflow: hidden;
   position: relative;
+  max-width: 100%;
 }
 
 /* 顶部横线 - 月份标题下方 */
@@ -41,6 +44,8 @@
   border-radius: var(--mantine-radius-md);
   padding: 1rem;
   background: var(--mantine-color-white);
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .toolbar {

@@ -53,6 +53,8 @@
       padding: 4px;
       word-break: break-word;
       overflow-wrap: break-word;
+      overflow: hidden;
+      max-width: 100%;
     }
   }
 
@@ -62,6 +64,8 @@
 
   [data-type="details"][open] > [data-type="detailsContainer"] > [data-type="detailsContent"]{
     display: block;
+    overflow: hidden;
+    max-width: 100%;
   }
 
   [data-type="details"][open] > [data-type="detailsButton"] {
@@ -74,6 +78,8 @@
   
   [data-type="details"]:has(.search-result) > [data-type="detailsContainer"] > [data-type="detailsContent"]{
     display: block;
+    overflow: hidden;
+    max-width: 100%;
   }
 
   [data-type="details"]:has(.search-result) > [data-type="detailsButton"] .ProseMirror-icon{
