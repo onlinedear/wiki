@@ -34,12 +34,115 @@ import {
   Mention,
   Subpages,
 } from '@notedoc/editor-ext';
+import { Node as TiptapNode, mergeAttributes } from '@tiptap/core';
 import { generateText, getSchema, JSONContent } from '@tiptap/core';
 import { generateHTML, generateJSON } from '../common/helpers/prosemirror/html';
 // @tiptap/html library works best for generating prosemirror json state but not HTML
 // see: https://github.com/ueberdosis/tiptap/issues/5352
 // see:https://github.com/ueberdosis/tiptap/issues/4089
-import { Node } from '@tiptap/pm/model';
+import { Node as ProseMirrorNode } from '@tiptap/pm/model';
+
+// Server-side Gantt extension without React dependency
+const GanttServerSide = TiptapNode.create({
+  name: 'gantt',
+  inline: false,
+  group: 'block',
+  isolating: true,
+  atom: true,
+  defining: true,
+  draggable: true,
+
+  addAttributes() {
+    return {
+      tasks: {
+        default: [],
+        parseHTML: (element) => {
+          const data = element.getAttribute('data-tasks');
+          return data ? JSON.parse(data) : [];
+        },
+        renderHTML: (attributes) => ({
+          'data-tasks': JSON.stringify(attributes.tasks || []),
+        }),
+      },
+      viewMode: {
+        default: 'week',
+        parseHTML: (element) => element.getAttribute('data-view-mode') || 'week',
+        renderHTML: (attributes) => ({
+          'data-view-mode': attributes.viewMode,
+        }),
+      },
+      hiddenColumns: {
+        default: [],
+        parseHTML: (element) => {
+          const data = element.getAttribute('data-hidden-columns');
+          return data ? JSON.parse(data) : [];
+        },
+        renderHTML: (attributes) => ({
+          'data-hidden-columns': JSON.stringify(attributes.hiddenColumns || []),
+        }),
+      },
+      customFields: {
+        default: [],
+        parseHTML: (element) => {
+          const data = element.getAttribute('data-custom-fields');
+          return data ? JSON.parse(data) : [];
+        },
+        renderHTML: (attributes) => ({
+          'data-custom-fields': JSON.stringify(attributes.customFields || []),
+        }),
+      },
+      ganttSettings: {
+        default: {},
+        parseHTML: (element) => {
+          const data = element.getAttribute('data-gantt-settings');
+          return data ? JSON.parse(data) : {};
+        },
+        renderHTML: (attributes) => ({
+          'data-gantt-settings': JSON.stringify(attributes.ganttSettings || {}),
+        }),
+      },
+      viewConfig: {
+        default: {},
+        parseHTML: (element) => {
+          const data = element.getAttribute('data-view-config');
+          return data ? JSON.parse(data) : {};
+        },
+        renderHTML: (attributes) => ({
+          'data-view-config': JSON.stringify(attributes.viewConfig || {}),
+        }),
+      },
+      milestones: {
+        default: [],
+        parseHTML: (element) => {
+          const data = element.getAttribute('data-milestones');
+          return data ? JSON.parse(data) : [];
+        },
+        renderHTML: (attributes) => ({
+          'data-milestones': JSON.stringify(attributes.milestones || []),
+        }),
+      },
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'div[data-type="gantt"]',
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'div',
+      mergeAttributes(
+        { 'data-type': 'gantt', class: 'gantt-chart' },
+        HTMLAttributes
+      ),
+      ['p', 'Gantt Chart'],
+    ];
+  },
+});
 
 export const tiptapExtensions = [
   StarterKit.configure({
@@ -80,6 +183,7 @@ export const tiptapExtensions = [
   Embed,
   Mention,
   Subpages,
+  GanttServerSide,
 ] as any;
 
 export function jsonToHtml(tiptapJson: any) {
@@ -95,7 +199,7 @@ export function jsonToText(tiptapJson: JSONContent) {
 }
 
 export function jsonToNode(tiptapJson: JSONContent) {
-  return Node.fromJSON(getSchema(tiptapExtensions), tiptapJson);
+  return ProseMirrorNode.fromJSON(getSchema(tiptapExtensions), tiptapJson);
 }
 
 export function getPageId(documentName: string) {
