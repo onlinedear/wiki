@@ -57,7 +57,6 @@ export default defineConfig(({ mode }) => {
             'editor-core': [
               '@tiptap/react',
               '@tiptap/core',
-              '@tiptap/pm',
               '@tiptap/extension-character-count',
             ],
             'collab': ['yjs', 'y-indexeddb', '@hocuspocus/provider'],
@@ -69,6 +68,13 @@ export default defineConfig(({ mode }) => {
         },
       },
       chunkSizeWarningLimit: 1000,
+      commonjsOptions: {
+        include: [/node_modules/],
+        transformMixedEsModules: true,
+      },
+    },
+    optimizeDeps: {
+      include: ['@tiptap/pm'],
     },
     server: {
       hmr: {

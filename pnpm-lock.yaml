@@ -196,6 +196,9 @@ importers:
       passport-google-oauth20:
         specifier: ^2.0.0
         version: 2.0.0
+      pinyin-pro:
+        specifier: ^3.27.0
+        version: 3.27.0
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -8304,6 +8307,9 @@ packages:
   pino@9.1.0:
     resolution: {integrity: sha512-qUcgfrlyOtjwhNLdbhoL7NR4NkHjzykAPw0V2QLFbvu/zss29h4NkRnibyFzBrNCbzCOY3WZ9hhKSwfOkNggYA==}
     hasBin: true
+
+  pinyin-pro@3.27.0:
+    resolution: {integrity: sha512-Osdgjwe7Rm17N2paDMM47yW+jUIUH3+0RGo8QP39ZTLpTaJVDK0T58hOLaMQJbcMmAebVuK2ePunTEVEx1clNQ==}
 
   pirates@4.0.6:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
@@ -19290,6 +19296,8 @@ snapshots:
       safe-stable-stringify: 2.4.3
       sonic-boom: 4.0.1
       thread-stream: 3.0.2
+
+  pinyin-pro@3.27.0: {}
 
   pirates@4.0.6: {}
 

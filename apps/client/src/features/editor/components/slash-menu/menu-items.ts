@@ -43,6 +43,7 @@ import {
   VimeoIcon,
   YoutubeIcon,
 } from "@/components/icons";
+import { pinyin } from "pinyin-pro";
 
 const CommandGroups: SlashMenuGroupedItemsType = {
   basic: [
@@ -445,6 +446,20 @@ export const getSuggestionItems = ({
     return false;
   };
 
+  // Helper function to check if query matches pinyin
+  const matchesPinyin = (query: string, text: string) => {
+    try {
+      // Get full pinyin (e.g., "youxu")
+      const fullPinyin = pinyin(text, { toneType: "none", type: "array" }).join("").toLowerCase();
+      // Get pinyin initials (e.g., "yx")
+      const pinyinInitials = pinyin(text, { pattern: "first", toneType: "none", type: "array" }).join("").toLowerCase();
+      
+      return fuzzyMatch(query, fullPinyin) || fuzzyMatch(query, pinyinInitials);
+    } catch (e) {
+      return false;
+    }
+  };
+
   for (const [group, items] of Object.entries(CommandGroups)) {
     const filteredItems = items.filter((item) => {
       // Match against English text
@@ -455,12 +470,24 @@ export const getSuggestionItems = ({
           item.searchTerms.some((term: string) => term.includes(search)));
 
       // Match against translated text if translation function is provided
-      const matchesTranslated = t
-        ? fuzzyMatch(search, t(item.title)) ||
-          t(item.description).toLowerCase().includes(search)
-        : false;
+      let matchesTranslated = false;
+      let matchesChinesePinyin = false;
+      
+      if (t) {
+        const translatedTitle = t(item.title);
+        const translatedDescription = t(item.description);
+        
+        matchesTranslated = 
+          fuzzyMatch(search, translatedTitle) ||
+          translatedDescription.toLowerCase().includes(search);
+        
+        // Check pinyin match for Chinese text
+        matchesChinesePinyin = 
+          matchesPinyin(search, translatedTitle) ||
+          matchesPinyin(search, translatedDescription);
+      }
 
-      return matchesEnglish || matchesTranslated;
+      return matchesEnglish || matchesTranslated || matchesChinesePinyin;
     });
 
     if (filteredItems.length) {

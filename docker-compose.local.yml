@@ -1,42 +1,41 @@
 services:
   notedoc:
-    # 使用预构建镜像，如果没有则需要本地构建
-    image: notedoc/notedoc:latest
-    # 如果上面的镜像不存在，取消下面的注释来本地构建
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    image: notedoc:latest
     depends_on:
       - db
       - redis
     environment:
       APP_URL: 'http://localhost:3000'
-      APP_SECRET: 'REPLACE_WITH_LONG_SECRET'
-      DATABASE_URL: 'postgresql://notedoc:STRONG_DB_PASSWORD@db:5432/notedoc?schema=public'
+      APP_SECRET: 'your-super-secret-key-at-least-32-characters-long'
+      DATABASE_URL: 'postgresql://notedoc:notedoc123@db:5432/notedoc?schema=public'
       REDIS_URL: 'redis://redis:6379'
     ports:
-      - "3001:3000"
+      - "3000:3000"
     restart: unless-stopped
     volumes:
-      - notedoc:/app/data/storage
+      - notedoc_data:/app/data/storage
 
   db:
     image: postgres:16-alpine
     environment:
       POSTGRES_DB: notedoc
       POSTGRES_USER: notedoc
-      POSTGRES_PASSWORD: STRONG_DB_PASSWORD
+      POSTGRES_PASSWORD: notedoc123
     restart: unless-stopped
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   redis:
     image: redis:7.2-alpine
     restart: unless-stopped
     volumes:
       - redis_data:/data
+    ports:
+      - "6379:6379"
 
 volumes:
-  notedoc:
+  notedoc_data:
   db_data:
   redis_data:
