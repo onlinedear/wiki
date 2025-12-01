@@ -86,7 +86,7 @@
 .scrollableArea {
   flex: 1;
   overflow-x: auto;
-  overflow-y: visible;
+  overflow-y: hidden;
   position: relative;
   scrollbar-width: thin;
   scrollbar-color: var(--mantine-color-gray-4) var(--mantine-color-gray-1);

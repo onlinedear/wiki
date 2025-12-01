@@ -52,6 +52,14 @@ function EmbedView(props: NodeViewProps) {
     validate: zodResolver(schema),
   });
 
+  const [isInteracting, setIsInteracting] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!selected) {
+      setIsInteracting(false);
+    }
+  }, [selected]);
+
   const handleResize = useCallback(
     (newHeight: number) => {
       updateAttributes({ height: newHeight });
@@ -97,14 +105,31 @@ function EmbedView(props: NodeViewProps) {
             "ProseMirror-selectednode": selected,
           })}
         >
-          <iframe
-            className={classes.embedIframe}
-            src={sanitizeUrl(embedUrl)}
-            allow="encrypted-media"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-            allowFullScreen
-            frameBorder="0"
-          />
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
+            <iframe
+              className={classes.embedIframe}
+              src={sanitizeUrl(embedUrl)}
+              allow="encrypted-media"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              allowFullScreen
+              frameBorder="0"
+              style={{ pointerEvents: isInteracting ? "auto" : "none" }}
+            />
+            {selected && !isInteracting && (
+              <Button
+                size="xs"
+                variant="filled"
+                color="blue"
+                style={{ position: "absolute", top: 8, right: 8, zIndex: 10 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsInteracting(true);
+                }}
+              >
+                {t("Interact")}
+              </Button>
+            )}
+          </div>
         </ResizableWrapper>
       ) : (
         <Popover

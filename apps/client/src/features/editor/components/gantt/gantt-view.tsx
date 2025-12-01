@@ -1393,16 +1393,11 @@ export function GanttView({ node, updateAttributes, editor }: GanttViewProps) {
 
   // 清除时间条（只清除日期，保留任务）
   const handleClearTimeBar = (taskId: string) => {
-    console.log('清除时间条 - 任务ID:', taskId);
-    console.log('清除前的任务列表:', tasks.map(t => ({ id: t.id, name: t.name, startDate: t.startDate, endDate: t.endDate })));
-    
     const newTasks = tasks.map(t => 
       t.id === taskId 
         ? { ...t, startDate: '', endDate: '' } 
         : t
     );
-    
-    console.log('清除后的任务列表:', newTasks.map(t => ({ id: t.id, name: t.name, startDate: t.startDate, endDate: t.endDate })));
     
     updateAttributes({ tasks: newTasks });
     handleCloseContextMenu();
@@ -2058,11 +2053,9 @@ export function GanttView({ node, updateAttributes, editor }: GanttViewProps) {
                             
                             // 如果任务没有日期，不渲染进度条
                             if (!taskDates.startDate || !taskDates.endDate) {
-                              console.log(`任务 ${task.id} (${task.name}) 没有日期，跳过渲染进度条`);
                               return null;
                             }
                             
-                            console.log(`渲染任务 ${task.id} (${task.name}) 的进度条`);
                             const position = calculateTaskPosition(task);
                             
                             // 如果无法计算位置，跳过渲染

@@ -1,0 +1,57 @@
+<!--
+ * @creator: "${author}"
+ * @created: "${createTime}"
+ * @last_modified_by: "${author}"
+ * @last_modified: "${updateTime}"
+ * @version: "v1.0"
+ * @visibility: "internal"
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>测试标题编号</title>
+<style>
+/* 测试 1: 基础 attr() 功能 */
+.test1 li[data-computed-number] > h1::before {
+  content: attr(data-computed-number) ". ";
+  color: red;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* 测试 2: 完整样式 */
+.test2 ol li[data-computed-number] > h1::before {
+  content: attr(data-computed-number) ". " !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 700;
+  color: blue;
+  display: inline-flex !important;
+  visibility: visible !important;
+}
+
+.test2 ol li > h1 {
+  position: relative;
+  padding-left: 3em;
+}
+</style>
+</head>
+<body>
+<h2>测试 1: 基础 attr() 功能</h2>
+<ol class="test1">
+  <li data-computed-number="1"><h1>标题 1</h1></li>
+  <li data-computed-number="1.1"><h1>标题 1.1</h1></li>
+</ol>
+
+<h2>测试 2: 完整样式（模拟 Tiptap）</h2>
+<ol class="test2">
+  <li data-computed-number="2"><h1>标题 2</h1></li>
+  <li data-computed-number="2.1"><h1>标题 2.1</h1></li>
+</ol>
+
+<h2>测试 3: 检查你的实际 HTML</h2>
+<p>打开开发者工具，在 Elements 面板中检查你的 &lt;h1&gt; 元素，看看 Styles 面板中 ::before 的 content 属性值是什么。</p>
+</body>
+</html>

@@ -56,6 +56,7 @@ import { FIVE_MINUTES } from "@/lib/constants.ts";
 import { PageEditMode } from "@/features/user/types/user.types.ts";
 import { jwtDecode } from "jwt-decode";
 import { searchSpotlight } from "@/features/search/constants.ts";
+import { NumberingMenu } from "@/features/editor/components/ordered-list/numbering-menu.tsx";
 
 interface PageEditorProps {
   pageId: string;
@@ -325,6 +326,24 @@ export default function PageEditor({
     };
   }, []);
 
+  // 监听编号点击事件
+  useEffect(() => {
+    const handleNumberingClick = (event: CustomEvent) => {
+      const { number, position, rect } = event.detail;
+      setNumberingMenuState({
+        show: true,
+        number,
+        position: { x: rect.right + 5, y: rect.top },
+        listItemPos: position,
+      });
+    };
+
+    document.addEventListener("heading-number-click", handleNumberingClick as EventListener);
+    return () => {
+      document.removeEventListener("heading-number-click", handleNumberingClick as EventListener);
+    };
+  }, []);
+
   useEffect(() => {
     setActiveCommentId(null);
     setShowCommentPopup(false);
@@ -372,6 +391,14 @@ export default function PageEditor({
 
   const hasConnectedOnceRef = useRef(false);
   const [showStatic, setShowStatic] = useState(true);
+  
+  // 编号菜单状态
+  const [numberingMenuState, setNumberingMenuState] = useState<{
+    show: boolean;
+    number: string;
+    position: { x: number; y: number };
+    listItemPos: number;
+  } | null>(null);
 
   useEffect(() => {
     if (
@@ -418,6 +445,15 @@ export default function PageEditor({
           </div>
         )}
         {showCommentPopup && <CommentDialog editor={editor} pageId={pageId} />}
+        {numberingMenuState?.show && editor && (
+          <NumberingMenu
+            editor={editor}
+            currentNumber={numberingMenuState.number}
+            position={numberingMenuState.position}
+            listItemPos={numberingMenuState.listItemPos}
+            onClose={() => setNumberingMenuState(null)}
+          />
+        )}
       </div>
       <div
         onClick={() => editor.commands.focus("end")}

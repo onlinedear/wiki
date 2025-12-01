@@ -34,6 +34,7 @@ api.interceptors.response.use(
               APP_ROUTE.AUTH.SIGNUP,
               APP_ROUTE.AUTH.FORGOT_PASSWORD,
               APP_ROUTE.AUTH.PASSWORD_RESET,
+              APP_ROUTE.AUTH.SETUP,
             ];
             if (authPaths.some((path) => window.location.pathname.startsWith(path))) {
               return Promise.reject(error);
@@ -82,6 +83,7 @@ function redirectToLogin() {
     APP_ROUTE.AUTH.SIGNUP,
     APP_ROUTE.AUTH.FORGOT_PASSWORD,
     APP_ROUTE.AUTH.PASSWORD_RESET,
+    APP_ROUTE.AUTH.SETUP,
     "/invites",
   ];
   if (!exemptPaths.some((path) => window.location.pathname.startsWith(path))) {

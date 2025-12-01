@@ -1,34 +1,194 @@
-/* Ordered list type cycling based on nesting depth */
-ol,
-ol ol ol ol,
-ol ol ol ol ol ol ol,
-ol ol ol ol ol ol ol ol ol ol {
-  list-style-type: decimal;
+/* 有序列表层级编号样式 - 标题自动编号功能 */
+/* 符合 PRD 要求：H1-H3 三级标题自动编号，格式为 1. / 1.1 / 1.1.1 */
+/* PRD 规则：任何层级在缺失父级时，均从 1 开始，禁止出现"0.x"形态 */
+
+/* 初始化计数器 */
+.tiptap {
+  counter-reset: h1-counter 0 h2-counter 0 h3-counter 0 h4-counter 0 h5-counter 0 h6-counter 0;
 }
 
-ol ol,
-ol ol ol ol ol,
-ol ol ol ol ol ol ol ol,
-ol ol ol ol ol ol ol ol ol ol ol {
-  list-style-type: lower-alpha;
+/* 重置有序列表的基本样式 */
+.tiptap ol {
+  list-style-position: inside; /* 编号在内容内部，实现左对齐 */
+  padding-left: 0; /* 不留左侧空间 */
 }
 
-ol ol ol,
-ol ol ol ol ol ol,
-ol ol ol ol ol ol ol ol ol,
-ol ol ol ol ol ol ol ol ol ol ol ol {
-  list-style-type: lower-roman;
+.tiptap ol li {
+  position: relative;
+  list-style-type: decimal; /* 默认显示编号 */
 }
 
-ol {
-  list-style-position: outside;
-  margin-left: 0.25rem;
+/* 确保包含段落的列表项，段落和编号在同一行 */
+.tiptap ol li > p {
+  display: inline;
+  margin: 0;
 }
 
-/* Nested list spacing */
-ol ol,
-ol ul,
-ul ol {
-  margin-top: 0.1rem;
-  margin-bottom: 0.1rem;
+/* 有序列表中的 placeholder 需要左侧内边距，避免被编号遮挡 */
+.tiptap ol li > p.is-empty::before,
+.tiptap ol li > p.is-editor-empty::before {
+  padding-left: 2em; /* 为编号留出空间 */
 }
+
+/* 禁用所有默认编号 - 现在完全使用 JavaScript widget */
+.tiptap ol {
+  list-style-type: none;
+}
+
+/* 所有列表项默认隐藏编号 */
+.tiptap ol li {
+  list-style-type: none;
+}
+
+/* 禁用所有 ::before 伪元素编号 */
+.tiptap ol li::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* 隐藏所有列表项的 marker */
+.tiptap ol li::marker {
+  content: '';
+  display: none;
+}
+
+/* ========== 标题编号的通用样式 ========== */
+.tiptap ol li:has(> h1),
+.tiptap ol li:has(> h2),
+.tiptap ol li:has(> h3),
+.tiptap ol li:has(> h4),
+.tiptap ol li:has(> h5),
+.tiptap ol li:has(> h6) {
+  padding-left: 0 !important;
+  list-style: none !important;
+}
+
+/* 强制隐藏包含标题的列表项的项目符号 */
+.tiptap ol li:has(> h1)::marker,
+.tiptap ol li:has(> h2)::marker,
+.tiptap ol li:has(> h3)::marker,
+.tiptap ol li:has(> h4)::marker,
+.tiptap ol li:has(> h5)::marker,
+.tiptap ol li:has(> h6)::marker {
+  content: '' !important;
+  display: none !important;
+}
+
+.tiptap ol li > h1,
+.tiptap ol li > h2,
+.tiptap ol li > h3,
+.tiptap ol li > h4,
+.tiptap ol li > h5,
+.tiptap ol li > h6 {
+  position: relative !important;
+  margin-left: 0;
+  margin-top: 0;
+}
+
+/* H1 标题 */
+.tiptap ol li:has(> h1) {
+  counter-increment: h1-counter;
+  counter-reset: h2-counter 0;
+}
+
+/* H2 标题 */
+.tiptap ol li:has(> h2) {
+  counter-increment: h2-counter;
+  counter-reset: h3-counter 0;
+}
+
+/* H3 标题 */
+.tiptap ol li:has(> h3) {
+  counter-increment: h3-counter;
+  counter-reset: h4-counter 0;
+}
+
+/* H4 标题 */
+.tiptap ol li:has(> h4) {
+  counter-increment: h4-counter;
+  counter-reset: h5-counter 0;
+}
+
+/* H5 标题 */
+.tiptap ol li:has(> h5) {
+  counter-increment: h5-counter;
+  counter-reset: h6-counter 0;
+}
+
+/* H6 标题 */
+.tiptap ol li:has(> h6) {
+  counter-increment: h6-counter;
+}
+
+/* ========== 禁用 CSS ::before 编号（现在使用 JavaScript widget） ========== */
+/* 强制隐藏所有有序列表中标题的 ::before 伪元素 */
+.tiptap ol li > h1::before,
+.tiptap ol li > h2::before,
+.tiptap ol li > h3::before,
+.tiptap ol li > h4::before,
+.tiptap ol li > h5::before,
+.tiptap ol li > h6::before {
+  content: '' !important;
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+/* ========== 后备方案已禁用：现在使用 JavaScript widget 显示编号 ========== */
+/* 所有标题的 ::before 规则已被禁用，因为我们使用 JavaScript Decoration widget */
+
+/* ========== 自定义编号（优先级最高） ========== */
+.tiptap ol li[data-custom-number]:has(> h1) > h1::before,
+.tiptap ol li[data-custom-number]:has(> h2) > h2::before,
+.tiptap ol li[data-custom-number]:has(> h3) > h3::before,
+.tiptap ol li[data-custom-number]:has(> h4) > h4::before,
+.tiptap ol li[data-custom-number]:has(> h5) > h5::before,
+.tiptap ol li[data-custom-number]:has(> h6) > h6::before {
+  content: attr(data-custom-number) ". " !important;
+}
+
+/* ========== 普通段落使用浏览器默认编号 ========== */
+/* 不包含标题的有序列表使用默认样式 */
+
+/* ========== 嵌套列表 ========== */
+.tiptap ol ol {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding-left: 2em;
+}
+
+/* ========== 确保编号不会被选中 ========== */
+.tiptap ol li::before,
+.tiptap ol li > h1::before,
+.tiptap ol li > h2::before,
+.tiptap ol li > h3::before,
+.tiptap ol li > h4::before,
+.tiptap ol li > h5::before,
+.tiptap ol li > h6::before {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* ========== 旧的 CSS ::before 规则已删除 ========== */
+/* 现在完全使用 JavaScript widget 来显示编号 */
+
+/* ========== 标题编号悬停效果 ========== */
+.heading-number {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: color 0.2s ease, opacity 0.2s ease !important;
+}
+
+.heading-number:hover {
+  color: var(--mantine-color-blue-6) !important;
+  opacity: 0.8 !important;
+}
+
+
+

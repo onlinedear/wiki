@@ -74,7 +74,12 @@ export default defineConfig(({ mode }) => {
       },
     },
     optimizeDeps: {
-      include: ['@tiptap/pm'],
+      include: [
+        '@tiptap/pm/state',
+        '@tiptap/pm/model',
+        '@tiptap/pm/view',
+        '@tiptap/pm/transform',
+      ],
     },
     server: {
       hmr: {

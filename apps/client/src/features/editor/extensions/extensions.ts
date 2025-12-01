@@ -1,3 +1,24 @@
+import {
+  IconTypography,
+  IconH1,
+  IconH2,
+  IconH3,
+  IconList,
+  IconListNumbers,
+  IconCheckbox,
+  IconQuote,
+  IconCode,
+  IconInfoCircle,
+  IconTable,
+  IconPhoto,
+  IconVideo,
+  IconPaperclip,
+  IconCalendar,
+  IconListDetails,
+  IconMath,
+  IconAppWindow,
+  IconSitemap,
+} from "@tabler/icons-react";
 import { StarterKit } from "@tiptap/starter-kit";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { TextAlign } from "@tiptap/extension-text-align";
@@ -42,6 +63,8 @@ import {
   TableDndExtension,
   Gantt,
 } from "@notedoc/editor-ext";
+import { CustomListItem } from "@notedoc/editor-ext/src/lib/list-item";
+import { CustomOrderedList } from "@notedoc/editor-ext/src/lib/ordered-list";
 import {
   randomElement,
   userColors,
@@ -49,7 +72,7 @@ import {
 import { IUser } from "@/features/user/types/user.types.ts";
 import MathInlineView from "@/features/editor/components/math/math-inline.tsx";
 import MathBlockView from "@/features/editor/components/math/math-block.tsx";
-import GlobalDragHandle from "tiptap-extension-global-drag-handle";
+import { CustomGlobalDragHandle } from './custom-drag-handle';
 import { Youtube } from "@tiptap/extension-youtube";
 import ImageView from "@/features/editor/components/image/image-view.tsx";
 import CalloutView from "@/features/editor/components/callout/callout-view.tsx";
@@ -80,6 +103,7 @@ import { MarkdownClipboard } from "@/features/editor/extensions/markdown-clipboa
 import EmojiCommand from "./emoji-command";
 import { CharacterCount } from "@tiptap/extension-character-count";
 import { countWords } from "alfaaz";
+import React from "react";
 
 const lowlight = createLowlight(common);
 lowlight.register("mermaid", plaintext);
@@ -101,12 +125,16 @@ export const mainExtensions = [
       color: "#70CFF8",
     },
     codeBlock: false,
+    listItem: false, // 禁用默认的 ListItem，使用自定义的
+    orderedList: false, // 禁用默认的 OrderedList，使用自定义的
     code: {
       HTMLAttributes: {
         spellcheck: false,
       },
     },
   }),
+  CustomListItem, // 使用自定义的 ListItem，支持标题作为列表项
+  CustomOrderedList, // 使用自定义的 OrderedList，支持层级编号
   Placeholder.configure({
     placeholder: ({ node }) => {
       if (node.type.name === "heading") {
@@ -138,7 +166,79 @@ export const mainExtensions = [
   }),
   Typography,
   TrailingNode,
-  GlobalDragHandle,
+  CustomGlobalDragHandle.configure({
+    dragHandleWidth: 40, // 增加宽度以容纳图标和手柄
+    scrollTreshold: 100,
+    // 添加自定义节点类型，以便拖拽手柄能正确识别它们
+    customNodes: [
+      'table', 
+      'callout', 
+      'details', 
+      'codeBlock', 
+      'image', 
+      'video', 
+      'attachment', 
+      'gantt', 
+      'embed', 
+      'subpages', 
+      'mathBlock'
+    ],
+    renderContent: (node) => {
+      // 获取块类型的显示名称和图标
+      const getBlockInfo = (node: any) => {
+        const type = node.type.name;
+        const attrs = node.attrs;
+        
+        // 标题类型
+        if (type === 'heading') {
+          const icons = [null, IconH1, IconH2, IconH3, IconH3, IconH3, IconH3];
+          return {
+            label: `H${attrs.level}`,
+            icon: icons[attrs.level] || IconH1,
+          };
+        }
+        
+        // 其他块类型
+        const blockInfo: Record<string, { label: string; icon: any }> = {
+          'paragraph': { label: i18n.t('Text') || 'Text', icon: IconTypography },
+          'bulletList': { label: i18n.t('Bullet List') || 'List', icon: IconList },
+          'orderedList': { label: i18n.t('Numbered list') || 'Numbered', icon: IconListNumbers },
+          'taskList': { label: i18n.t('To-do list') || 'To-do', icon: IconCheckbox },
+          'blockquote': { label: i18n.t('Quote') || 'Quote', icon: IconQuote },
+          'codeBlock': { label: i18n.t('Code') || 'Code', icon: IconCode },
+          'callout': { label: i18n.t('Callout') || 'Callout', icon: IconInfoCircle },
+          'table': { label: i18n.t('Table') || 'Table', icon: IconTable },
+          'tableRow': { label: i18n.t('Table') || 'Table', icon: IconTable },
+          'image': { label: i18n.t('Image') || 'Image', icon: IconPhoto },
+          'video': { label: i18n.t('Video') || 'Video', icon: IconVideo },
+          'attachment': { label: i18n.t('File attachment') || 'File', icon: IconPaperclip },
+          'gantt': { label: i18n.t('Gantt chart') || 'Gantt', icon: IconCalendar },
+          'details': { label: i18n.t('Toggle block') || 'Toggle', icon: IconListDetails },
+          'detailsSummary': { label: i18n.t('Toggle block') || 'Toggle', icon: IconListDetails },
+          'mathBlock': { label: i18n.t('Math block') || 'Math', icon: IconMath },
+          'embed': { label: i18n.t('Iframe embed') || 'Embed', icon: IconAppWindow },
+          'subpages': { label: i18n.t('Subpages (Child pages)') || 'Subpages', icon: IconSitemap },
+          'excalidraw': { label: i18n.t('Excalidraw') || 'Excalidraw', icon: IconPhoto },
+          'drawio': { label: i18n.t('Draw.io') || 'Draw.io', icon: IconPhoto },
+        };
+        
+        return blockInfo[type] || { label: type, icon: IconTypography };
+      };
+      
+      const { label, icon: IconComponent } = getBlockInfo(node);
+      
+      // 使用 React.createElement 创建 React 元素，而不是 DOM 元素
+      return React.createElement('div', { className: 'drag-handle-container' },
+        React.createElement('div', { className: 'block-type-label' },
+           IconComponent ? 
+             React.createElement('span', { className: 'block-type-icon' },
+               React.createElement(IconComponent as any, { size: 16, stroke: 1.5 })
+             ) : (label.substring(0, 2) || "?")
+        ),
+        React.createElement('div', { className: 'drag-handle-icon' })
+      );
+    },
+  }),
   TextStyle,
   Color,
   SlashCommand,

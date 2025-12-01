@@ -5,52 +5,153 @@
   box-shadow: none;
 }*/
 
+/* 拖拽手柄容器 - 用浅灰色圆角矩形边框框住 */
+.drag-handle-container,
 .drag-handle {
   position: fixed;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 4px;
   opacity: 1;
-  transition: opacity ease-in 0.2s;
-  border-radius: 0.25rem;
-  background-size: calc(0.5em + 0.375rem) calc(0.5em + 0.375rem);
+  transition: opacity ease-in 0.2s, background-color 0.2s;
+  z-index: 50;
+  pointer-events: auto !important;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: grab;
+  
+  @mixin light {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+  
+  @mixin dark {
+    background-color: rgba(47, 52, 55, 0.9);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.drag-handle-container:hover,
+.drag-handle:hover {
+  @mixin light {
+    background-color: rgba(242, 242, 242, 1);
+    border-color: rgba(0, 0, 0, 0.12);
+  }
+  
+  @mixin dark {
+    background-color: rgba(55, 60, 63, 1);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.drag-handle-container.hide,
+.drag-handle.hide {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* 块类型标签 - 显示块类型图标 */
+.block-type-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  white-space: nowrap;
+  user-select: none;
+  flex-shrink: 0;
+  
+  @mixin light {
+    color: rgba(55, 53, 47, 0.65);
+  }
+  
+  @mixin dark {
+    color: rgba(255, 255, 255, 0.65);
+  }
+}
+
+/* 块类型图标 */
+.block-type-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.block-type-icon svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+/* 拖拽手柄图标 - 只显示六点图标，无背景 */
+.drag-handle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: 12px 12px;
   background-repeat: no-repeat;
   background-position: center;
-  width: 1.2rem;
-  height: 1.5rem;
-  z-index: 50;
+  width: 18px;
+  height: 18px;
   cursor: grab;
+  flex-shrink: 0;
 
   @mixin light {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' style='fill: rgba(55, 53, 47, 0.3)'%3E%3Cpath d='M3,2 C2.44771525,2 2,1.55228475 2,1 C2,0.44771525 2.44771525,0 3,0 C3.55228475,0 4,0.44771525 4,1 C4,1.55228475 3.55228475,2 3,2 Z M3,6 C2.44771525,6 2,5.55228475 2,5 C2,4.44771525 2.44771525,4 3,4 C3.55228475,4 4,4.44771525 4,5 C4,5.55228475 3.55228475,6 3,6 Z M3,10 C2.44771525,10 2,9.55228475 2,9 C2,8.44771525 2.44771525,8 3,8 C3.55228475,8 4,8.44771525 4,9 C4,9.55228475 3.55228475,10 3,10 Z M7,2 C6.44771525,2 6,1.55228475 6,1 C6,0.44771525 6.44771525,0 7,0 C7.55228475,0 8,0.44771525 8,1 C8,1.55228475 7.55228475,2 7,2 Z M7,6 C6.44771525,6 6,5.55228475 6,5 C6,4.44771525 6.44771525,4 7,4 C7.55228475,4 8,4.44771525 8,5 C8,5.55228475 7.55228475,6 7,6 Z M7,10 C6.44771525,10 6,9.55228475 6,9 C6,8.44771525 6.44771525,8 7,8 C7.55228475,8 8,8.44771525 8,9 C8,9.55228475 7.55228475,10 7,10 Z'%3E%3C/path%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' style='fill: rgba(55, 53, 47, 0.4)'%3E%3Cpath d='M3,2 C2.44771525,2 2,1.55228475 2,1 C2,0.44771525 2.44771525,0 3,0 C3.55228475,0 4,0.44771525 4,1 C4,1.55228475 3.55228475,2 3,2 Z M3,6 C2.44771525,6 2,5.55228475 2,5 C2,4.44771525 2.44771525,4 3,4 C3.55228475,4 4,4.44771525 4,5 C4,5.55228475 3.55228475,6 3,6 Z M3,10 C2.44771525,10 2,9.55228475 2,9 C2,8.44771525 2.44771525,8 3,8 C3.55228475,8 4,8.44771525 4,9 C4,9.55228475 3.55228475,10 3,10 Z M7,2 C6.44771525,2 6,1.55228475 6,1 C6,0.44771525 6.44771525,0 7,0 C7.55228475,0 8,0.44771525 8,1 C8,1.55228475 7.55228475,2 7,2 Z M7,6 C6.44771525,6 6,5.55228475 6,5 C6,4.44771525 6.44771525,4 7,4 C7.55228475,4 8,4.44771525 8,5 C8,5.55228475 7.55228475,6 7,6 Z M7,10 C6.44771525,10 6,9.55228475 6,9 C6,8.44771525 6.44771525,8 7,8 C7.55228475,8 8,8.44771525 8,9 C8,9.55228475 7.55228475,10 7,10 Z'%3E%3C/path%3E%3C/svg%3E");
   }
   @mixin dark {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' style='fill: rgba(255, 255, 255, 0.5)'%3E%3Cpath d='M3,2 C2.44771525,2 2,1.55228475 2,1 C2,0.44771525 2.44771525,0 3,0 C3.55228475,0 4,0.44771525 4,1 C4,1.55228475 3.55228475,2 3,2 Z M3,6 C2.44771525,6 2,5.55228475 2,5 C2,4.44771525 2.44771525,4 3,4 C3.55228475,4 4,4.44771525 4,5 C4,5.55228475 3.55228475,6 3,6 Z M3,10 C2.44771525,10 2,9.55228475 2,9 C2,8.44771525 2.44771525,8 3,8 C3.55228475,8 4,8.44771525 4,9 C4,9.55228475 3.55228475,10 3,10 Z M7,2 C6.44771525,2 6,1.55228475 6,1 C6,0.44771525 6.44771525,0 7,0 C7.55228475,0 8,0.44771525 8,1 C8,1.55228475 7.55228475,2 7,2 Z M7,6 C6.44771525,6 6,5.55228475 6,5 C6,4.44771525 6.44771525,4 7,4 C7.55228475,4 8,4.44771525 8,5 C8,5.55228475 7.55228475,6 7,6 Z M7,10 C6.44771525,10 6,9.55228475 6,9 C6,8.44771525 6.44771525,8 7,8 C7.55228475,8 8,8.44771525 8,9 C8,9.55228475 7.55228475,10 7,10 Z'%3E%3C/path%3E%3C/svg%3E");
   }
-
-  &:hover {
-    background-color: #0d0d0d10;
-    transition: background-color 0.2s;
-  }
-
-  &:active {
-    background-color: #0d0d0d10;
-    transition: background-color 0.2s;
-    cursor: grabbing;
-  }
-
-  &.hide {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  @media screen and (max-width: 600px) {
-    display: none;
-    pointer-events: none;
-  }
-
-  &[data-direction='horizontal'] {
-    rotate: 90deg;
-  }
 }
 
-.dark .drag-handle {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' style='fill: rgba(255, 255, 255, 0.5)'%3E%3Cpath d='M3,2 C2.44771525,2 2,1.55228475 2,1 C2,0.44771525 2.44771525,0 3,0 C3.55228475,0 4,0.44771525 4,1 C4,1.55228475 3.55228475,2 3,2 Z M3,6 C2.44771525,6 2,5.55228475 2,5 C2,4.44771525 2.44771525,4 3,4 C3.55228475,4 4,4.44771525 4,5 C4,5.55228475 3.55228475,6 3,6 Z M3,10 C2.44771525,10 2,9.55228475 2,9 C2,8.44771525 2.44771525,8 3,8 C3.55228475,8 4,8.44771525 4,9 C4,9.55228475 3.55228475,10 3,10 Z M7,2 C6.44771525,2 6,1.55228475 6,1 C6,0.44771525 6.44771525,0 7,0 C7.55228475,0 8,0.44771525 8,1 C8,1.55228475 7.55228475,2 7,2 Z M7,6 C6.44771525,6 6,5.55228475 6,5 C6,4.44771525 6.44771525,4 7,4 C7.55228475,4 8,4.44771525 8,5 C8,5.55228475 7.55228475,6 7,6 Z M7,10 C6.44771525,10 6,9.55228475 6,9 C6,8.44771525 6.44771525,8 7,8 C7.55228475,8 8,8.44771525 8,9 C8,9.55228475 7.55228475,10 7,10 Z'%3E%3C/path%3E%3C/svg%3E");
+.drag-handle-icon:active {
+  cursor: grabbing;
 }
+
+/* 鼠标悬停在块上时显示 */
+.ProseMirror > * {
+  position: relative;
+}
+
+.ProseMirror > *:hover > .drag-handle-container,
+.ProseMirror > *:hover .drag-handle-container,
+.drag-handle-container:hover {
+  opacity: 1 !important;
+}
+
+/* 在有序列表项中调整拖拽手柄位置，避免与编号重叠 */
+.tiptap ol li {
+  position: relative;
+}
+
+/* 隐藏列表项内标题自己的拖拽手柄，只保留列表项的拖拽手柄 */
+.tiptap ol li > h1 .drag-handle-container,
+.tiptap ol li > h2 .drag-handle-container,
+.tiptap ol li > h3 .drag-handle-container,
+.tiptap ol li > h4 .drag-handle-container,
+.tiptap ol li > h5 .drag-handle-container,
+.tiptap ol li > h6 .drag-handle-container,
+.tiptap ol li > p .drag-handle-container {
+  display: none !important;
+}
+
+/* 确保列表项的拖拽手柄在编号左侧显示 */
+.tiptap ol li .drag-handle-container {
+  z-index: 51;
+}
+
+/* 调整有序列表的拖拽手柄位置，使其与其他块保持一致的距离 */
+.tiptap ol {
+  margin-left: 0;
+}
+
+.tiptap ol li {
+  margin-left: 0;
+}
+
+/* 旧的 drag-handle 样式已移除，统一使用 drag-handle-container */
