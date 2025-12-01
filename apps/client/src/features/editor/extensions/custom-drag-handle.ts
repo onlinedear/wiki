@@ -3,6 +3,7 @@ import { Plugin, PluginKey, NodeSelection, TextSelection } from '@tiptap/pm/stat
 import { Slice, Fragment } from '@tiptap/pm/model';
 import * as pmView from '@tiptap/pm/view';
 import { createRoot, Root } from 'react-dom/client';
+import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 
 function getPmView() {
     try {
@@ -87,13 +88,13 @@ export interface GlobalDragHandleOptions {
     excludedTags: string[];
     customNodes: string[];
     renderContent?: (node: any) => any;
+    onMenuOpen?: (node: ProseMirrorNode, position: { x: number; y: number; position?: 'left' | 'bottom' | 'top' | 'right' }) => void;
     pluginKey?: string;
 }
 
 function DragHandlePlugin(options: GlobalDragHandleOptions) {
     let listType = '';
-    // 用于去重日志的 Set
-    const loggedTypes = new Set<string>();
+    let currentNode: ProseMirrorNode | null = null;
     
     function handleDragStart(event: DragEvent, view: any) {
         view.focus();
@@ -174,7 +175,7 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
     
     function hideHandleOnEditorOut(event) {
         if (event.target instanceof Element) {
-            // Check if the relatedTarget class is still inside the editor or drag handle
+            // Check if the relatedTarget class is still inside the editor or drag handle or menu
             const relatedTarget = event.relatedTarget;
             const isInsideEditor = relatedTarget?.classList.contains('tiptap') ||
                 relatedTarget?.classList.contains('drag-handle') ||
@@ -182,7 +183,8 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
                 relatedTarget?.classList.contains('block-type-label') ||
                 relatedTarget?.classList.contains('drag-handle-icon') ||
                 relatedTarget?.closest('.drag-handle') ||
-                relatedTarget?.closest('.drag-handle-container');
+                relatedTarget?.closest('.drag-handle-container') ||
+                relatedTarget?.closest('[data-drag-handle-menu]'); // 检查是否在菜单区域
             if (isInsideEditor)
                 return;
         }
@@ -206,12 +208,99 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
                 root = createRoot(dragHandleElement);
             }
             
-            function onDragHandleDragStart(e) {
+            function onDragHandleDragStart(e: DragEvent) {
                 handleDragStart(e, view);
             }
             dragHandleElement.addEventListener('dragstart', onDragHandleDragStart);
             
-            function onDragHandleDrag(e) {
+            // 鼠标悬停时打开菜单
+            let hoverTimeout: number | null = null;
+            let closeMenuCallback: (() => void) | null = null;
+            
+            function onDragHandleMouseEnter(e: MouseEvent) {
+                // 延迟 200ms 打开菜单，避免快速划过时触发
+                hoverTimeout = window.setTimeout(() => {
+                    if (options.onMenuOpen && currentNode) {
+                        const rect = dragHandleElement!.getBoundingClientRect();
+                        const viewportWidth = window.innerWidth;
+                        const viewportHeight = window.innerHeight;
+                        
+                        // 菜单预估宽度和高度
+                        const menuWidth = 280;
+                        const menuHeight = 500;
+                        const gap = 0; // 菜单与拖拽手柄的间距（紧贴）
+                        const offsetToContent = 50; // 菜单向内容方向偏移，缩短距离
+                        
+                        // 计算拖拽手柄的实际位置
+                        const handleLeft = rect.left - rect.width - 20;
+                        
+                        let x = handleLeft - menuWidth - gap + offsetToContent; // 默认显示在左侧，向右偏移50px
+                        let y = rect.top;
+                        let position: 'left' | 'bottom' | 'top' | 'right' = 'left';
+                        
+                        // 如果左侧空间不足，显示在下方
+                        if (x < 0) {
+                            position = 'bottom';
+                            x = rect.left;
+                            y = rect.bottom + gap + 8; // 下方显示时增加8px间距，避免遮挡拖拽手柄
+                            
+                            // 如果下方空间也不足，显示在上方
+                            if (y + menuHeight > viewportHeight) {
+                                position = 'top';
+                                y = rect.top - menuHeight - gap;
+                                
+                                // 如果上方空间也不足，显示在右侧
+                                if (y < 0) {
+                                    position = 'right';
+                                    x = rect.right + gap;
+                                    y = rect.top;
+                                }
+                            }
+                        } else {
+                            // 左侧显示时，让拖拽手柄位于菜单中间偏上（约 1/3 处）
+                            const offsetFromTop = Math.min(menuHeight / 3, 150);
+                            y = rect.top - offsetFromTop;
+                            
+                            // 确保不超出顶部
+                            if (y < 0) {
+                                y = gap * 2;
+                            }
+                        }
+                        
+                        options.onMenuOpen(currentNode, { x, y, position });
+                    }
+                }, 200);
+            }
+            
+            function onDragHandleMouseLeave(e: MouseEvent) {
+                // 清除延迟打开的定时器
+                if (hoverTimeout) {
+                    window.clearTimeout(hoverTimeout);
+                    hoverTimeout = null;
+                }
+                
+                // 检查鼠标是否移动到菜单区域
+                const relatedTarget = e.relatedTarget as HTMLElement;
+                if (!relatedTarget?.closest('[data-drag-handle-menu]')) {
+                    // 鼠标离开拖拽手柄且不在菜单区域，延迟关闭菜单
+                    if (closeMenuCallback) {
+                        closeMenuCallback();
+                    }
+                }
+            }
+            
+            // 暴露关闭菜单的回调，供菜单组件调用
+            if (options.onMenuOpen) {
+                const originalOnMenuOpen = options.onMenuOpen;
+                options.onMenuOpen = (node, position) => {
+                    originalOnMenuOpen(node, position);
+                };
+            }
+            
+            dragHandleElement.addEventListener('mouseenter', onDragHandleMouseEnter);
+            dragHandleElement.addEventListener('mouseleave', onDragHandleMouseLeave);
+            
+            function onDragHandleDrag(e: DragEvent) {
                 hideDragHandle();
                 let scrollY = window.scrollY;
                 if (e.clientY < options.scrollTreshold) {
@@ -257,6 +346,8 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
                     }
                     dragHandleElement?.removeEventListener('drag', onDragHandleDrag);
                     dragHandleElement?.removeEventListener('dragstart', onDragHandleDragStart);
+                    dragHandleElement?.removeEventListener('mouseenter', onDragHandleMouseEnter);
+                    dragHandleElement?.removeEventListener('mouseleave', onDragHandleMouseLeave);
                     dragHandleElement = null;
                     view?.dom?.parentElement?.removeEventListener('mouseout', hideHandleOnEditorOut);
                 },
@@ -302,22 +393,27 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
                         return;
                     }
                     
-                    const compStyle = window.getComputedStyle(nodeDOM);
+                    // If the node is inside an ordered list item, use the list item itself for drag handle
+                    let displayNode = nodeDOM;
+                    const closestListItem = nodeDOM.closest('ol li');
+                    if (closestListItem && !nodeDOM.matches('li')) {
+                        displayNode = closestListItem as Element;
+                    }
+                    
+                    const compStyle = window.getComputedStyle(displayNode);
                     const parsedLineHeight = parseInt(compStyle.lineHeight, 10);
                     const lineHeight = isNaN(parsedLineHeight)
                         ? parseInt(compStyle.fontSize) * 1.2
                         : parsedLineHeight;
                     const paddingTop = parseInt(compStyle.paddingTop, 10);
-                    const rect = absoluteRect(nodeDOM);
+                    const rect = absoluteRect(displayNode);
                     rect.top += (lineHeight - 24) / 2;
                     rect.top += paddingTop;
                     
-                    // Unordered List markers (bullets) are outside the content box, 
-                    // so we need to shift the handle further left to avoid overlapping with the bullet.
-                    // Ordered List (ol) numbers are handled via custom CSS (::before) inside the padded li,
-                    // so they don't need this extra shift.
-                    if (nodeDOM.matches('ul:not([data-type=taskList]) li')) {
-                        rect.left -= options.dragHandleWidth;
+                    // Adjust drag handle position for list items to align with other blocks
+                    // Unordered List: shift left slightly to avoid overlapping with bullet, but less than before
+                    if (displayNode.matches('ul:not([data-type=taskList]) li')) {
+                        rect.left -= 16; // 向左调整 16px，避免盖住小圆点，同时与其他块距离更接近
                     }
 
                     rect.width = options.dragHandleWidth;
@@ -486,6 +582,9 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
                         
                         // Render icon
                         if (targetNode && targetNode.type.name !== 'doc') {
+                            // 保存当前节点供菜单使用
+                            currentNode = targetNode;
+                            
                             const content = options.renderContent(targetNode);
                             if (content && root && !isDestroyed) {
                                 try {
@@ -559,6 +658,7 @@ export const CustomGlobalDragHandle = Extension.create<GlobalDragHandleOptions>(
             excludedTags: [],
             customNodes: [],
             renderContent: undefined,
+            onMenuOpen: undefined,
         };
     },
     addProseMirrorPlugins() {
@@ -571,6 +671,7 @@ export const CustomGlobalDragHandle = Extension.create<GlobalDragHandleOptions>(
                 excludedTags: this.options.excludedTags,
                 customNodes: this.options.customNodes,
                 renderContent: this.options.renderContent,
+                onMenuOpen: this.options.onMenuOpen,
             }),
         ];
     },

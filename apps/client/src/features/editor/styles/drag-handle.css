@@ -5,6 +5,11 @@
   box-shadow: none;
 }*/
 
+/* 隐藏拖拽光标的圆圈 */
+.ProseMirror-dropcursor {
+  display: none !important;
+}
+
 /* 拖拽手柄容器 - 用浅灰色圆角矩形边框框住 */
 .drag-handle-container,
 .drag-handle {
@@ -14,12 +19,15 @@
   gap: 2px;
   padding: 3px 4px;
   opacity: 1;
-  transition: opacity ease-in 0.2s, background-color 0.2s;
+  transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), 
+              background-color 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 50;
   pointer-events: auto !important;
   border-radius: 6px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   cursor: grab;
+  will-change: opacity, transform;
   
   @mixin light {
     background-color: rgba(255, 255, 255, 0.9);
@@ -49,6 +57,7 @@
 .drag-handle.hide {
   opacity: 0 !important;
   pointer-events: none !important;
+  transform: scale(0.95);
 }
 
 /* 块类型标签 - 显示块类型图标 */
@@ -129,7 +138,14 @@
   position: relative;
 }
 
-/* 隐藏列表项内标题自己的拖拽手柄，只保留列表项的拖拽手柄 */
+/* 隐藏列表项内标题和段落自己的拖拽手柄，只保留列表项的拖拽手柄 */
+.tiptap ol li h1 .drag-handle-container,
+.tiptap ol li h2 .drag-handle-container,
+.tiptap ol li h3 .drag-handle-container,
+.tiptap ol li h4 .drag-handle-container,
+.tiptap ol li h5 .drag-handle-container,
+.tiptap ol li h6 .drag-handle-container,
+.tiptap ol li p .drag-handle-container,
 .tiptap ol li > h1 .drag-handle-container,
 .tiptap ol li > h2 .drag-handle-container,
 .tiptap ol li > h3 .drag-handle-container,
@@ -138,6 +154,9 @@
 .tiptap ol li > h6 .drag-handle-container,
 .tiptap ol li > p .drag-handle-container {
   display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* 确保列表项的拖拽手柄在编号左侧显示 */

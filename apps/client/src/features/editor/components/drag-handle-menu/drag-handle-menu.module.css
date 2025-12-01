@@ -1,0 +1,162 @@
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.menu {
+  min-width: 240px;
+  max-width: 280px;
+  animation: menuFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.typeGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.typeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: background-color, color, transform;
+  
+  @mixin light {
+    background-color: rgba(0, 0, 0, 0.03);
+    color: rgba(55, 53, 47, 0.65);
+  }
+  
+  @mixin dark {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.65);
+  }
+}
+
+.typeButton:hover {
+  transform: scale(1.05);
+  
+  @mixin light {
+    background-color: rgba(0, 0, 0, 0.08);
+    color: rgba(55, 53, 47, 0.9);
+  }
+  
+  @mixin dark {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.typeButton:active {
+  transform: scale(0.98);
+}
+
+.activeType {
+  @mixin light {
+    background-color: rgba(35, 131, 226, 0.15) !important;
+    color: rgb(35, 131, 226) !important;
+  }
+  
+  @mixin dark {
+    background-color: rgba(35, 131, 226, 0.25) !important;
+    color: rgb(100, 181, 246) !important;
+  }
+}
+
+.menuItem {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: background-color, transform;
+  
+  @mixin light {
+    color: rgba(55, 53, 47, 0.9);
+  }
+  
+  @mixin dark {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.menuItem:hover {
+  @mixin light {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  @mixin dark {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+@keyframes insertMenuSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.insertMenu {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  margin-left: 8px;
+  z-index: 1001;
+  animation: insertMenuSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.insertMenuItem {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  transition: background-color 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: background-color, transform;
+  
+  @mixin light {
+    color: rgba(55, 53, 47, 0.9);
+  }
+  
+  @mixin dark {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.insertMenuItem:hover {
+  @mixin light {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  @mixin dark {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.selectedInsertItem {
+  @mixin light {
+    background-color: rgba(35, 131, 226, 0.1);
+  }
+  
+  @mixin dark {
+    background-color: rgba(35, 131, 226, 0.2);
+  }
+}
