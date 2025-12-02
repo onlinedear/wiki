@@ -7,7 +7,7 @@ interface NumberingMenuWrapperProps {
 }
 
 export function NumberingMenuWrapper({ editor }: NumberingMenuWrapperProps) {
-  const { show, position, currentNumber, closeMenu } = useNumberingClick(editor);
+  const { show, position, currentNumber, listItemPos, closeMenu } = useNumberingClick(editor);
 
   if (!show || !editor) return null;
 
@@ -16,6 +16,7 @@ export function NumberingMenuWrapper({ editor }: NumberingMenuWrapperProps) {
       editor={editor}
       currentNumber={currentNumber}
       position={position}
+      listItemPos={listItemPos}
       onClose={closeMenu}
     />
   );

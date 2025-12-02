@@ -5,6 +5,7 @@ interface NumberingClickState {
   show: boolean;
   position: { x: number; y: number };
   currentNumber: string;
+  listItemPos: number;
 }
 
 export function useNumberingClick(editor: Editor | null) {
@@ -12,6 +13,7 @@ export function useNumberingClick(editor: Editor | null) {
     show: false,
     position: { x: 0, y: 0 },
     currentNumber: '1',
+    listItemPos: 0,
   });
 
   useEffect(() => {
@@ -45,10 +47,24 @@ export function useNumberingClick(editor: Editor | null) {
         currentNumber = calculateCurrentNumber(listItem as HTMLElement);
       }
 
+      // 获取 listItem 在文档中的位置
+      let listItemPos = 0;
+      const { state: editorState } = editor;
+      editorState.doc.descendants((node, pos) => {
+        if (node.type.name === 'listItem') {
+          const domNode = editor.view.nodeDOM(pos);
+          if (domNode === listItem) {
+            listItemPos = pos;
+            return false;
+          }
+        }
+      });
+
       setState({
         show: true,
         position: { x: event.clientX, y: event.clientY },
         currentNumber,
+        listItemPos,
       });
     };
 
