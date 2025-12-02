@@ -359,8 +359,34 @@ export const DragHandleMenu = ({
 
     let closeTimeout: number | null = null;
 
-    const handleMouseLeave = (e: MouseEvent) => {
+    // 全局鼠标移动监听，检查鼠标是否在菜单或拖拽手柄区域
+    const handleGlobalMouseMove = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      
+      // 检查鼠标是否在菜单或拖拽手柄区域
+      const isInMenu = target?.closest('[data-drag-handle-menu]');
+      const isInDragHandle = target?.closest('.drag-handle') || 
+                            target?.closest('.drag-handle-container') ||
+                            target?.classList.contains('drag-handle') ||
+                            target?.classList.contains('drag-handle-container');
+      
+      // 如果鼠标不在菜单也不在拖拽手柄区域，延迟关闭
+      if (!isInMenu && !isInDragHandle) {
+        if (!closeTimeout) {
+          closeTimeout = window.setTimeout(() => {
+            onClose();
+          }, 200);
+        }
+      } else {
+        // 鼠标在菜单或拖拽手柄区域，取消关闭
+        if (closeTimeout) {
+          window.clearTimeout(closeTimeout);
+          closeTimeout = null;
+        }
+      }
+    };
+
+    const handleMouseLeave = (e: MouseEvent) => {
       const relatedTarget = e.relatedTarget as HTMLElement;
       
       // 如果鼠标移动到拖拽手柄或菜单内部，不关闭
@@ -375,7 +401,7 @@ export const DragHandleMenu = ({
       // 延迟关闭，给用户时间移动鼠标
       closeTimeout = window.setTimeout(() => {
         onClose();
-      }, 300);
+      }, 200);
     };
 
     const handleMouseEnter = () => {
@@ -400,12 +426,15 @@ export const DragHandleMenu = ({
       if (!relatedTarget?.closest('[data-drag-handle-menu]')) {
         closeTimeout = window.setTimeout(() => {
           onClose();
-        }, 300);
+        }, 200);
       }
     };
 
     const menuElement = document.querySelector('[data-drag-handle-menu]');
     const dragHandleElement = document.querySelector('.drag-handle, .drag-handle-container');
+    
+    // 添加全局鼠标移动监听
+    document.addEventListener('mousemove', handleGlobalMouseMove);
     
     if (menuElement) {
       menuElement.addEventListener('mouseleave', handleMouseLeave as any);
@@ -420,6 +449,7 @@ export const DragHandleMenu = ({
       if (closeTimeout) {
         window.clearTimeout(closeTimeout);
       }
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
       if (menuElement) {
         menuElement.removeEventListener('mouseleave', handleMouseLeave as any);
         menuElement.removeEventListener('mouseenter', handleMouseEnter);

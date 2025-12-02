@@ -57,6 +57,7 @@ import { PageEditMode } from "@/features/user/types/user.types.ts";
 import { jwtDecode } from "jwt-decode";
 import { searchSpotlight } from "@/features/search/constants.ts";
 import { NumberingMenu } from "@/features/editor/components/ordered-list/numbering-menu.tsx";
+import { DragHandleMenu } from "@/features/editor/components/drag-handle-menu/drag-handle-menu.tsx";
 
 interface PageEditorProps {
   pageId: string;
@@ -207,9 +208,26 @@ export default function PageEditor({
   }, [isIdle, documentState, providersReady, resetIdle]);
 
   const extensions = useMemo(() => {
-    if (!remoteProvider || !currentUser?.user) return mainExtensions;
+    // 配置拖拽手柄菜单回调
+    const extensionsWithMenu = mainExtensions.map((ext: any) => {
+      if (ext.name === 'globalDragHandle') {
+        return ext.configure({
+          ...ext.options,
+          onMenuOpen: (node: any, position: { x: number; y: number; position?: 'left' | 'bottom' | 'top' | 'right' }) => {
+            setDragHandleMenuState({
+              opened: true,
+              node,
+              position,
+            });
+          },
+        });
+      }
+      return ext;
+    });
+
+    if (!remoteProvider || !currentUser?.user) return extensionsWithMenu;
     return [
-      ...mainExtensions,
+      ...extensionsWithMenu,
       ...collabExtensions(remoteProvider, currentUser?.user),
     ];
   }, [remoteProvider, currentUser?.user]);
@@ -400,6 +418,17 @@ export default function PageEditor({
     listItemPos: number;
   } | null>(null);
 
+  // 拖拽手柄菜单状态
+  const [dragHandleMenuState, setDragHandleMenuState] = useState<{
+    opened: boolean;
+    node: any;
+    position: { x: number; y: number; position?: 'left' | 'bottom' | 'top' | 'right' };
+  }>({
+    opened: false,
+    node: null,
+    position: { x: 0, y: 0 },
+  });
+
   useEffect(() => {
     if (
       !hasConnectedOnceRef.current &&
@@ -452,6 +481,15 @@ export default function PageEditor({
             position={numberingMenuState.position}
             listItemPos={numberingMenuState.listItemPos}
             onClose={() => setNumberingMenuState(null)}
+          />
+        )}
+        {dragHandleMenuState.opened && editor && (
+          <DragHandleMenu
+            editor={editor}
+            node={dragHandleMenuState.node}
+            opened={dragHandleMenuState.opened}
+            position={dragHandleMenuState.position}
+            onClose={() => setDragHandleMenuState({ opened: false, node: null, position: { x: 0, y: 0 } })}
           />
         )}
       </div>
