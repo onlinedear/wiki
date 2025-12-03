@@ -4,6 +4,7 @@ import {
   AppShell,
   Group,
   ScrollArea,
+  Text,
   Tooltip,
 } from "@mantine/core";
 import { useGetSharedPageTreeQuery } from "@/features/share/queries/share-query.ts";
@@ -27,16 +28,11 @@ import {
   mobileTableOfContentAsideAtom,
   tableOfContentAsideAtom,
 } from "@/features/share/atoms/sidebar-atom.ts";
-import { IconList } from "@tabler/icons-react";
+import { IconList, IconSearch } from "@tabler/icons-react";
 import { useToggleToc } from "@/features/share/hooks/use-toggle-toc.ts";
 import classes from "./share.module.css";
-import {
-  SearchControl,
-  SearchMobileControl,
-} from "@/features/search/components/search-control.tsx";
 import { ShareSearchSpotlight } from "@/features/search/components/share-search-spotlight.tsx";
 import { shareSearchSpotlight } from "@/features/search/constants";
-import ShareBranding from '@/features/share/components/share-branding.tsx';
 
 const MemoizedSharedTree = React.memo(SharedTree);
 
@@ -100,7 +96,7 @@ export default function ShareShell({
       padding="md"
     >
       <AppShell.Header>
-        <Group wrap="nowrap" justify="space-between" py="sm" px="xl">
+        <Group h="100%" px="md" justify="space-between" wrap="nowrap">
           <Group wrap="nowrap">
             {data?.pageTree?.length > 1 && (
               <>
@@ -125,46 +121,52 @@ export default function ShareShell({
                 </Tooltip>
               </>
             )}
+
+            <Text
+              size="lg"
+              fw={600}
+              style={{ cursor: "pointer", userSelect: "none" }}
+            >
+              {data?.workspace?.name || "NoteDoc"}
+            </Text>
           </Group>
 
-          {shareId && (
-            <Group visibleFrom="sm">
-              <SearchControl onClick={shareSearchSpotlight.open} />
-            </Group>
-          )}
+          <Group gap="xs" wrap="nowrap">
+            {shareId && (
+              <>
+                <Tooltip label={t("Search")} openDelay={250} withArrow>
+                  <ActionIcon
+                    variant="subtle"
+                    color="gray"
+                    onClick={shareSearchSpotlight.open}
+                  >
+                    <IconSearch size={20} stroke={2} />
+                  </ActionIcon>
+                </Tooltip>
 
-          <Group>
-            <>
-              {shareId && (
-                <Group hiddenFrom="sm">
-                  <SearchMobileControl onSearch={shareSearchSpotlight.open} />
-                </Group>
-              )}
+                <Tooltip label={t("Table of contents")} openDelay={250} withArrow>
+                  <ActionIcon
+                    variant="subtle"
+                    color="gray"
+                    onClick={toggleTocMobile}
+                    hiddenFrom="sm"
+                  >
+                    <IconList size={20} stroke={2} />
+                  </ActionIcon>
+                </Tooltip>
 
-              <Tooltip label={t("Table of contents")} withArrow>
-                <ActionIcon
-                  variant="default"
-                  style={{ border: "none" }}
-                  onClick={toggleTocMobile}
-                  hiddenFrom="sm"
-                  size="sm"
-                >
-                  <IconList size={20} stroke={2} />
-                </ActionIcon>
-              </Tooltip>
-
-              <Tooltip label={t("Table of contents")} withArrow>
-                <ActionIcon
-                  variant="default"
-                  style={{ border: "none" }}
-                  onClick={toggleToc}
-                  visibleFrom="sm"
-                  size="sm"
-                >
-                  <IconList size={20} stroke={2} />
-                </ActionIcon>
-              </Tooltip>
-            </>
+                <Tooltip label={t("Table of contents")} openDelay={250} withArrow>
+                  <ActionIcon
+                    variant="subtle"
+                    color="gray"
+                    onClick={toggleToc}
+                    visibleFrom="sm"
+                  >
+                    <IconList size={20} stroke={2} />
+                  </ActionIcon>
+                </Tooltip>
+              </>
+            )}
 
             <ThemeToggle />
           </Group>
@@ -179,8 +181,6 @@ export default function ShareShell({
 
       <AppShell.Main>
         {children}
-
-        {data && shareId && !data.hasLicenseKey && <ShareBranding />}
       </AppShell.Main>
 
       <AppShell.Aside

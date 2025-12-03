@@ -18,11 +18,21 @@ export type HeadingLink = {
   position: number;
 };
 
-const recalculateLinks = (nodePos: NodePos[]) => {
+const recalculateLinks = (nodePos: NodePos[], editorView: any) => {
+  // Safety check - if editor view is not ready, return empty
+  if (!editorView) {
+    return { links: [], nodes: [] };
+  }
+
   const nodes: HTMLElement[] = [];
 
   const links: HeadingLink[] = Array.from(nodePos).reduce<HeadingLink[]>(
     (acc, item) => {
+      // Skip if element is not available yet (editor not fully initialized)
+      if (!item.element) {
+        return acc;
+      }
+      
       const label = item.node.textContent;
       const level = Number(item.node.attrs.level);
       if (label.length && level <= 3) {
@@ -51,6 +61,11 @@ export const TableOfContents: FC<TableOfContentsProps> = (props) => {
 
   const handleScrollToHeading = (position: number) => {
     const { view } = props.editor;
+    
+    // Safety check for view
+    if (!view) {
+      return;
+    }
 
     const headerOffset = parseInt(
       window.getComputedStyle(headerPaddingRef.current).getPropertyValue("top"),
@@ -73,7 +88,12 @@ export const TableOfContents: FC<TableOfContentsProps> = (props) => {
   };
 
   const handleUpdate = () => {
-    const result = recalculateLinks(props.editor?.$nodes("heading"));
+    // Ensure editor and view are ready before accessing DOM
+    if (!props.editor?.view) {
+      return;
+    }
+    
+    const result = recalculateLinks(props.editor.$nodes("heading"), props.editor.view);
 
     setLinks(result.links);
     setHeadingDOMNodes(result.nodes);

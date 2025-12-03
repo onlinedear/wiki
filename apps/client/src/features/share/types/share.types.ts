@@ -72,4 +72,8 @@ export interface ISharedPageTree {
   share: IShare;
   pageTree: Partial<IPage[]>;
   hasLicenseKey: boolean;
+  workspace?: {
+    id: string;
+    name: string;
+  };
 }

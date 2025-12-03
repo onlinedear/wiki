@@ -214,7 +214,6 @@ export const CustomOrderedList = OrderedList.extend({
                         span.dispatchEvent(event);
                       });
                       
-                      console.log('[Decoration] Creating number widget:', displayNumber, 'level:', headingLevel, 'fontSize:', fontSize, 'at pos:', headingPos + 1);
                       return span;
                     }, {
                       side: -1,
@@ -231,26 +230,27 @@ export const CustomOrderedList = OrderedList.extend({
                       plainParagraphCounter++;
                       const currentNumber = plainParagraphCounter; // 立即捕获当前值
                       
-                      // 为普通段落创建编号 widget
-                      const paragraphPos = listItemPos + 1;
-                      const widget = Decoration.widget(paragraphPos, () => {
+                      // 为普通段落创建编号 widget - 插入到段落内部开头
+                      // listItemPos 是 listItem 的起始位置
+                      // +1 跳过 listItem 的开始标记，到达第一个子节点（paragraph）的位置
+                      // +1 再跳过 paragraph 的开始标记，到达段落内容的开始位置
+                      const paragraphContentPos = listItemPos + 1 + 1;
+                      const widget = Decoration.widget(paragraphContentPos, () => {
                         const span = document.createElement('span');
                         span.className = 'paragraph-number';
                         span.textContent = `${currentNumber}. `;
                         span.style.cssText = `
-                          display: inline-block;
-                          margin-right: 0;
+                          display: inline;
+                          margin-right: 0.25em;
                           font-weight: 400;
                           color: var(--mantine-color-text, #000);
                           user-select: none;
-                          min-width: 2em;
                         `;
                         
-                        console.log('[Decoration] Creating paragraph number widget:', currentNumber, 'at pos:', paragraphPos);
                         return span;
                       }, {
                         side: -1,
-                        key: `paragraph-number-${paragraphPos}-${currentNumber}`,
+                        key: `paragraph-number-${paragraphContentPos}-${currentNumber}`,
                       });
                       
                       decorations.push(widget);
@@ -274,7 +274,7 @@ export const CustomOrderedList = OrderedList.extend({
             return null;
           }
 
-          console.log('[HeadingNumbering] Document changed, recalculating numbers...');
+  
           const tr = newState.tr;
           let modified = false;
 
@@ -291,23 +291,18 @@ export const CustomOrderedList = OrderedList.extend({
               });
               
               if (blockCount > 1) {
-                console.log('[HeadingNumbering] Found listItem with multiple blocks at pos:', pos);
                 itemsToFix.push({ pos, node });
               }
             }
           });
 
-          // 如果发现异常结构，记录警告但不自动修复（避免破坏用户内容）
-          if (itemsToFix.length > 0) {
-            console.warn('[HeadingNumbering] Found', itemsToFix.length, 'listItems with multiple blocks. This may cause display issues.');
-            // 不自动修复，因为这可能会破坏用户正在编辑的内容
-            // 用户需要手动修复这些异常结构
-          }
+          // 如果发现异常结构，不自动修复（避免破坏用户内容）
+          // 用户需要手动修复这些异常结构
 
           // 遍历文档，计算每个有序列表中的标题编号
           newState.doc.descendants((node, pos) => {
             if (node.type.name === 'orderedList') {
-              console.log('[HeadingNumbering] Found orderedList at pos:', pos);
+      
               // 计数器 - 用于跟踪每个级别的标题数量
               const counters = { h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0 };
               // 标记是否遇到过某个级别的标题
@@ -323,12 +318,10 @@ export const CustomOrderedList = OrderedList.extend({
                   // 查找列表项中的第一个子节点
                   const firstChild = listItem.firstChild;
                   if (!firstChild) {
-                    console.log('[HeadingNumbering] ListItem has no firstChild');
                     return;
                   }
 
                   const nodeName = firstChild.type.name;
-                  console.log('[HeadingNumbering] ListItem firstChild type:', nodeName);
                   
                   // 如果是标题
                   if (nodeName === 'heading') {
@@ -389,7 +382,6 @@ export const CustomOrderedList = OrderedList.extend({
                     
                     // 如果有自定义编号，不更新 computedNumber
                     if (!hasCustomNumber && currentComputedNumber !== computedNumber) {
-                      console.log(`[HeadingNumbering] Setting H${level} number to: ${computedNumber}`);
                       tr.setNodeMarkup(listItemPos, undefined, {
                         ...listItem.attrs,
                         computedNumber,
@@ -427,9 +419,6 @@ export const CustomOrderedList = OrderedList.extend({
             }
           });
 
-          if (modified) {
-            console.log('[HeadingNumbering] Transaction modified, applying changes');
-          }
           return modified ? tr : null;
         },
       }),

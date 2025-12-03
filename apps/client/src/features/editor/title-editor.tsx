@@ -27,6 +27,7 @@ import localEmitter from "@/lib/local-emitter.ts";
 import { currentUserAtom } from "@/features/user/atoms/current-user-atom.ts";
 import { PageEditMode } from "@/features/user/types/user.types.ts";
 import { searchSpotlight } from "@/features/search/constants.ts";
+import { LastEditInfo } from "@/features/editor/components/last-edit-info/last-edit-info";
 
 export interface TitleEditorProps {
   pageId: string;
@@ -203,15 +204,18 @@ export function TitleEditor({
   }
 
   return (
-    <EditorContent
-      editor={titleEditor}
-      onKeyDown={(event) => {
-        // First handle the search hotkey
-        getHotkeyHandler([["mod+F", openSearchDialog]])(event);
+    <div>
+      <EditorContent
+        editor={titleEditor}
+        onKeyDown={(event) => {
+          // First handle the search hotkey
+          getHotkeyHandler([["mod+F", openSearchDialog]])(event);
 
-        // Then handle other key events
-        handleTitleKeyDown(event);
-      }}
-    />
+          // Then handle other key events
+          handleTitleKeyDown(event);
+        }}
+      />
+      <LastEditInfo pageId={pageId} />
+    </div>
   );
 }

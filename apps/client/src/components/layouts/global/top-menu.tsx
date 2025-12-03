@@ -9,7 +9,6 @@ import {
   IconBrightnessFilled,
   IconBrush,
   IconCheck,
-  IconChevronDown,
   IconDeviceDesktop,
   IconLogout,
   IconMoon,
@@ -25,7 +24,6 @@ import APP_ROUTE from "@/lib/app-route.ts";
 import useAuth from "@/features/auth/hooks/use-auth.ts";
 import { CustomAvatar } from "@/components/ui/custom-avatar.tsx";
 import { useTranslation } from "react-i18next";
-import { AvatarIconType } from "@/features/attachments/types/attachment.types.ts";
 import useUserRole from "@/hooks/use-user-role.tsx";
 
 export default function TopMenu() {
@@ -46,18 +44,12 @@ export default function TopMenu() {
     <Menu width={250} position="bottom-end" withArrow shadow={"lg"}>
       <Menu.Target>
         <UnstyledButton>
-          <Group gap={7} wrap={"nowrap"}>
-            <CustomAvatar
-              avatarUrl={user?.avatarUrl}
-              name={user?.name}
-              variant="filled"
-              size="sm"
-            />
-            <Text fw={500} size="sm" lh={1} mr={3} lineClamp={1}>
-              {user?.name}
-            </Text>
-            <IconChevronDown size={16} />
-          </Group>
+          <CustomAvatar
+            avatarUrl={user?.avatarUrl}
+            name={user?.name}
+            variant="filled"
+            size="sm"
+          />
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>

@@ -183,6 +183,10 @@ export class ShareController {
         isCloud: this.environmentService.isCloud(),
         plan: workspace.plan,
       }),
+      workspace: {
+        id: workspace.id,
+        name: workspace.name,
+      },
     };
   }
 }

@@ -173,7 +173,6 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
         }
         // 只有在鼠标不在拖拽手柄上时才清除定时器
         if (!isMouseOverHandle && hoverTimeout) {
-            console.log('[DragHandle] hideDragHandle: clearing hoverTimeout because mouse is not over handle');
             window.clearTimeout(hoverTimeout);
             hoverTimeout = null;
         }
@@ -184,9 +183,6 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
             dragHandleElement.classList.remove('hide');
             // 确保拖拽手柄可以接收鼠标事件
             dragHandleElement.style.pointerEvents = 'auto';
-            console.log('[DragHandle] showDragHandle: removed hide class, element exists:', !!dragHandleElement.parentElement);
-        } else {
-            console.log('[DragHandle] showDragHandle: dragHandleElement is null!');
         }
     }
     
@@ -234,12 +230,6 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
             
             // 打开菜单的通用函数
             function openMenu() {
-                console.log('[DragHandle] openMenu called, checks:', {
-                    hasOnMenuOpen: !!options.onMenuOpen,
-                    hasCurrentNode: !!currentNode,
-                    currentNodeType: currentNode?.type?.name,
-                    hasDragHandleElement: !!dragHandleElement
-                });
                 if (options.onMenuOpen && currentNode && dragHandleElement) {
                     isMenuOpen = true;
                     const rect = dragHandleElement.getBoundingClientRect();
@@ -343,7 +333,6 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
             }
             
             function onDragHandleMouseEnter(e: MouseEvent) {
-                console.log('[DragHandle] mouseenter event fired');
                 isMouseOverHandle = true; // 标记鼠标在拖拽手柄上
                 
                 // 清除隐藏定时器
@@ -360,18 +349,15 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
                     window.clearTimeout(hoverTimeout);
                 }
                 hoverTimeout = window.setTimeout(() => {
-                    console.log('[DragHandle] Opening menu after timeout');
                     openMenu();
                 }, 200);
             }
             
             function onDragHandleMouseLeave(e: MouseEvent) {
-                console.log('[DragHandle] mouseleave event fired');
                 isMouseOverHandle = false; // 标记鼠标离开拖拽手柄
                 
                 // 清除延迟打开的定时器
                 if (hoverTimeout) {
-                    console.log('[DragHandle] mouseleave: clearing hoverTimeout');
                     window.clearTimeout(hoverTimeout);
                     hoverTimeout = null;
                 }
@@ -472,10 +458,14 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
                 mousemove: (view, event) => {
                     // Bail out if destroyed
                     if (isDestroyed) {
-                        console.log('[DragHandle] mousemove: isDestroyed = true');
                         return;
                     }
-                    // 移除 view.editable 检查，拖拽手柄应该在阅读模式下也显示
+                    
+                    // 在阅读模式下不显示拖拽手柄
+                    if (!view.editable) {
+                        hideDragHandle();
+                        return;
+                    }
                     
                     // Check if mouse is over the drag handle itself or menu
                     const target = event.target as Element;

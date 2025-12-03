@@ -25,14 +25,32 @@
 
 /* 确保包含段落的列表项，段落和编号在同一行 */
 .tiptap ol li > p {
-  display: inline;
+  display: block;
   margin: 0;
+  position: relative; /* 为绝对定位的 placeholder 提供参考 */
 }
 
-/* 有序列表中的 placeholder 需要左侧内边距，避免被编号遮挡 */
+/* 有序列表中的 placeholder 样式覆盖 - 使用绝对定位避免影响编号位置 */
 .tiptap ol li > p.is-empty::before,
 .tiptap ol li > p.is-editor-empty::before {
-  padding-left: 2em; /* 为编号留出空间 */
+  content: attr(data-placeholder) !important;
+  position: absolute !important;
+  left: 2em !important; /* 编号宽度，让 placeholder 显示在编号后面 */
+  top: 0 !important;
+  pointer-events: none !important;
+  color: #adb5bd !important;
+  white-space: nowrap !important;
+}
+
+/* 修复：列表项中第二个及后续段落需要换行显示 */
+.tiptap ol li > p:not(:first-child) {
+  display: block; /* 第二个段落开始换行 */
+}
+
+/* 第二个及后续段落的 placeholder 不需要左侧内边距 */
+.tiptap ol li > p:not(:first-child).is-empty::before,
+.tiptap ol li > p:not(:first-child).is-editor-empty::before {
+  padding-left: 0;
 }
 
 /* 禁用所有默认编号 - 现在完全使用 JavaScript widget */
