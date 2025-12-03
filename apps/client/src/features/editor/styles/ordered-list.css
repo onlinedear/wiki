@@ -18,6 +18,11 @@
   list-style-type: decimal; /* 默认显示编号 */
 }
 
+/* 移除列表项 marker 的默认 margin */
+.tiptap ol li::marker {
+  margin-right: 0 !important;
+}
+
 /* 确保包含段落的列表项，段落和编号在同一行 */
 .tiptap ol li > p {
   display: inline;
@@ -50,6 +55,7 @@
 .tiptap ol li::marker {
   content: '';
   display: none;
+  margin-right: 0 !important;
 }
 
 /* ========== 标题编号的通用样式 ========== */

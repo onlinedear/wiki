@@ -19,11 +19,11 @@
   gap: 2px;
   padding: 3px 4px;
   opacity: 1;
-  transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), 
+  transition: opacity 0.2s ease-out, 
               background-color 0.15s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 50;
-  pointer-events: auto !important;
+  pointer-events: auto;
   border-radius: 6px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   cursor: grab;
@@ -55,8 +55,8 @@
 
 .drag-handle-container.hide,
 .drag-handle.hide {
-  opacity: 0 !important;
-  pointer-events: none !important;
+  opacity: 0;
+  pointer-events: none;
   transform: scale(0.95);
 }
 

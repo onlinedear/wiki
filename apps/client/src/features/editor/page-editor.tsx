@@ -1,5 +1,5 @@
 import "@/features/editor/styles/index.css";
-import React, { useEffect, useMemo, useRef, useState, startTransition } from "react";
+import React, { useEffect, useMemo, useRef, useState, startTransition, useCallback } from "react";
 import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
 import {
@@ -58,6 +58,7 @@ import { jwtDecode } from "jwt-decode";
 import { searchSpotlight } from "@/features/search/constants.ts";
 import { NumberingMenu } from "@/features/editor/components/ordered-list/numbering-menu.tsx";
 import { DragHandleMenu } from "@/features/editor/components/drag-handle-menu/drag-handle-menu.tsx";
+import { MemoryMonitor } from "@/components/common/memory-monitor";
 
 interface PageEditorProps {
   pageId: string;
@@ -207,19 +208,22 @@ export default function PageEditor({
     }
   }, [isIdle, documentState, providersReady, resetIdle]);
 
+  // 拖拽手柄菜单打开回调
+  const handleMenuOpen = useCallback((node: any, position: { x: number; y: number; position?: 'left' | 'bottom' | 'top' | 'right' }) => {
+    setDragHandleMenuState({
+      opened: true,
+      node,
+      position,
+    });
+  }, []);
+
   const extensions = useMemo(() => {
     // 配置拖拽手柄菜单回调
     const extensionsWithMenu = mainExtensions.map((ext: any) => {
       if (ext.name === 'globalDragHandle') {
         return ext.configure({
           ...ext.options,
-          onMenuOpen: (node: any, position: { x: number; y: number; position?: 'left' | 'bottom' | 'top' | 'right' }) => {
-            setDragHandleMenuState({
-              opened: true,
-              node,
-              position,
-            });
-          },
+          onMenuOpen: handleMenuOpen,
         });
       }
       return ext;
@@ -230,7 +234,7 @@ export default function PageEditor({
       ...extensionsWithMenu,
       ...collabExtensions(remoteProvider, currentUser?.user),
     ];
-  }, [remoteProvider, currentUser?.user]);
+  }, [remoteProvider, currentUser?.user, handleMenuOpen]);
 
   const editor = useEditor(
     {
@@ -452,6 +456,9 @@ export default function PageEditor({
 
   return (
     <div className="editor-container" style={{ position: "relative" }}>
+      {/* 内存监控组件 - 仅用于调试 */}
+      <MemoryMonitor />
+      
       <div ref={menuContainerRef}>
         <EditorContent editor={editor} />
 
@@ -489,7 +496,11 @@ export default function PageEditor({
             node={dragHandleMenuState.node}
             opened={dragHandleMenuState.opened}
             position={dragHandleMenuState.position}
-            onClose={() => setDragHandleMenuState({ opened: false, node: null, position: { x: 0, y: 0 } })}
+            onClose={() => {
+              setDragHandleMenuState({ opened: false, node: null, position: { x: 0, y: 0 } });
+              // 通知拖拽手柄菜单已关闭
+              window.dispatchEvent(new CustomEvent('drag-handle-menu-closed'));
+            }}
           />
         )}
       </div>

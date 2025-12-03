@@ -187,7 +187,7 @@ export const CustomOrderedList = OrderedList.extend({
                       span.setAttribute('data-list-item-pos', savedListItemPos.toString());
                       span.style.cssText = `
                         display: inline;
-                        margin-right: 0.5em;
+                        margin-right: 0;
                         font-size: ${fontSize};
                         font-weight: 700;
                         line-height: inherit;
@@ -239,7 +239,7 @@ export const CustomOrderedList = OrderedList.extend({
                         span.textContent = `${currentNumber}. `;
                         span.style.cssText = `
                           display: inline-block;
-                          margin-right: 0.5em;
+                          margin-right: 0;
                           font-weight: 400;
                           color: var(--mantine-color-text, #000);
                           user-select: none;

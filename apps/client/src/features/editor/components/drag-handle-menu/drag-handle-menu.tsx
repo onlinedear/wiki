@@ -4,7 +4,6 @@ import {
   Divider,
   Group,
   Paper,
-  ScrollArea,
   Text,
   UnstyledButton,
 } from "@mantine/core";
@@ -24,7 +23,6 @@ import {
   IconCheckbox,
   IconCode,
   IconPalette,
-  IconPlus,
   IconTrash,
   IconCopy,
   IconScissors,
@@ -36,8 +34,6 @@ import {
 import { useTranslation } from "react-i18next";
 import classes from "./drag-handle-menu.module.css";
 import clsx from "clsx";
-import getSuggestionItems from "@/features/editor/components/slash-menu/menu-items";
-import { SlashMenuItemType } from "@/features/editor/components/slash-menu/types";
 import { v7 as uuid7 } from "uuid";
 import { useAtom } from "jotai";
 import {
@@ -79,11 +75,8 @@ export const DragHandleMenu = ({
   position,
 }: DragHandleMenuProps) => {
   const { t } = useTranslation();
-  const [showInsertMenu, setShowInsertMenu] = useState(false);
   const [showColorMenu, setShowColorMenu] = useState(false);
-  const [selectedInsertIndex, setSelectedInsertIndex] = useState(0);
   const [editorUpdateKey, setEditorUpdateKey] = useState(0);
-  const insertMenuRef = useRef<HTMLDivElement>(null);
   const colorMenuRef = useRef<HTMLDivElement>(null);
   const [showCommentPopup, setShowCommentPopup] = useAtom(showCommentPopupAtom);
   const [, setDraftCommentId] = useAtom(draftCommentIdAtom);
@@ -289,69 +282,7 @@ export const DragHandleMenu = ({
     { label: "Gray", value: "#f1f1ef", display: "#f1f1ef" },
   ];
 
-  // 获取插入菜单项
-  const insertMenuItems = useMemo(() => {
-    return getSuggestionItems({ query: "", t });
-  }, [t]);
 
-  const flatInsertItems = useMemo(() => {
-    return Object.values(insertMenuItems).flat();
-  }, [insertMenuItems]);
-
-  const handleInsertItem = useCallback(
-    (item: SlashMenuItemType) => {
-      const { state } = editor;
-      const { selection } = state;
-      const pos = selection.to;
-
-      // 在当前块后插入新块
-      item.command({
-        editor,
-        range: { from: pos, to: pos },
-      });
-
-      setShowInsertMenu(false);
-      onClose();
-    },
-    [editor, onClose]
-  );
-
-  // 键盘导航
-  useEffect(() => {
-    if (!showInsertMenu) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setSelectedInsertIndex((prev) =>
-          prev > 0 ? prev - 1 : flatInsertItems.length - 1
-        );
-      } else if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setSelectedInsertIndex((prev) =>
-          prev < flatInsertItems.length - 1 ? prev + 1 : 0
-        );
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        handleInsertItem(flatInsertItems[selectedInsertIndex]);
-      } else if (e.key === "Escape") {
-        e.preventDefault();
-        setShowInsertMenu(false);
-      }
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [showInsertMenu, selectedInsertIndex, flatInsertItems, handleInsertItem]);
-
-  // 滚动到选中项
-  useEffect(() => {
-    if (showInsertMenu) {
-      insertMenuRef.current
-        ?.querySelector(`[data-insert-index="${selectedInsertIndex}"]`)
-        ?.scrollIntoView({ block: "nearest" });
-    }
-  }, [selectedInsertIndex, showInsertMenu]);
 
   // 鼠标移出菜单区域时关闭
   useEffect(() => {
@@ -359,39 +290,11 @@ export const DragHandleMenu = ({
 
     let closeTimeout: number | null = null;
 
-    // 全局鼠标移动监听，检查鼠标是否在菜单或拖拽手柄区域
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      
-      // 检查鼠标是否在菜单或拖拽手柄区域
-      const isInMenu = target?.closest('[data-drag-handle-menu]');
-      const isInDragHandle = target?.closest('.drag-handle') || 
-                            target?.closest('.drag-handle-container') ||
-                            target?.classList.contains('drag-handle') ||
-                            target?.classList.contains('drag-handle-container');
-      
-      // 如果鼠标不在菜单也不在拖拽手柄区域，延迟关闭
-      if (!isInMenu && !isInDragHandle) {
-        if (!closeTimeout) {
-          closeTimeout = window.setTimeout(() => {
-            onClose();
-          }, 200);
-        }
-      } else {
-        // 鼠标在菜单或拖拽手柄区域，取消关闭
-        if (closeTimeout) {
-          window.clearTimeout(closeTimeout);
-          closeTimeout = null;
-        }
-      }
-    };
-
     const handleMouseLeave = (e: MouseEvent) => {
       const relatedTarget = e.relatedTarget as HTMLElement;
       
-      // 如果鼠标移动到拖拽手柄或菜单内部，不关闭
+      // 如果鼠标移动到拖拽手柄，不关闭
       if (
-        relatedTarget?.closest('[data-drag-handle-menu]') ||
         relatedTarget?.closest('.drag-handle') ||
         relatedTarget?.closest('.drag-handle-container')
       ) {
@@ -400,8 +303,14 @@ export const DragHandleMenu = ({
       
       // 延迟关闭，给用户时间移动鼠标
       closeTimeout = window.setTimeout(() => {
-        onClose();
-      }, 200);
+        // 再次检查鼠标是否在拖拽手柄上
+        const dragHandleElement = document.querySelector('.drag-handle');
+        const isHandleHovered = dragHandleElement?.matches(':hover');
+        
+        if (!isHandleHovered) {
+          onClose();
+        }
+      }, 300);
     };
 
     const handleMouseEnter = () => {
@@ -412,50 +321,41 @@ export const DragHandleMenu = ({
       }
       
       // 确保拖拽手柄保持显示
-      const dragHandleElement = document.querySelector('.drag-handle, .drag-handle-container');
+      const dragHandleElement = document.querySelector('.drag-handle');
       if (dragHandleElement) {
         dragHandleElement.classList.remove('hide');
       }
     };
 
-    // 监听拖拽手柄的鼠标离开事件
-    const handleDragHandleLeave = (e: MouseEvent) => {
-      const relatedTarget = e.relatedTarget as HTMLElement;
-      
-      // 如果鼠标不是移动到菜单，延迟关闭
-      if (!relatedTarget?.closest('[data-drag-handle-menu]')) {
-        closeTimeout = window.setTimeout(() => {
-          onClose();
-        }, 200);
-      }
+    // 监听拖拽手柄的关闭请求
+    const handleCloseRequest = () => {
+      onClose();
+    };
+
+    // 监听滚动事件，滚动时关闭菜单
+    const handleScroll = () => {
+      onClose();
     };
 
     const menuElement = document.querySelector('[data-drag-handle-menu]');
-    const dragHandleElement = document.querySelector('.drag-handle, .drag-handle-container');
     
-    // 添加全局鼠标移动监听
-    document.addEventListener('mousemove', handleGlobalMouseMove);
+    window.addEventListener('drag-handle-menu-close-request', handleCloseRequest);
+    window.addEventListener('scroll', handleScroll, true); // 使用捕获阶段监听所有滚动
     
     if (menuElement) {
       menuElement.addEventListener('mouseleave', handleMouseLeave as any);
       menuElement.addEventListener('mouseenter', handleMouseEnter);
-    }
-    
-    if (dragHandleElement) {
-      dragHandleElement.addEventListener('mouseleave', handleDragHandleLeave as any);
     }
 
     return () => {
       if (closeTimeout) {
         window.clearTimeout(closeTimeout);
       }
-      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      window.removeEventListener('drag-handle-menu-close-request', handleCloseRequest);
+      window.removeEventListener('scroll', handleScroll, true);
       if (menuElement) {
         menuElement.removeEventListener('mouseleave', handleMouseLeave as any);
         menuElement.removeEventListener('mouseenter', handleMouseEnter);
-      }
-      if (dragHandleElement) {
-        dragHandleElement.removeEventListener('mouseleave', handleDragHandleLeave as any);
       }
     };
   }, [opened, onClose]);
@@ -508,38 +408,73 @@ export const DragHandleMenu = ({
             {t("Indent and alignment")}
           </Text>
           <Group gap="xs" mb="xs">
-            <ActionIcon
-              variant="default"
-              disabled={!blockState || blockState.indent === 0}
-              onClick={() => {
-                if (blockState && blockState.indent > 0) {
-                  editor.chain().focus().decreaseIndent().run();
-                }
-              }}
-              title={t("Decrease indent")}
-              style={{
-                opacity: !blockState || blockState.indent === 0 ? 0.4 : 1,
-                cursor: !blockState || blockState.indent === 0 ? 'not-allowed' : 'pointer',
-              }}
-            >
-              <IconIndentDecrease size={18} />
-            </ActionIcon>
-            <ActionIcon
-              variant="default"
-              disabled={!blockState || blockState.indent >= 1}
-              onClick={() => {
-                if (blockState && blockState.indent < 1) {
-                  editor.chain().focus().increaseIndent().run();
-                }
-              }}
-              title={t("Increase indent")}
-              style={{
-                opacity: !blockState || blockState.indent >= 1 ? 0.4 : 1,
-                cursor: !blockState || blockState.indent >= 1 ? 'not-allowed' : 'pointer',
-              }}
-            >
-              <IconIndentIncrease size={18} />
-            </ActionIcon>
+            {/* 缩进按钮 - 对列表显示 */}
+            {(() => {
+              // 检查节点类型是否为列表
+              const nodeTypeName = node?.type?.name;
+              const isListNode = nodeTypeName === 'orderedList' || 
+                                 nodeTypeName === 'bulletList' || 
+                                 nodeTypeName === 'taskList';
+              
+              const isListActive = isListNode ||
+                                   blockState?.isOrderedList || 
+                                   blockState?.isBulletList || 
+                                   blockState?.isTaskList ||
+                                   blockState?.isListItem ||
+                                   blockState?.isTaskItem;
+              
+              const isTaskType = nodeTypeName === 'taskList' || 
+                                 blockState?.isTaskList || 
+                                 blockState?.isTaskItem;
+              
+              const canLift = isTaskType 
+                ? editor.can().liftListItem('taskItem')
+                : editor.can().liftListItem('listItem');
+              const canSink = isTaskType 
+                ? editor.can().sinkListItem('taskItem')
+                : editor.can().sinkListItem('listItem');
+              
+              return (
+                <>
+                  <ActionIcon
+                    variant="default"
+                    disabled={!isListActive || !canLift}
+                    onClick={() => {
+                      if (isTaskType) {
+                        editor.chain().focus().liftListItem('taskItem').run();
+                      } else {
+                        editor.chain().focus().liftListItem('listItem').run();
+                      }
+                    }}
+                    title={t("Decrease indent")}
+                    style={{
+                      opacity: (!isListActive || !canLift) ? 0.4 : 1,
+                      cursor: (!isListActive || !canLift) ? 'not-allowed' : 'pointer',
+                    }}
+                  >
+                    <IconIndentDecrease size={18} />
+                  </ActionIcon>
+                  <ActionIcon
+                    variant="default"
+                    disabled={!isListActive || !canSink}
+                    onClick={() => {
+                      if (isTaskType) {
+                        editor.chain().focus().sinkListItem('taskItem').run();
+                      } else {
+                        editor.chain().focus().sinkListItem('listItem').run();
+                      }
+                    }}
+                    title={t("Increase indent")}
+                    style={{
+                      opacity: (!isListActive || !canSink) ? 0.4 : 1,
+                      cursor: (!isListActive || !canSink) ? 'not-allowed' : 'pointer',
+                    }}
+                  >
+                    <IconIndentIncrease size={18} />
+                  </ActionIcon>
+                </>
+              );
+            })()}
             
             {/* 分割线 */}
             <div
@@ -1201,78 +1136,7 @@ export const DragHandleMenu = ({
         </Group>
       </UnstyledButton>
 
-      <Divider my="xs" />
 
-      {/* 在下方添加 */}
-      <div style={{ position: "relative" }}>
-        <UnstyledButton
-          className={classes.menuItem}
-          onClick={() => setShowInsertMenu(!showInsertMenu)}
-          onMouseEnter={() => setShowInsertMenu(true)}
-        >
-          <Group gap="xs" style={{ width: "100%" }}>
-            <IconPlus size={18} />
-            <Text size="sm" style={{ flex: 1 }}>
-              {t("Insert below")}
-            </Text>
-            <Text size="xs" c="dimmed">
-              ▶
-            </Text>
-          </Group>
-        </UnstyledButton>
-
-        {/* 插入菜单 */}
-        {showInsertMenu && (
-          <Paper
-            ref={insertMenuRef}
-            className={classes.insertMenu}
-            shadow="md"
-            p="xs"
-            withBorder
-          >
-            <ScrollArea h={350} w={270} scrollbarSize={8}>
-              {(() => {
-                let globalIndex = 0;
-                return Object.entries(insertMenuItems).map(([category, items]) => (
-                  <div key={category}>
-                    <Text c="dimmed" mb={4} fw={500} tt="capitalize">
-                      {t(category)}
-                    </Text>
-                    {items.map((item: SlashMenuItemType, index: number) => {
-                      const currentIndex = globalIndex++;
-                      return (
-                        <UnstyledButton
-                          key={index}
-                          data-insert-index={currentIndex}
-                          className={clsx(classes.insertMenuItem, {
-                            [classes.selectedInsertItem]:
-                              currentIndex === selectedInsertIndex,
-                          })}
-                          onClick={() => handleInsertItem(item)}
-                        >
-                          <Group gap="xs">
-                            <ActionIcon variant="default" component="div">
-                              <item.icon size={18} />
-                            </ActionIcon>
-                            <div style={{ flex: 1 }}>
-                              <Text size="sm" fw={500}>
-                                {t(item.title)}
-                              </Text>
-                              <Text c="dimmed" size="xs">
-                                {t(item.description)}
-                              </Text>
-                            </div>
-                          </Group>
-                        </UnstyledButton>
-                      );
-                    })}
-                  </div>
-                ));
-              })()}
-            </ScrollArea>
-          </Paper>
-        )}
-      </div>
     </Paper>
   );
 };

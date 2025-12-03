@@ -95,6 +95,9 @@ export interface GlobalDragHandleOptions {
 function DragHandlePlugin(options: GlobalDragHandleOptions) {
     let listType = '';
     let currentNode: ProseMirrorNode | null = null;
+    let hoverTimeout: number | null = null;
+    let hideTimeout: number | null = null;
+    let isMouseOverHandle = false; // 跟踪鼠标是否在拖拽手柄上
     
     function handleDragStart(event: DragEvent, view: any) {
         view.focus();
@@ -160,36 +163,52 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
     let dragHandleElement: HTMLElement | null = null;
     let root: Root | null = null;
     let isDestroyed = false; // Track destroyed state to prevent updates
+    let isMenuOpen = false; // Track menu open state
     
     function hideDragHandle() {
         if (dragHandleElement) {
             dragHandleElement.classList.add('hide');
+            // 隐藏时也要禁用指针事件，避免干扰
+            dragHandleElement.style.pointerEvents = 'none';
+        }
+        // 只有在鼠标不在拖拽手柄上时才清除定时器
+        if (!isMouseOverHandle && hoverTimeout) {
+            console.log('[DragHandle] hideDragHandle: clearing hoverTimeout because mouse is not over handle');
+            window.clearTimeout(hoverTimeout);
+            hoverTimeout = null;
         }
     }
     
     function showDragHandle() {
         if (dragHandleElement) {
             dragHandleElement.classList.remove('hide');
+            // 确保拖拽手柄可以接收鼠标事件
+            dragHandleElement.style.pointerEvents = 'auto';
+            console.log('[DragHandle] showDragHandle: removed hide class, element exists:', !!dragHandleElement.parentElement);
+        } else {
+            console.log('[DragHandle] showDragHandle: dragHandleElement is null!');
         }
     }
     
-    function hideHandleOnEditorOut(event) {
-        if (event.target instanceof Element) {
-            // Check if the relatedTarget class is still inside the editor or drag handle or menu
-            const relatedTarget = event.relatedTarget;
-            const isInsideEditor = relatedTarget?.classList.contains('tiptap') ||
-                relatedTarget?.classList.contains('drag-handle') ||
-                relatedTarget?.classList.contains('drag-handle-container') ||
-                relatedTarget?.classList.contains('block-type-label') ||
-                relatedTarget?.classList.contains('drag-handle-icon') ||
-                relatedTarget?.closest('.drag-handle') ||
-                relatedTarget?.closest('.drag-handle-container') ||
-                relatedTarget?.closest('[data-drag-handle-menu]'); // 检查是否在菜单区域
-            if (isInsideEditor)
-                return;
-        }
-        hideDragHandle();
-    }
+    // 这个函数已经不再使用，因为 mouseout 事件会导致拖拽手柄频繁隐藏
+    // function hideHandleOnEditorOut(event) {
+    //     const relatedTarget = event.relatedTarget;
+    //     if (!relatedTarget) {
+    //         hideDragHandle();
+    //         return;
+    //     }
+    //     if (relatedTarget instanceof Element) {
+    //         const isInsideEditor = relatedTarget.closest('.tiptap') ||
+    //             relatedTarget.closest('.ProseMirror') ||
+    //             relatedTarget.closest('.drag-handle') ||
+    //             relatedTarget.closest('.drag-handle-container') ||
+    //             relatedTarget.closest('[data-drag-handle-menu]');
+    //         if (isInsideEditor) {
+    //             return;
+    //         }
+    //     }
+    //     hideDragHandle();
+    // }
     
     return new Plugin({
         key: new PluginKey('globalDragHandle'),
@@ -213,88 +232,174 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
             }
             dragHandleElement.addEventListener('dragstart', onDragHandleDragStart);
             
-            // 鼠标悬停时打开菜单
-            let hoverTimeout: number | null = null;
-            let closeMenuCallback: (() => void) | null = null;
+            // 打开菜单的通用函数
+            function openMenu() {
+                console.log('[DragHandle] openMenu called, checks:', {
+                    hasOnMenuOpen: !!options.onMenuOpen,
+                    hasCurrentNode: !!currentNode,
+                    currentNodeType: currentNode?.type?.name,
+                    hasDragHandleElement: !!dragHandleElement
+                });
+                if (options.onMenuOpen && currentNode && dragHandleElement) {
+                    isMenuOpen = true;
+                    const rect = dragHandleElement.getBoundingClientRect();
+                    const viewportWidth = window.innerWidth;
+                    const viewportHeight = window.innerHeight;
+                    
+                    // 菜单预估宽度和高度
+                    const menuWidth = 280;
+                    const menuHeight = 500;
+                    const gap = 8; // 菜单与拖拽手柄的间距
+                    const padding = 16; // 菜单与视口边缘的最小间距
+                    const offsetToContent = 50; // 菜单向内容方向偏移，缩短距离
+                    
+                    // 计算拖拽手柄的实际位置
+                    const handleLeft = rect.left - rect.width - 20;
+                    
+                    let x = 0;
+                    let y = 0;
+                    let position: 'left' | 'bottom' | 'top' | 'right' = 'left';
+                    
+                    // 优先级：左侧 > 右侧 > 下方 > 上方
+                    
+                    // 1. 尝试左侧显示
+                    const leftX = handleLeft - menuWidth - gap + offsetToContent;
+                    const leftSpaceAvailable = leftX >= padding;
+                    
+                    // 2. 尝试右侧显示
+                    const rightX = rect.right + gap;
+                    const rightSpaceAvailable = rightX + menuWidth + padding <= viewportWidth;
+                    
+                    // 3. 尝试下方显示
+                    const bottomY = rect.bottom + gap;
+                    const bottomSpaceAvailable = bottomY + menuHeight + padding <= viewportHeight;
+                    
+                    // 4. 尝试上方显示
+                    const topY = rect.top - menuHeight - gap;
+                    const topSpaceAvailable = topY >= padding;
+                    
+                    // 根据可用空间选择位置
+                    if (leftSpaceAvailable) {
+                        // 左侧显示
+                        position = 'left';
+                        x = leftX;
+                        // 让拖拽手柄位于菜单中间偏上（约 1/3 处）
+                        const offsetFromTop = Math.min(menuHeight / 3, 150);
+                        y = rect.top - offsetFromTop;
+                        
+                        // 确保菜单不超出顶部和底部
+                        if (y < padding) {
+                            y = padding;
+                        } else if (y + menuHeight + padding > viewportHeight) {
+                            y = viewportHeight - menuHeight - padding;
+                        }
+                    } else if (rightSpaceAvailable) {
+                        // 右侧显示
+                        position = 'right';
+                        x = rightX;
+                        // 让拖拽手柄位于菜单中间偏上
+                        const offsetFromTop = Math.min(menuHeight / 3, 150);
+                        y = rect.top - offsetFromTop;
+                        
+                        // 确保菜单不超出顶部和底部
+                        if (y < padding) {
+                            y = padding;
+                        } else if (y + menuHeight + padding > viewportHeight) {
+                            y = viewportHeight - menuHeight - padding;
+                        }
+                    } else if (bottomSpaceAvailable) {
+                        // 下方显示
+                        position = 'bottom';
+                        x = rect.left;
+                        y = bottomY;
+                        
+                        // 确保菜单不超出左右边界
+                        if (x < padding) {
+                            x = padding;
+                        } else if (x + menuWidth + padding > viewportWidth) {
+                            x = viewportWidth - menuWidth - padding;
+                        }
+                    } else if (topSpaceAvailable) {
+                        // 上方显示
+                        position = 'top';
+                        x = rect.left;
+                        y = topY;
+                        
+                        // 确保菜单不超出左右边界
+                        if (x < padding) {
+                            x = padding;
+                        } else if (x + menuWidth + padding > viewportWidth) {
+                            x = viewportWidth - menuWidth - padding;
+                        }
+                    } else {
+                        // 所有位置都不够，强制显示在视口内（优先右侧）
+                        position = 'right';
+                        x = Math.max(padding, Math.min(rightX, viewportWidth - menuWidth - padding));
+                        y = Math.max(padding, Math.min(rect.top, viewportHeight - menuHeight - padding));
+                    }
+                    
+                    options.onMenuOpen(currentNode, { x, y, position });
+                }
+            }
             
             function onDragHandleMouseEnter(e: MouseEvent) {
+                console.log('[DragHandle] mouseenter event fired');
+                isMouseOverHandle = true; // 标记鼠标在拖拽手柄上
+                
+                // 清除隐藏定时器
+                if (hideTimeout) {
+                    window.clearTimeout(hideTimeout);
+                    hideTimeout = null;
+                }
+                
+                // 确保拖拽手柄显示
+                showDragHandle();
+                
                 // 延迟 200ms 打开菜单，避免快速划过时触发
+                if (hoverTimeout) {
+                    window.clearTimeout(hoverTimeout);
+                }
                 hoverTimeout = window.setTimeout(() => {
-                    if (options.onMenuOpen && currentNode) {
-                        const rect = dragHandleElement!.getBoundingClientRect();
-                        const viewportWidth = window.innerWidth;
-                        const viewportHeight = window.innerHeight;
-                        
-                        // 菜单预估宽度和高度
-                        const menuWidth = 280;
-                        const menuHeight = 500;
-                        const gap = 0; // 菜单与拖拽手柄的间距（紧贴）
-                        const offsetToContent = 50; // 菜单向内容方向偏移，缩短距离
-                        
-                        // 计算拖拽手柄的实际位置
-                        const handleLeft = rect.left - rect.width - 20;
-                        
-                        let x = handleLeft - menuWidth - gap + offsetToContent; // 默认显示在左侧，向右偏移50px
-                        let y = rect.top;
-                        let position: 'left' | 'bottom' | 'top' | 'right' = 'left';
-                        
-                        // 如果左侧空间不足，显示在下方
-                        if (x < 0) {
-                            position = 'bottom';
-                            x = rect.left;
-                            y = rect.bottom + gap + 8; // 下方显示时增加8px间距，避免遮挡拖拽手柄
-                            
-                            // 如果下方空间也不足，显示在上方
-                            if (y + menuHeight > viewportHeight) {
-                                position = 'top';
-                                y = rect.top - menuHeight - gap;
-                                
-                                // 如果上方空间也不足，显示在右侧
-                                if (y < 0) {
-                                    position = 'right';
-                                    x = rect.right + gap;
-                                    y = rect.top;
-                                }
-                            }
-                        } else {
-                            // 左侧显示时，让拖拽手柄位于菜单中间偏上（约 1/3 处）
-                            const offsetFromTop = Math.min(menuHeight / 3, 150);
-                            y = rect.top - offsetFromTop;
-                            
-                            // 确保不超出顶部
-                            if (y < 0) {
-                                y = gap * 2;
-                            }
-                        }
-                        
-                        options.onMenuOpen(currentNode, { x, y, position });
-                    }
+                    console.log('[DragHandle] Opening menu after timeout');
+                    openMenu();
                 }, 200);
             }
             
             function onDragHandleMouseLeave(e: MouseEvent) {
+                console.log('[DragHandle] mouseleave event fired');
+                isMouseOverHandle = false; // 标记鼠标离开拖拽手柄
+                
                 // 清除延迟打开的定时器
                 if (hoverTimeout) {
+                    console.log('[DragHandle] mouseleave: clearing hoverTimeout');
                     window.clearTimeout(hoverTimeout);
                     hoverTimeout = null;
                 }
                 
                 // 检查鼠标是否移动到菜单区域
                 const relatedTarget = e.relatedTarget as HTMLElement;
-                if (!relatedTarget?.closest('[data-drag-handle-menu]')) {
-                    // 鼠标离开拖拽手柄且不在菜单区域，延迟关闭菜单
-                    if (closeMenuCallback) {
-                        closeMenuCallback();
-                    }
+                const isMovingToMenu = relatedTarget?.closest('[data-drag-handle-menu]');
+                
+                if (!isMovingToMenu) {
+                    // 延迟检查，给用户时间移动到菜单
+                    hideTimeout = window.setTimeout(() => {
+                        // 再次检查鼠标是否在菜单区域
+                        const menuElement = document.querySelector('[data-drag-handle-menu]');
+                        const dragHandleElement = document.querySelector('.drag-handle');
+                        
+                        // 如果鼠标既不在菜单也不在拖拽手柄上，才关闭
+                        if (menuElement && dragHandleElement) {
+                            const isMenuHovered = menuElement.matches(':hover');
+                            const isHandleHovered = dragHandleElement.matches(':hover');
+                            
+                            if (!isMenuHovered && !isHandleHovered) {
+                                isMenuOpen = false;
+                                // 触发菜单关闭
+                                window.dispatchEvent(new CustomEvent('drag-handle-menu-close-request'));
+                            }
+                        }
+                    }, 300);
                 }
-            }
-            
-            // 暴露关闭菜单的回调，供菜单组件调用
-            if (options.onMenuOpen) {
-                const originalOnMenuOpen = options.onMenuOpen;
-                options.onMenuOpen = (node, position) => {
-                    originalOnMenuOpen(node, position);
-                };
             }
             
             dragHandleElement.addEventListener('mouseenter', onDragHandleMouseEnter);
@@ -312,12 +417,20 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
             }
             dragHandleElement.addEventListener('drag', onDragHandleDrag);
             
+            // 监听菜单关闭事件
+            function onMenuClosed() {
+                isMenuOpen = false;
+                hideDragHandle();
+            }
+            window.addEventListener('drag-handle-menu-closed', onMenuClosed);
+            
             hideDragHandle();
             
             if (!handleBySelector) {
                 view?.dom?.parentElement?.appendChild(dragHandleElement);
             }
-            view?.dom?.parentElement?.addEventListener('mouseout', hideHandleOnEditorOut);
+            // 移除 mouseout 事件监听器，它会导致拖拽手柄频繁隐藏
+            // view?.dom?.parentElement?.addEventListener('mouseout', hideHandleOnEditorOut);
             
             return {
                 destroy: () => {
@@ -348,20 +461,23 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
                     dragHandleElement?.removeEventListener('dragstart', onDragHandleDragStart);
                     dragHandleElement?.removeEventListener('mouseenter', onDragHandleMouseEnter);
                     dragHandleElement?.removeEventListener('mouseleave', onDragHandleMouseLeave);
+                    window.removeEventListener('drag-handle-menu-closed', onMenuClosed);
                     dragHandleElement = null;
-                    view?.dom?.parentElement?.removeEventListener('mouseout', hideHandleOnEditorOut);
+                    // view?.dom?.parentElement?.removeEventListener('mouseout', hideHandleOnEditorOut);
                 },
             };
         },
         props: {
             handleDOMEvents: {
                 mousemove: (view, event) => {
-                    // Bail out if destroyed or view is not editable
-                    if (isDestroyed || !view.editable) {
+                    // Bail out if destroyed
+                    if (isDestroyed) {
+                        console.log('[DragHandle] mousemove: isDestroyed = true');
                         return;
                     }
+                    // 移除 view.editable 检查，拖拽手柄应该在阅读模式下也显示
                     
-                    // Check if mouse is over the drag handle itself
+                    // Check if mouse is over the drag handle itself or menu
                     const target = event.target as Element;
                     const isOverDragHandle = target?.closest('.drag-handle') || 
                                             target?.closest('.drag-handle-container') ||
@@ -370,10 +486,13 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
                                             target?.classList.contains('block-type-label') ||
                                             target?.classList.contains('drag-handle-icon');
                     
-                    // If mouse is over drag handle, keep it visible
-                    if (isOverDragHandle) {
+                    const isOverMenu = target?.closest('[data-drag-handle-menu]');
+                    
+                    // If mouse is over drag handle or menu, keep it visible and don't process further
+                    // 但仍然需要更新拖拽手柄的位置和内容
+                    if (isOverDragHandle || isOverMenu) {
                         showDragHandle();
-                        return;
+                        // 不要 return，继续处理以更新位置
                     }
                     
                     const nodeDOM = nodeDOMAtCoords({
@@ -599,9 +718,6 @@ function DragHandlePlugin(options: GlobalDragHandleOptions) {
                     showDragHandle();
                 },
                 keydown: () => {
-                    hideDragHandle();
-                },
-                mousewheel: () => {
                     hideDragHandle();
                 },
                 // dragging updates
